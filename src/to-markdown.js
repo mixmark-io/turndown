@@ -104,9 +104,9 @@ var toMarkdown = function(string) {
   }
   
   // Lists
-  
   // use [\s\S] to match any char (rather than .) to fix . not matching across linebreaks: http://www.regular-expressions.info/dot.html#nodotall
-  string = string.replace(/<(ul|ol)[^>]*>([\s\S]*)<\/(?:ul|ol)>/gi, function(str, listType, innerHTML) {
+  string = string.replace(/<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/gi, function(str, listType, innerHTML) {
+    window.console && console.log(str);
     var lis = innerHTML.split('</li>');
     for(i = 0, len = lis.length; i < len; i++) {
       if(lis[i]) {

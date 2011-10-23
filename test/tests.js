@@ -61,7 +61,8 @@ $(function(){
   
   test("converting list elements", function() {
     equal(toMarkdown("<ol>\n\t<li>Hello world</li>\n\t<li>Lorem ipsum</li>\n</ol>"), "1. Hello world\n2. Lorem ipsum", "We expect ol elements to be converted properly");
-    equal(toMarkdown("<ul>\n\t<li>Hello world</li>\n\t<li>Lorem ipsum</li>\n</ul>"), "* Hello world\n* Lorem ipsum", "We expect ol elements to be converted properly");
-    equal(toMarkdown("<ul class='blargh'><li class='first'>Hello world</li><li>Lorem ipsum</li></ul>"), "* Hello world\n* Lorem ipsum", "We expect ol elements to be converted properly");
+    equal(toMarkdown("<ul>\n\t<li>Hello world</li>\n\t<li>Lorem ipsum</li>\n</ul>"), "* Hello world\n* Lorem ipsum", "We expect ul elements with line breaks and tabs to be converted properly");
+    equal(toMarkdown("<ul class='blargh'><li class='first'>Hello world</li><li>Lorem ipsum</li></ul>"), "* Hello world\n* Lorem ipsum", "We expect ul elements with attributes to be converted properly");
+    equal(toMarkdown("<ul><li>Hello world</li><li>Lorem ipsum</li></ul><ul><li>Hello world</li><li>Lorem ipsum</li></ul>"), "* Hello world\n* Lorem ipsum\n\n* Hello world\n* Lorem ipsum", "We expect multiple ul elements to be converted properly");
   });
 });
