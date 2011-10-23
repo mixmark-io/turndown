@@ -28,9 +28,13 @@
 <script src="https://raw.github.com/domchristie/to-markdown/master/src/to-markdown.js"></script>
 <script>
   $(function(){
-    $('.input').keyup(function() {
-      var $textarea = $(this);
-      $('.output').text(toMarkdown($textarea.val()));
+    var $input = $('.input');
+    function updateOutput() {
+      $('.output').text(toMarkdown($input.val()));
+    }
+    updateOutput();
+    $input.keyup(function() {
+      updateOutput();
     });
   });
 </script>
@@ -41,13 +45,14 @@
   <h2>Try it</h2>
   <p>Enter some HTML into the textarea below.</p>
   <div class="lock-x">
-    <textarea class="input" cols="100" rows="10">
-<p>Hello world!</p>
-<a href="http://example.com">Example link</a>
+    <textarea class="input" cols="100" rows="10"><p>Hello world! This demonstrates <a href="https://github.com/domchristie/to-markdown">to-markdown.js</a> – an HTML to Markdown converter.</p>
+
+<hr />
+
 <ol>
-  <li>number 1</li>
-</ol>
-    </textarea>
+  <li>Number 1</li>
+  <li>Number Two</li>
+</ol></textarea>
   </div>
   
   <h3>Output:</h3>
