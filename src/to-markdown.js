@@ -40,7 +40,7 @@ var toMarkdown = function(string) {
       replacement: function(str, attrs, innerHTML) {
         var href = attrs.match(attrRegExp('href')),
             title = attrs.match(attrRegExp('title'));
-        return '[' + innerHTML + ']' + '(' + href[1] + (title && title[1] ? ' "' + title[1] + '"' : '') + ')';
+        return href ? '[' + innerHTML + ']' + '(' + href[1] + (title && title[1] ? ' "' + title[1] + '"' : '') + ')' : str;
       }
     },
     {
