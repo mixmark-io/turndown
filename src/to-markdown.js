@@ -1,18 +1,3 @@
-// √ paragraphs
-// √ linebreaks - voidEl
-// √ headers
-// blockquotes
-// √ lists
-// code blocks
-// √ horizontal rules - voidEl
-// 
-// √ links
-// √ emphasis (em, strong)
-// √ code
-// √ images - voidEl
-
-// inline html
-
 var toMarkdown = function(string) {
   
   var ELEMENTS = [
@@ -109,10 +94,6 @@ var toMarkdown = function(string) {
   function attrRegExp(attr) {
     return new RegExp(attr + '\\s*=\\s*["\']?([^"\']*)["\']?', 'i');
   }
-  
-  // Todo:
-  // Code blocks
-  // Blockquotes
   
   // Lists
   string = string.replace(/<(ul|ol)[^>]*>(.*)<\/(?:ul|ol)>/gi, function(str, listType, innerHTML) {
