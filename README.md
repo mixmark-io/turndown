@@ -7,6 +7,7 @@ An HTML to Markdown converter written in javascript
 * Codeblocks
 * Blockquotes
 * Inline HTML
+* Cleanup (remove duplicate line breaks etc)
 
 ## Licence
 
