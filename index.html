@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Juration.js - a natural language date parser/stringifier</title>
+<link rel="stylesheet" href="normalise.css"></link>
+<style>
+  body {
+    width: 751.538px;
+    margin: 0 auto;
+    font-family: sans-serif;
+    line-height: 1.4;
+  }
+  .lock-x {
+    margin-right: 10px;
+  }
+  .lock-x textarea {
+    width: 100%;
+    padding: 4px;
+  }
+  .output {
+    border: 1px dashed #999;
+    padding: 4px;
+    min-height: px;
+  }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script>
+<script src="https://raw.github.com/domchristie/to-markdown/master/src/to-markdown.js"></script>
+<script>
+  $(function(){
+    $('.input').keyup(function() {
+      var $textarea = $(this);
+      $('.output').text(toMarkdown($textarea.val()));
+    });
+  });
+</script>
+</head>
+<body>
+  <h1>to-markdown.js</h1>
+  
+  <h2>Try it</h2>
+  <p>Enter some HTML into the textarea below.</p>
+  <div class="lock-x">
+    <textarea class="input" cols="100" rows="10">
+<p>Hello world!</p>
+<a href="http://example.com">Example link</a>
+<ol>
+  <li>number 1</li>
+</ol>
+    </textarea>
+  </div>
+  
+  <h3>Output:</h3>
+  <div class="lock-x">
+    <textarea class="output" cols="100" rows="10" class="output"></textarea>
+  </div>
+  
+  <p><a href="https://github.com/domchristie/to-markdown">Source on GitHub</a></p>
+  <p><small>to-markdown is copyright &copy; 2011 <a href="http://domchristie.co.uk">Dom Christie</a> and is released under the MIT licence.</small></p>
+</body>
+</html>
