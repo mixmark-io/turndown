@@ -117,5 +117,11 @@ var toMarkdown = function(string) {
     return "\n\n" + lis.join('') + "\n";
   });
   
-  return string;
+  function cleanUp(string) {
+    string = string.replace(/^\s+|\s+$/g, ''); // trim leading/trailing whitespace
+    string = string.replace(/\n{3,}/g, '\n\n'); // limit consecutive linebreaks to 2
+    return string;
+  }
+  
+  return cleanUp(string);
 };

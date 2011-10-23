@@ -1,8 +1,8 @@
 $(function(){
   
   test("converting p elements", function() {
-    equal(toMarkdown("<p>Lorem ipsum</p>"), "\n\nLorem ipsum\n\n", "We expect p tags to be wrapped with two line breaks");
-    equal(toMarkdown("<p class='intro'>Lorem ipsum</p>"), "\n\nLorem ipsum\n\n", "We expect p tags to be wrapped with two line breaks");
+    equal(toMarkdown("<p>Lorem ipsum</p>"), "Lorem ipsum", "We expect p tags to be wrapped with two line breaks");
+    equal(toMarkdown("<p class='intro'>Lorem ipsum</p>"), "Lorem ipsum", "We expect p tags to be wrapped with two line breaks");
   });
   
   test("converting emphasis elements", function() {
@@ -22,24 +22,24 @@ $(function(){
   });
   
   test("converting heading elements", function() {
-    equal(toMarkdown("<h1>Hello world</h1>"), "\n\n# Hello world\n\n", "We expect <h1>Hello world</h1> to be converted to # Hello world");
-    equal(toMarkdown("<h3>Hello world</h3>"), "\n\n### Hello world\n\n", "We expect <h3>Hello world</h3> to be converted to ### Hello world");
-    equal(toMarkdown("<h6>Hello world</h6>"), "\n\n###### Hello world\n\n", "We expect <h6>Hello world</h6> to be converted to ###### Hello world");
+    equal(toMarkdown("<h1>Hello world</h1>"), "# Hello world", "We expect <h1>Hello world</h1> to be converted to # Hello world");
+    equal(toMarkdown("<h3>Hello world</h3>"), "### Hello world", "We expect <h3>Hello world</h3> to be converted to ### Hello world");
+    equal(toMarkdown("<h6>Hello world</h6>"), "###### Hello world", "We expect <h6>Hello world</h6> to be converted to ###### Hello world");
     
     equal(toMarkdown("<h8>Hello world</h8>"), "<h8>Hello world</h8>", "We expect <h8>Hello world</h8> to be converted to <h8>Hello world</h8>");
   });
   
   test("converting hr elements", function() {
-    equal(toMarkdown("<hr />"), "\n\n* * *\n\n", "We expect hr elements to be converted to * * *");
-    equal(toMarkdown("<hr/>"), "\n\n* * *\n\n", "We expect hr elements to be converted to * * *");
-    equal(toMarkdown("<hr>"), "\n\n* * *\n\n", "We expect hr elements to be converted to * * *");
-    equal(toMarkdown("<hr class='fancy' />"), "\n\n* * *\n\n", "We expect hr elements to be converted to * * *");
+    equal(toMarkdown("<hr />"), "* * *", "We expect hr elements to be converted to * * *");
+    equal(toMarkdown("<hr/>"), "* * *", "We expect hr elements to be converted to * * *");
+    equal(toMarkdown("<hr>"), "* * *", "We expect hr elements to be converted to * * *");
+    equal(toMarkdown("<hr class='fancy' />"), "* * *", "We expect hr elements to be converted to * * *");
   });
   
   test("converting br elements", function() {
-    equal(toMarkdown("<br />"), "\n", "We expect br elements to be converted to \n");
-    equal(toMarkdown("<br/>"), "\n", "We expect br elements to be converted to \n");
-    equal(toMarkdown("<br>"), "\n", "We expect br elements to be converted to \n");
+    equal(toMarkdown("Hello<br />world"), "Hello\nworld", "We expect br elements to be converted to \n");
+    equal(toMarkdown("Hello<br/>world"), "Hello\nworld", "We expect br elements to be converted to \n");
+    equal(toMarkdown("Hello<br>world"), "Hello\nworld", "We expect br elements to be converted to \n");
   });
   
   test("converting img elements", function() {
@@ -59,8 +59,8 @@ $(function(){
   });
   
   test("converting list elements", function() {
-    equal(toMarkdown("<ol><li>Hello world</li><li>Lorem ipsum</li></ol>"), "\n\n1. Hello world\n2. Lorem ipsum\n\n", "We expect ol elements to be converted properly");
-    equal(toMarkdown("<ul><li>Hello world</li><li>Lorem ipsum</li></ul>"), "\n\n* Hello world\n* Lorem ipsum\n\n", "We expect ol elements to be converted properly");
-    equal(toMarkdown("<ul class='blargh'><li class='first'>Hello world</li><li>Lorem ipsum</li></ul>"), "\n\n* Hello world\n* Lorem ipsum\n\n", "We expect ol elements to be converted properly");
+    equal(toMarkdown("<ol><li>Hello world</li><li>Lorem ipsum</li></ol>"), "1. Hello world\n2. Lorem ipsum", "We expect ol elements to be converted properly");
+    equal(toMarkdown("<ul><li>Hello world</li><li>Lorem ipsum</li></ul>"), "* Hello world\n* Lorem ipsum", "We expect ol elements to be converted properly");
+    equal(toMarkdown("<ul class='blargh'><li class='first'>Hello world</li><li>Lorem ipsum</li></ul>"), "* Hello world\n* Lorem ipsum", "We expect ol elements to be converted properly");
   });
 });
