@@ -85,7 +85,7 @@ var toMarkdown = function(string) {
   }
   
   function replaceEls(html, elProperties) {
-    var pattern = elProperties.type === 'void' ? '<' + elProperties.tag + '([^>]*)\\/?>' : '<' + elProperties.tag + '([^>]*)>(.*)<\\/' + elProperties.tag + '>',
+    var pattern = elProperties.type === 'void' ? '<' + elProperties.tag + '\\b([^>]*)\\/?>' : '<' + elProperties.tag + '\\b([^>]*)>(.*?)<\\/' + elProperties.tag + '>',
         regex = new RegExp(pattern, 'gi'),
         markdown = '';
     if(typeof elProperties.replacement === 'string') {
