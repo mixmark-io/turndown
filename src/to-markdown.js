@@ -104,12 +104,14 @@ var toMarkdown = function(string) {
   }
   
   // Lists
-  string = string.replace(/<(ul|ol)[^>]*>(.*)<\/(?:ul|ol)>/gi, function(str, listType, innerHTML) {
+  
+  // use [\s\S] to match any char (rather than .) to fix . not matching across linebreaks: http://www.regular-expressions.info/dot.html#nodotall
+  string = string.replace(/<(ul|ol)[^>]*>([\s\S]*)<\/(?:ul|ol)>/gi, function(str, listType, innerHTML) {
     var lis = innerHTML.split('</li>');
     for(i = 0, len = lis.length; i < len; i++) {
       if(lis[i]) {
         var prefix = (listType === 'ol') ? (i + 1) + ". " : "* ";
-        lis[i] = lis[i].replace(/<li[^>]*>(.*)/i, function(str, innerHTML) {
+        lis[i] = lis[i].replace(/\s*<li[^>]*>(.*)/i, function(str, innerHTML) {
           return prefix + innerHTML + '\n';
         });
       }
