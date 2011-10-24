@@ -110,7 +110,8 @@ var toMarkdown = function(string) {
     for(i = 0, len = lis.length; i < len; i++) {
       if(lis[i]) {
         var prefix = (listType === 'ol') ? (i + 1) + ". " : "* ";
-        lis[i] = lis[i].replace(/\s*<li[^>]*>(.*)/i, function(str, innerHTML) {
+        lis[i] = lis[i].replace(/\s*<li[^>]*>([\s\S]*)/i, function(str, innerHTML) {
+          innerHTML = innerHTML.replace(/^\s+/, '');
           return prefix + innerHTML + '\n';
         });
       }
