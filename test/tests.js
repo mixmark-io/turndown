@@ -65,5 +65,34 @@ $(function(){
     equal(toMarkdown("<ul class='blargh'><li class='first'>Hello world</li><li>Lorem ipsum</li></ul>"), "* Hello world\n* Lorem ipsum", "We expect ul elements with attributes to be converted properly");
     equal(toMarkdown("<ul><li>Hello world</li><li>Lorem ipsum</li></ul><ul><li>Hello world</li><li>Lorem ipsum</li></ul>"), "* Hello world\n* Lorem ipsum\n\n* Hello world\n* Lorem ipsum", "We expect multiple ul elements to be converted properly");
     equal(toMarkdown("<ul><li><p>Hello world</p></li><li>Lorem ipsum</li></ul>"), "* Hello world\n\n* Lorem ipsum", "We expect li elements with ps to be converted properly");
+    var nestedListHtml = "<ul>\
+      <li>This is a list item at root level</li>\
+      <li>This is another item at root level</li>\
+      <li>\
+        <ul>\
+          <li>This is a nested list item</li>\
+          <li>This is another nested list item</li>\
+          <li>\
+            <ul>\
+              <li>This is a deeply nested list item</li>\
+              <li>This is another deeply nested list item</li>\
+              <li>This is a third deeply nested list item</li>\
+            </ul>\
+          </li>\
+        </ul>\
+      </li>\
+      <li>This is a third item at root level</li>\
+    </ul>",
+    nestedListMd = [
+      "* This is a list item at root level",
+      "* This is another item at root level",
+      "* * This is a nested list item",
+      "    * This is another nested list item",
+      "    * * This is a deeply nested list item",
+      "        * This is another deeply nested list item",
+      "        * This is a third deeply nested list item",
+      "* This is a third item at root level"
+    ];
+    equal(toMarkdown(nestedListHtml), nestedListMd.join('\n'), "We expect nested lists to be converted properly");
   });
 });

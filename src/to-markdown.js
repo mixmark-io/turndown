@@ -104,23 +104,36 @@ var toMarkdown = function(string) {
   }
   
   // Lists
-  // use [\s\S] to match any char (rather than .) to fix . not matching across linebreaks: http://www.regular-expressions.info/dot.html#nodotall
-  string = string.replace(/<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/gi, function(str, listType, innerHTML) {
-    var lis = innerHTML.split('</li>');
-    for(i = 0, len = lis.length; i < len; i++) {
-      if(lis[i]) {
-        var prefix = (listType === 'ol') ? (i + 1) + ". " : "* ";
-        lis[i] = lis[i].replace(/\s*<li[^>]*>([\s\S]*)/i, function(str, innerHTML) {
-          innerHTML = innerHTML.replace(/^\s+/, '');
-          return prefix + innerHTML + '\n';
-        });
+  // Converts lists that have no child lists (of same type) first, then works it's way up
+  var noChildrenRegex = /<(ul|ol)\b[^>]*>(?:(?!<\1>)[\s\S])*?<\/\1>/gi;
+  while(string.match(noChildrenRegex)) {
+    string = string.replace(noChildrenRegex, function(str) {
+      return replaceLists(str).replace(/[ \t]+\n/g, '');
+    });
+  }
+  
+  function replaceLists(html) {
+    html = html.replace(/<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/gi, function(str, listType, innerHTML) {
+      var lis = innerHTML.split('</li>');
+      for(i = 0, len = lis.length; i < len; i++) {
+        if(lis[i]) {
+          var prefix = (listType === 'ol') ? (i + 1) + ". " : "* ";
+          lis[i] = lis[i].replace(/\s*<li[^>]*>([\s\S]*)/i, function(str, innerHTML) {
+            innerHTML = innerHTML.replace(/^\s+/, '');
+            
+            // indent nested lists
+            innerHTML = innerHTML.replace(/\n([ ]*)+\* /g, '\n$1    \* ');
+            return prefix + innerHTML + '\n';
+          });
+        }
       }
-    }
-    return "\n\n" + lis.join('') + "\n";
-  });
+      return "\n\n" + lis.join('') + "\n";
+    });
+    return html;
+  }
   
   function cleanUp(string) {
-    string = string.replace(/^\s+|\s+$/g, ''); // trim leading/trailing whitespace
+    string = string.replace(/^[\t\r\n]+|[\t\r\n]+$/g, ''); // trim leading/trailing whitespace
     string = string.replace(/\n{3,}/g, '\n\n'); // limit consecutive linebreaks to 2
     return string;
   }
