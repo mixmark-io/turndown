@@ -95,4 +95,18 @@ $(function(){
     ];
     equal(toMarkdown(nestedListHtml), nestedListMd.join('\n'), "We expect nested lists to be converted properly");
   });
+  
+  test("converting code blocks", function() {
+    var codeHtml = [
+      "<pre><code>def hello_world",
+      "  'Hello world!'",
+      "end</code></pre>"
+    ],
+    codeMd = [
+      "    def hello_world",
+      "      'Hello world!'",
+      "    end"
+    ];
+    equal(toMarkdown(codeHtml.join('\n')), codeMd.join('\n'), "We expect code blocks to be converted");
+  });
 });

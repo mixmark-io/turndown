@@ -132,6 +132,12 @@ var toMarkdown = function(string) {
     return html;
   }
   
+  string = string.replace(/<pre\b[^>]*>`([\s\S]*)`<\/pre>/gi, function(str, innerHTML) {
+    innerHTML = innerHTML.replace(/^\t+/g, '  '); // convert tabs to spaces (you know it makes sense)
+    innerHTML = innerHTML.replace(/\n/g, '\n    ');
+    return '    ' + innerHTML;
+  });
+  
   function cleanUp(string) {
     string = string.replace(/^[\t\r\n]+|[\t\r\n]+$/g, ''); // trim leading/trailing whitespace
     string = string.replace(/\n{3,}/g, '\n\n'); // limit consecutive linebreaks to 2

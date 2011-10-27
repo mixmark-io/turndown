@@ -2,9 +2,8 @@
 
 An HTML to Markdown converter written in javascript
 
-## Todos
+## Todo
 
-* Codeblocks
 * Blockquotes
 * Inline HTML
 
