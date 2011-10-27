@@ -122,7 +122,7 @@ var toMarkdown = function(string) {
             innerHTML = innerHTML.replace(/^\s+/, '');
             
             // indent nested lists
-            innerHTML = innerHTML.replace(/\n([ ]*)+\* /g, '\n$1    \* ');
+            innerHTML = innerHTML.replace(/\n([ ]*)+(\*|\d+\.) /g, '\n$1    $2 ');
             return prefix + innerHTML + '\n';
           });
         }

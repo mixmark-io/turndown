@@ -94,6 +94,36 @@ $(function(){
       "* This is a third item at root level"
     ];
     equal(toMarkdown(nestedListHtml), nestedListMd.join('\n'), "We expect nested lists to be converted properly");
+    
+    nestedListHtml = "<ul>\
+      <li>This is a list item at root level</li>\
+      <li>This is another item at root level</li>\
+      <li>\
+        <ol>\
+          <li>This is a nested list item</li>\
+          <li>This is another nested list item</li>\
+          <li>\
+            <ul>\
+              <li>This is a deeply nested list item</li>\
+              <li>This is another deeply nested list item</li>\
+              <li>This is a third deeply nested list item</li>\
+            </ul>\
+          </li>\
+        </ol>\
+      </li>\
+      <li>This is a third item at root level</li>\
+    </ul>",
+    nestedListMd = [
+      "* This is a list item at root level",
+      "* This is another item at root level",
+      "* 1. This is a nested list item",
+      "    2. This is another nested list item",
+      "    3. * This is a deeply nested list item",
+      "        * This is another deeply nested list item",
+      "        * This is a third deeply nested list item",
+      "* This is a third item at root level"
+    ];
+    equal(toMarkdown(nestedListHtml), nestedListMd.join('\n'), "We expect nested lists to be converted properly");
   });
   
   test("converting code blocks", function() {
