@@ -1,9 +1,5 @@
 $(function(){
   
-  test("stripping or padding out html elements outside of the md subset", function() {
-    equal(toMarkdown("<div>hello</div>"), "", "We expect div tags to be removed");
-  });
-  
   test("converting p elements", function() {
     equal(toMarkdown("<p>Lorem ipsum</p>"), "Lorem ipsum", "We expect p tags to be wrapped with two line breaks");
     equal(toMarkdown("<p class='intro'>Lorem ipsum</p>"), "Lorem ipsum", "We expect p tags to be wrapped with two line breaks");

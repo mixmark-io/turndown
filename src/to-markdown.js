@@ -10,10 +10,6 @@ var toMarkdown = function(string) {
   
   var ELEMENTS = [
     {
-      patterns: 'div',
-      replacement: ''
-    },
-    {
       patterns: 'p',
       replacement: function(str, attrs, innerHTML) {
         return innerHTML ? '\n\n' + innerHTML + '\n\n' : '';
