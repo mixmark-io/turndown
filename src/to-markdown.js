@@ -139,7 +139,7 @@ var toMarkdown = function(string) {
   string = string.replace(/<pre\b[^>]*>`([\s\S]*)`<\/pre>/gi, function(str, innerHTML) {
     innerHTML = innerHTML.replace(/^\t+/g, '  '); // convert tabs to spaces (you know it makes sense)
     innerHTML = innerHTML.replace(/\n/g, '\n    ');
-    return '    ' + innerHTML;
+    return '\n\n    ' + innerHTML + '\n\n';
   });
   
   function cleanUp(string) {
