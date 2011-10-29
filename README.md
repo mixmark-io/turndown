@@ -2,6 +2,10 @@
 
 An HTML to Markdown converter written in javascript
 
+## Known issues
+
+Blockquote indentation in lists
+
 ## Todo
 
 * Inline HTML
