@@ -103,6 +103,14 @@ var toMarkdown = function(string) {
     return new RegExp(attr + '\\s*=\\s*["\']?([^"\']*)["\']?', 'i');
   }
   
+  // Pre code block
+  
+  string = string.replace(/<pre\b[^>]*>`([\s\S]*)`<\/pre>/gi, function(str, innerHTML) {
+    innerHTML = innerHTML.replace(/^\t+/g, '  '); // convert tabs to spaces (you know it makes sense)
+    innerHTML = innerHTML.replace(/\n/g, '\n    ');
+    return '\n\n    ' + innerHTML + '\n\n';
+  });
+  
   // Lists
   
   // Escape numbers that could trigger an ol
@@ -134,12 +142,6 @@ var toMarkdown = function(string) {
     });
     return html;
   }
-  
-  string = string.replace(/<pre\b[^>]*>`([\s\S]*)`<\/pre>/gi, function(str, innerHTML) {
-    innerHTML = innerHTML.replace(/^\t+/g, '  '); // convert tabs to spaces (you know it makes sense)
-    innerHTML = innerHTML.replace(/\n/g, '\n    ');
-    return '\n\n    ' + innerHTML + '\n\n';
-  });
   
   function cleanUp(string) {
     string = string.replace(/^[\t\r\n]+|[\t\r\n]+$/g, ''); // trim leading/trailing whitespace
