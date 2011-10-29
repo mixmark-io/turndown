@@ -60,6 +60,7 @@ $(function(){
   });
   
   test("converting list elements", function() {
+    equal(toMarkdown('1986. What a great season.'), '1986\\. What a great season.','We expect numbers that could trigger an ol to be escaped');
     equal(toMarkdown("<ol>\n\t<li>Hello world</li>\n\t<li>Lorem ipsum</li>\n</ol>"), "1. Hello world\n2. Lorem ipsum", "We expect ol elements to be converted properly");
     equal(toMarkdown("<ul>\n\t<li>Hello world</li>\n\t<li>Lorem ipsum</li>\n</ul>"), "* Hello world\n* Lorem ipsum", "We expect ul elements with line breaks and tabs to be converted properly");
     equal(toMarkdown("<ul class='blargh'><li class='first'>Hello world</li><li>Lorem ipsum</li></ul>"), "* Hello world\n* Lorem ipsum", "We expect ul elements with attributes to be converted properly");

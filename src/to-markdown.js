@@ -104,6 +104,10 @@ var toMarkdown = function(string) {
   }
   
   // Lists
+  
+  // Escape numbers that could trigger an ol
+  string = string.replace(/(\d+). /g, '$1\\. ');
+  
   // Converts lists that have no child lists (of same type) first, then works it's way up
   var noChildrenRegex = /<(ul|ol)\b[^>]*>(?:(?!ul|ol)[\s\S])*?<\/\1>/gi;
   while(string.match(noChildrenRegex)) {
