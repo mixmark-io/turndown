@@ -149,12 +149,23 @@ var toMarkdown = function(string) {
   }
   
   // Blockquotes
+  var deepest = /<blockquote\b[^>]*>((?:(?!<blockquote)[\s\S])*?)<\/blockquote>/gi;
+  while(string.match(deepest)) {
+    string = string.replace(deepest, function(str) {
+      return replaceBlockquotes(str);
+    });
+  }
   
-  string = string.replace(/<blockquote\b[^>]*>((?:(?!<blockquotel)[\s\S])*?)<\/blockquote>/gi, function(str, inner) {
-    inner = inner.replace(/^\s+|\s+$/g, '');
-    inner = cleanUp(inner);
-    return inner.replace(/^/gm, '> ');
-  });
+  function replaceBlockquotes(html) {
+    html = html.replace(/<blockquote\b[^>]*>([\s\S]*?)<\/blockquote>/gi, function(str, inner) {
+      inner = inner.replace(/^\s+|\s+$/g, '');
+      inner = cleanUp(inner);
+      inner = inner.replace(/^/gm, '> ');
+      inner = inner.replace(/^(>([ \t]{2,}>)+)/gm, '> >');
+      return inner;
+    });
+    return html;
+  }
   
   function cleanUp(string) {
     string = string.replace(/^[\t\r\n]+|[\t\r\n]+$/g, ''); // trim leading/trailing whitespace

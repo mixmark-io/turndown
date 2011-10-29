@@ -4,7 +4,6 @@ An HTML to Markdown converter written in javascript
 
 ## Todo
 
-* Blockquotes
 * Inline HTML
 
 ## Licence

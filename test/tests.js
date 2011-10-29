@@ -181,6 +181,49 @@ $(function(){
       "> ",
       "> Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing."
     ].join('\n');
-    equal(toMarkdown(html), md, "We expect block quotes with two paragraphs to be converted");
+    equal(toMarkdown(html), md, "We expect blockquotes with two paragraphs to be converted");
+    
+    html = [
+      "<blockquote>",
+      "  <p>This is the first level of quoting.</p>",
+      "",
+      "  <blockquote>",
+      "    <p>This is nested blockquote.</p>",
+      "  </blockquote>",
+      "",
+      "  <p>Back to the first level.</p>",
+      "</blockquote>"
+    ].join('\n');
+    md = [
+      "> This is the first level of quoting.",
+      "> ",
+      "> > This is nested blockquote.",
+      "> ",
+      "> Back to the first level."
+    ].join('\n');
+    equal(toMarkdown(html), md, "We expect nested blockquotes to be converted");
+    
+    html = [
+      "<blockquote>",
+      "  <h2>This is a header.</h2>",
+      "  <ol>",
+      "    <li>This is the first list item.</li>",
+      "    <li>This is the second list item.</li>",
+      "  </ol>",
+      "  <p>Here's some example code:</p>",
+      "  <pre><code>return shell_exec(\"echo $input | $markdown_script\");</code></pre>",
+      "</blockquote>"
+    ].join('\n');
+    md = [
+      "> ## This is a header.",
+      "> ",
+      "> 1.  This is the first list item.",
+      "> 2.  This is the second list item.",
+      "> ",
+      "> Here's some example code:",
+      "> ",
+      ">     return shell_exec(\"echo $input | $markdown_script\");"
+    ].join('\n');
+    strictEqual(toMarkdown(html), md, "We expect html in blockquotes to be converted");
   });
 });
