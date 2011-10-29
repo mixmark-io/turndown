@@ -117,10 +117,10 @@ var toMarkdown = function(string) {
   string = string.replace(/(\d+). /g, '$1\\. ');
   
   // Converts lists that have no child lists (of same type) first, then works it's way up
-  var noChildrenRegex = /<(ul|ol)\b[^>]*>(?:(?!ul|ol)[\s\S]*)?<\/\1>/gi;
+  var noChildrenRegex = /<(ul|ol)\b[^>]*>(?:(?!<\/ul>|<\/ol>)[\s\S])*?<\/\1>/gi;
   while(string.match(noChildrenRegex)) {
     string = string.replace(noChildrenRegex, function(str) {
-      return replaceLists(str).replace(/[ \t]+\n/g, '');
+      return replaceLists(str);
     });
   }
   
@@ -128,21 +128,24 @@ var toMarkdown = function(string) {
     
     html = html.replace(/<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/gi, function(str, listType, innerHTML) {
       var lis = innerHTML.split('</li>');
+      lis.splice(lis.length - 1, 1);
+      
       for(i = 0, len = lis.length; i < len; i++) {
         if(lis[i]) {
           var prefix = (listType === 'ol') ? (i + 1) + ".  " : "*   ";
           lis[i] = lis[i].replace(/\s*<li[^>]*>([\s\S]*)/i, function(str, innerHTML) {
+            
             innerHTML = innerHTML.replace(/^\s+/, '');
             innerHTML = innerHTML.replace(/\n\n/g, '\n\n    ');
             // indent nested lists
-            // innerHTML = innerHTML.replace(/\n([ ]*)+(\*|\d+\.) /g, '\n$1    $2 ');
-            return prefix + innerHTML + '\n';
+            innerHTML = innerHTML.replace(/\n([ ]*)+(\*|\d+\.) /g, '\n$1    $2 ');
+            return prefix + innerHTML;
           });
         }
       }
-      return "\n" + lis.join('');
+      return '\n' + lis.join('\n') + '\n';
     });
-    return html;
+    return html.replace(/[ \t]+\n/g, '');
   }
   
   function cleanUp(string) {
