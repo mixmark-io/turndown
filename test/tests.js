@@ -167,4 +167,20 @@ $(function(){
     ].join('\n');
     equal(toMarkdown(nestedListHtml), nestedListMd, "We expect nested lists to be converted properly");
   });
+  
+  test("converting blockquotes", function() {
+    var html = [
+      "<blockquote>",
+      "  <p>This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.</p>",
+      "",
+      "  <p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.</p>",
+      "</blockquote>"
+    ].join('\n');
+    var md = [
+      "> This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.",
+      "> ",
+      "> Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing."
+    ].join('\n');
+    equal(toMarkdown(html), md, "We expect block quotes with two paragraphs to be converted");
+  });
 });

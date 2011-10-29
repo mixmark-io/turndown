@@ -148,6 +148,14 @@ var toMarkdown = function(string) {
     return '\n\n' + html.replace(/[ \t]+\n|\s+$/g, '');
   }
   
+  // Blockquotes
+  
+  string = string.replace(/<blockquote\b[^>]*>((?:(?!<blockquotel)[\s\S])*?)<\/blockquote>/gi, function(str, inner) {
+    inner = inner.replace(/^\s+|\s+$/g, '');
+    inner = cleanUp(inner);
+    return inner.replace(/^/gm, '> ');
+  });
+  
   function cleanUp(string) {
     string = string.replace(/^[\t\r\n]+|[\t\r\n]+$/g, ''); // trim leading/trailing whitespace
     string = string.replace(/\n\s+\n/g, '\n\n');
