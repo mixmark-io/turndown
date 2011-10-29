@@ -12,7 +12,7 @@ var toMarkdown = function(string) {
     {
       patterns: 'p',
       replacement: function(str, attrs, innerHTML) {
-        return innerHTML ? '\n\n' + innerHTML + '\n\n' : '';
+        return innerHTML ? '\n\n' + innerHTML + '\n' : '';
       }
     },
     {
@@ -27,13 +27,13 @@ var toMarkdown = function(string) {
         for(var i = 0; i < hLevel; i++) {
           hPrefix += '#';
         }
-        return '\n\n' + hPrefix + ' ' + innerHTML + '\n\n';
+        return '\n\n' + hPrefix + ' ' + innerHTML + '\n';
       }
     },
     {
       patterns: 'hr',
       type: 'void',
-      replacement: '\n\n* * *\n\n'
+      replacement: '\n\n* * *\n'
     },
     {
       patterns: 'a',
@@ -108,7 +108,7 @@ var toMarkdown = function(string) {
   string = string.replace(/<pre\b[^>]*>`([\s\S]*)`<\/pre>/gi, function(str, innerHTML) {
     innerHTML = innerHTML.replace(/^\t+/g, '  '); // convert tabs to spaces (you know it makes sense)
     innerHTML = innerHTML.replace(/\n/g, '\n    ');
-    return '\n\n    ' + innerHTML + '\n\n';
+    return '\n\n    ' + innerHTML + '\n';
   });
   
   // Lists
@@ -117,7 +117,7 @@ var toMarkdown = function(string) {
   string = string.replace(/(\d+). /g, '$1\\. ');
   
   // Converts lists that have no child lists (of same type) first, then works it's way up
-  var noChildrenRegex = /<(ul|ol)\b[^>]*>(?:(?!<\/ul>|<\/ol>)[\s\S])*?<\/\1>/gi;
+  var noChildrenRegex = /<(ul|ol)\b[^>]*>(?:(?!<ul|<ol)[\s\S])*?<\/\1>/gi;
   while(string.match(noChildrenRegex)) {
     string = string.replace(noChildrenRegex, function(str) {
       return replaceLists(str);
@@ -143,9 +143,9 @@ var toMarkdown = function(string) {
           });
         }
       }
-      return '\n' + lis.join('\n') + '\n';
+      return lis.join('\n');
     });
-    return html.replace(/[ \t]+\n/g, '');
+    return '\n\n' + html.replace(/[ \t]+\n|\s+$/g, '');
   }
   
   function cleanUp(string) {
