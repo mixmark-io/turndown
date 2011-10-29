@@ -103,7 +103,7 @@ var toMarkdown = function(string) {
     return new RegExp(attr + '\\s*=\\s*["\']?([^"\']*)["\']?', 'i');
   }
   
-  // Pre code block
+  // Pre code blocks
   
   string = string.replace(/<pre\b[^>]*>`([\s\S]*)`<\/pre>/gi, function(str, innerHTML) {
     innerHTML = innerHTML.replace(/^\t+/g, '  '); // convert tabs to spaces (you know it makes sense)
@@ -117,7 +117,7 @@ var toMarkdown = function(string) {
   string = string.replace(/(\d+). /g, '$1\\. ');
   
   // Converts lists that have no child lists (of same type) first, then works it's way up
-  var noChildrenRegex = /<(ul|ol)\b[^>]*>(?:(?!ul|ol)[\s\S])*?<\/\1>/gi;
+  var noChildrenRegex = /<(ul|ol)\b[^>]*>(?:(?!ul|ol)[\s\S]*)?<\/\1>/gi;
   while(string.match(noChildrenRegex)) {
     string = string.replace(noChildrenRegex, function(str) {
       return replaceLists(str).replace(/[ \t]+\n/g, '');
@@ -125,6 +125,7 @@ var toMarkdown = function(string) {
   }
   
   function replaceLists(html) {
+    
     html = html.replace(/<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/gi, function(str, listType, innerHTML) {
       var lis = innerHTML.split('</li>');
       for(i = 0, len = lis.length; i < len; i++) {
@@ -132,8 +133,9 @@ var toMarkdown = function(string) {
           var prefix = (listType === 'ol') ? (i + 1) + ".  " : "*   ";
           lis[i] = lis[i].replace(/\s*<li[^>]*>([\s\S]*)/i, function(str, innerHTML) {
             innerHTML = innerHTML.replace(/^\s+/, '');
+            innerHTML = innerHTML.replace(/\n\n/g, '\n\n    ');
             // indent nested lists
-            innerHTML = innerHTML.replace(/\n([ ]*)+(\*|\d+\.) /g, '\n$1    $2 ');
+            // innerHTML = innerHTML.replace(/\n([ ]*)+(\*|\d+\.) /g, '\n$1    $2 ');
             return prefix + innerHTML + '\n';
           });
         }

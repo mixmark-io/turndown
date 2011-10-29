@@ -66,6 +66,29 @@ $(function(){
     equal(toMarkdown("<ul class='blargh'><li class='first'>Hello world</li><li>Lorem ipsum</li></ul>"), "*   Hello world\n*   Lorem ipsum", "We expect ul elements with attributes to be converted properly");
     equal(toMarkdown("<ul><li>Hello world</li><li>Lorem ipsum</li></ul><ul><li>Hello world</li><li>Lorem ipsum</li></ul>"), "*   Hello world\n*   Lorem ipsum\n\n*   Hello world\n*   Lorem ipsum", "We expect multiple ul elements to be converted properly");
     equal(toMarkdown("<ul><li><p>Hello world</p></li><li>Lorem ipsum</li></ul>"), "*   Hello world\n\n*   Lorem ipsum", "We expect li elements with ps to be converted properly");
+    
+    var lisWithPsHtml = [
+      "<ol>",
+      "  <li>",
+      "    <p>This is a list item with two paragraphs. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.</p>",
+      "    <p>Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus. Donec sit amet nisl. Aliquam semper ipsum sit amet velit.</p>",
+      "  </li>",
+      "  <li>",
+      "    <p>Suspendisse id sem consectetuer libero luctus adipiscing.</p>",
+      "  </li>",
+      "</ol>"
+    ].join('\n'),
+    
+    lisWithPsMd = [
+      "1.  This is a list item with two paragraphs. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.",
+      "",
+      "    Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus. Donec sit amet nisl. Aliquam semper ipsum sit amet velit.",
+      "",
+      "2.  Suspendisse id sem consectetuer libero luctus adipiscing."
+    ].join('\n');
+    
+    equal(toMarkdown(lisWithPsHtml), lisWithPsMd,'We expect lists with paragraphs to be converted');
+    
     var nestedListHtml = [
       "<ul>",
       "  <li>This is a list item at root level</li>",
