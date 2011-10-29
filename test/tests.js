@@ -166,6 +166,23 @@ $(function(){
       "*   This is a third item at root level"
     ].join('\n');
     equal(toMarkdown(nestedListHtml), nestedListMd, "We expect nested lists to be converted properly");
+    
+    var html = [
+      "<ul>",
+      "  <li>",
+      "    <p>A list item with a blockquote:</p>",
+      "    <blockquote>",
+      "      <p>This is a blockquote inside a list item.</p>",
+      "    </blockquote>",
+      "  </li>",
+      "</ul>"
+    ].join('\n');
+    var md = [
+      "*   A list item with a blockquote:",
+      "",
+      "    > This is a blockquote inside a list item."
+    ].join('\n');
+    equal(toMarkdown(html), md, "We expect lists with blockquotes to be converted");
   });
   
   test("converting blockquotes", function() {
