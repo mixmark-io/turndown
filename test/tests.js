@@ -59,6 +59,20 @@ $(function(){
     equal(toMarkdown('<a id="donuts3">About us</a>'), '<a id="donuts3">About us</a>', "Anchor tags without an href should not be converted");
   });
   
+  test("converting code blocks", function() {
+    var codeHtml = [
+      "<pre><code>def hello_world",
+      "  'Hello world!'",
+      "end</code></pre>"
+    ],
+    codeMd = [
+      "    def hello_world",
+      "      'Hello world!'",
+      "    end"
+    ];
+    equal(toMarkdown(codeHtml.join('\n')), codeMd.join('\n'), "We expect code blocks to be converted");
+  });
+  
   test("converting list elements", function() {
     equal(toMarkdown('1986. What a great season.'), '1986\\. What a great season.','We expect numbers that could trigger an ol to be escaped');
     equal(toMarkdown("<ol>\n\t<li>Hello world</li>\n\t<li>Lorem ipsum</li>\n</ol>"), "1.  Hello world\n2.  Lorem ipsum", "We expect ol elements to be converted properly");
@@ -150,19 +164,5 @@ $(function(){
       "*   This is a third item at root level"
     ];
     // equal(toMarkdown(nestedListHtml), nestedListMd.join('\n'), "We expect nested lists to be converted properly");
-  });
-  
-  test("converting code blocks", function() {
-    var codeHtml = [
-      "<pre><code>def hello_world",
-      "  'Hello world!'",
-      "end</code></pre>"
-    ],
-    codeMd = [
-      "    def hello_world",
-      "      'Hello world!'",
-      "    end"
-    ];
-    equal(toMarkdown(codeHtml.join('\n')), codeMd.join('\n'), "We expect code blocks to be converted");
   });
 });
