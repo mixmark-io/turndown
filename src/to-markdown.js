@@ -121,17 +121,16 @@ var toMarkdown = function(string) {
       var lis = innerHTML.split('</li>');
       for(i = 0, len = lis.length; i < len; i++) {
         if(lis[i]) {
-          var prefix = (listType === 'ol') ? (i + 1) + ". " : "* ";
+          var prefix = (listType === 'ol') ? (i + 1) + ".  " : "*   ";
           lis[i] = lis[i].replace(/\s*<li[^>]*>([\s\S]*)/i, function(str, innerHTML) {
             innerHTML = innerHTML.replace(/^\s+/, '');
-            
             // indent nested lists
             innerHTML = innerHTML.replace(/\n([ ]*)+(\*|\d+\.) /g, '\n$1    $2 ');
             return prefix + innerHTML + '\n';
           });
         }
       }
-      return "\n\n" + lis.join('') + "\n";
+      return "\n" + lis.join('');
     });
     return html;
   }
