@@ -12,7 +12,7 @@ var toMarkdown = function(string) {
     {
       patterns: 'p',
       replacement: function(str, attrs, innerHTML) {
-        return innerHTML ? '\n\n' + innerHTML + '\n\n' : '';
+        return innerHTML ? '\n\n' + innerHTML + '\n' : '';
       }
     },
     {
@@ -27,13 +27,13 @@ var toMarkdown = function(string) {
         for(var i = 0; i < hLevel; i++) {
           hPrefix += '#';
         }
-        return '\n\n' + hPrefix + ' ' + innerHTML + '\n\n';
+        return '\n\n' + hPrefix + ' ' + innerHTML + '\n';
       }
     },
     {
       patterns: 'hr',
       type: 'void',
-      replacement: '\n\n* * *\n\n'
+      replacement: '\n\n* * *\n'
     },
     {
       patterns: 'a',
@@ -85,7 +85,7 @@ var toMarkdown = function(string) {
   }
   
   function replaceEls(html, elProperties) {
-    var pattern = elProperties.type === 'void' ? '<' + elProperties.tag + '\\b([^>]*)\\/?>' : '<' + elProperties.tag + '\\b([^>]*)>(.*?)<\\/' + elProperties.tag + '>',
+    var pattern = elProperties.type === 'void' ? '<' + elProperties.tag + '\\b([^>]*)\\/?>' : '<' + elProperties.tag + '\\b([^>]*)>([\\s\\S]*?)<\\/' + elProperties.tag + '>',
         regex = new RegExp(pattern, 'gi'),
         markdown = '';
     if(typeof elProperties.replacement === 'string') {
@@ -103,24 +103,73 @@ var toMarkdown = function(string) {
     return new RegExp(attr + '\\s*=\\s*["\']?([^"\']*)["\']?', 'i');
   }
   
-  // Lists
-  // use [\s\S] to match any char (rather than .) to fix . not matching across linebreaks: http://www.regular-expressions.info/dot.html#nodotall
-  string = string.replace(/<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/gi, function(str, listType, innerHTML) {
-    window.console && console.log(str);
-    var lis = innerHTML.split('</li>');
-    for(i = 0, len = lis.length; i < len; i++) {
-      if(lis[i]) {
-        var prefix = (listType === 'ol') ? (i + 1) + ". " : "* ";
-        lis[i] = lis[i].replace(/\s*<li[^>]*>(.*)/i, function(str, innerHTML) {
-          return prefix + innerHTML + '\n';
-        });
-      }
-    }
-    return "\n\n" + lis.join('') + "\n";
+  // Pre code blocks
+  
+  string = string.replace(/<pre\b[^>]*>`([\s\S]*)`<\/pre>/gi, function(str, innerHTML) {
+    innerHTML = innerHTML.replace(/^\t+/g, '  '); // convert tabs to spaces (you know it makes sense)
+    innerHTML = innerHTML.replace(/\n/g, '\n    ');
+    return '\n\n    ' + innerHTML + '\n';
   });
   
+  // Lists
+  
+  // Escape numbers that could trigger an ol
+  string = string.replace(/(\d+). /g, '$1\\. ');
+  
+  // Converts lists that have no child lists (of same type) first, then works it's way up
+  var noChildrenRegex = /<(ul|ol)\b[^>]*>(?:(?!<ul|<ol)[\s\S])*?<\/\1>/gi;
+  while(string.match(noChildrenRegex)) {
+    string = string.replace(noChildrenRegex, function(str) {
+      return replaceLists(str);
+    });
+  }
+  
+  function replaceLists(html) {
+    
+    html = html.replace(/<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/gi, function(str, listType, innerHTML) {
+      var lis = innerHTML.split('</li>');
+      lis.splice(lis.length - 1, 1);
+      
+      for(i = 0, len = lis.length; i < len; i++) {
+        if(lis[i]) {
+          var prefix = (listType === 'ol') ? (i + 1) + ".  " : "*   ";
+          lis[i] = lis[i].replace(/\s*<li[^>]*>([\s\S]*)/i, function(str, innerHTML) {
+            
+            innerHTML = innerHTML.replace(/^\s+/, '');
+            innerHTML = innerHTML.replace(/\n\n/g, '\n\n    ');
+            // indent nested lists
+            innerHTML = innerHTML.replace(/\n([ ]*)+(\*|\d+\.) /g, '\n$1    $2 ');
+            return prefix + innerHTML;
+          });
+        }
+      }
+      return lis.join('\n');
+    });
+    return '\n\n' + html.replace(/[ \t]+\n|\s+$/g, '');
+  }
+  
+  // Blockquotes
+  var deepest = /<blockquote\b[^>]*>((?:(?!<blockquote)[\s\S])*?)<\/blockquote>/gi;
+  while(string.match(deepest)) {
+    string = string.replace(deepest, function(str) {
+      return replaceBlockquotes(str);
+    });
+  }
+  
+  function replaceBlockquotes(html) {
+    html = html.replace(/<blockquote\b[^>]*>([\s\S]*?)<\/blockquote>/gi, function(str, inner) {
+      inner = inner.replace(/^\s+|\s+$/g, '');
+      inner = cleanUp(inner);
+      inner = inner.replace(/^/gm, '> ');
+      inner = inner.replace(/^(>([ \t]{2,}>)+)/gm, '> >');
+      return inner;
+    });
+    return html;
+  }
+  
   function cleanUp(string) {
-    string = string.replace(/^\s+|\s+$/g, ''); // trim leading/trailing whitespace
+    string = string.replace(/^[\t\r\n]+|[\t\r\n]+$/g, ''); // trim leading/trailing whitespace
+    string = string.replace(/\n\s+\n/g, '\n\n');
     string = string.replace(/\n{3,}/g, '\n\n'); // limit consecutive linebreaks to 2
     return string;
   }
