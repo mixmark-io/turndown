@@ -105,7 +105,7 @@ var toMarkdown = function(string) {
   
   // Pre code blocks
   
-  string = string.replace(/<pre\b[^>]*>`([\s\S]*)`<\/pre>/gi, function(str, innerHTML) {
+  string = string.replace(/<pre\b[^>]*>`?([\s\S]*)`?<\/pre>/gi, function(str, innerHTML) {
     innerHTML = innerHTML.replace(/^\t+/g, '  '); // convert tabs to spaces (you know it makes sense)
     innerHTML = innerHTML.replace(/\n/g, '\n    ');
     return '\n\n    ' + innerHTML + '\n';
