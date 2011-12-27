@@ -1,0 +1,18 @@
+{
+  "name":             "to-markdown",
+  "description":      "HTML-to-Markdown converter",
+  "url":              "http://domchristie.github.com/to-markdown/",
+  "keywords":         "markdown",
+  "author":           "Dom Christie",
+  "main":             "src/to-markdown.js",
+  "version":          "0.0.1",
+  "devDependencies": {
+    "nodeunit"  : ">=0.6.0",
+    "zombie"    : ">=0.12.0",
+    "underscore": ">=1.2.0",
+    "express"   : ">=2.5.0"
+  },
+  "scripts":    {
+    "test": "./node_modules/nodeunit/bin/nodeunit test/nodejs"
+  }
+}
