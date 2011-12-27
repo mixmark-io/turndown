@@ -176,3 +176,7 @@ var toMarkdown = function(string) {
   
   return cleanUp(string);
 };
+
+if (typeof exports === 'object') {
+  exports.toMarkdown = toMarkdown;
+}
