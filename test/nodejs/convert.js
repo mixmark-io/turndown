@@ -193,6 +193,10 @@ exports['converting list elements'] = function(test) {
   ].join('\n');
   test.equal(toMarkdown(html), md, "We expect lists with blockquotes to be converted");
 
+
+  test.equal(toMarkdown("<p>12 </p>"), "12 ", "We expect plain numbers to remain unmodified");
+  test.equal(toMarkdown("<p>1. </p>"), "1\\. ", "We expect a period after a number to be escaped to avoid triggering an ordered list");
+
   test.done();
 };
 
