@@ -189,7 +189,7 @@ exports['converting list elements'] = function(test) {
   var md = [
     "*   A list item with a blockquote:",
     "",
-    "    > This is a blockquote inside a list item."
+    "        > This is a blockquote inside a list item."
   ].join('\n');
   test.equal(toMarkdown(html), md, "We expect lists with blockquotes to be converted");
 
