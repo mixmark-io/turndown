@@ -189,11 +189,15 @@ exports['converting list elements'] = function(test) {
   var md = [
     "*   A list item with a blockquote:",
     "",
-    "    > This is a blockquote inside a list item."
+    "        > This is a blockquote inside a list item."
   ].join('\n');
   
   // needs fixing: see https://github.com/domchristie/to-markdown/issues/2
   test.equal(toMarkdown(html), md, "We expect lists with blockquotes to be converted");
+
+
+  test.equal(toMarkdown("<p>12 </p>"), "12 ", "We expect plain numbers to remain unmodified");
+  test.equal(toMarkdown("<p>1. </p>"), "1\\. ", "We expect a period after a number to be escaped to avoid triggering an ordered list");
 
   test.done();
 };
