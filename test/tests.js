@@ -182,6 +182,8 @@ $(function(){
       "",
       "    > This is a blockquote inside a list item."
     ].join('\n');
+    
+    // needs fixing: see https://github.com/domchristie/to-markdown/issues/2
     equal(toMarkdown(html), md, "We expect lists with blockquotes to be converted");
   });
   
