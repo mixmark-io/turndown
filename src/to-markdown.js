@@ -70,6 +70,17 @@ var toMarkdown = function(string) {
             title = attrs.match(attrRegExp('title'));
         return '![' + (alt && alt[1] ? alt[1] : '') + ']' + '(' + src[1] + (title && title[1] ? ' "' + title[1] + '"' : '') + ')';
       }
+    },
+    {
+      patterns: 'span',
+      replacement: function(str, attrs, innerHTML) {
+        var style = attrs.match(attrRegExp('style'))[1];
+        if (style.indexOf('italic') > 0) {
+          return innerHTML ? '_' + innerHTML + '_' : '';
+        } else if (style.indexOf('bold') > 0) {
+          return innerHTML ? '**' + innerHTML + '**' : '';
+        }
+      }
     }
   ];
   
