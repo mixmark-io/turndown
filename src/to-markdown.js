@@ -173,11 +173,15 @@ var toMarkdown = function(input) {
   // TODO: add line breaks to non-block-level 
   // input.find(NON_MD_BLOCK_ELEMENTS.join(',')).before('\n\n').after('\n\n');
   
+  function decodeHtmlEntities(str) {
+    return String(str).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+  }
+  
   function cleanUp(string) {
     string = string.replace(/^[\t\r\n]+|[\t\r\n]+$/g, ''); // trim leading/trailing whitespace
     string = string.replace(/\n\s+\n/g, '\n\n');
     string = string.replace(/\n{3,}/g, '\n\n'); // limit consecutive linebreaks to 2
-    string = string.replace(/&gt;/g, '>');  
+    string = decodeHtmlEntities(string);
     return string;
   }
   
