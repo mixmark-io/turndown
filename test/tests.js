@@ -34,6 +34,7 @@ $(function(){
     equal(toMarkdown("<hr/>"), "* * *", "We expect hr elements to be converted to * * *");
     equal(toMarkdown("<hr>"), "* * *", "We expect hr elements to be converted to * * *");
     equal(toMarkdown("<hr class='fancy' />"), "* * *", "We expect hr elements to be converted to * * *");
+    equal(toMarkdown("<hr></hr>"), "* * *", "We expect hr elements to be converted to * * *");
   });
   
   test("converting br elements", function() {

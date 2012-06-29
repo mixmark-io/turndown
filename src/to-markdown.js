@@ -1,180 +1,187 @@
 /*
  * to-markdown - an HTML to Markdown converter
  *
- * Copyright 2011, Dom Christie
+ * Copyright 2011-2012, Dom Christie
  * Licenced under the MIT licence
  *
  */
 
-var toMarkdown = function(string) {
+var toMarkdown = function(input) {
+    
+  // Escape potential ol triggers
+  // see bottom of lists section: http://daringfireball.net/projects/markdown/syntax#list
+  input = input.replace(/(\d+)\. /g, '$1\\. ');
+  
+  // Wrap in containing div
+  var $container = $('<div/>');
+  input = $container.html(input);
+  
+  // Remove whitespace
+  input.find('*:not(pre, code)').contents().filter(function() {
+    return this.nodeType === 3 && (/^\s+|\s+$/.test(this.nodeValue));
+  }).remove();
   
   var ELEMENTS = [
     {
-      patterns: 'p',
-      replacement: function(str, attrs, innerHTML) {
-        return innerHTML ? '\n\n' + innerHTML + '\n' : '';
+      selector: 'p',
+      replacement: function(innerHTML, el) {
+        return innerHTML ? '\n\n' + innerHTML + '\n\n' : '';
       }
     },
     {
-      patterns: 'br',
-      type: 'void',
-      replacement: '\n'
+      selector: 'br',
+      replacement: function(innerHTML, el) {
+        return '\n';
+      }
     },
     {
-      patterns: 'h([1-6])',
-      replacement: function(str, hLevel, attrs, innerHTML) {
-        var hPrefix = '';
+      selector: 'h1,h2,h3,h4,h5,h6',
+      replacement: function(innerHTML, $el) {
+        var hLevel = $el.prop("nodeName").charAt(1),
+            prefix = '';
         for(var i = 0; i < hLevel; i++) {
-          hPrefix += '#';
+          prefix += '#';
         }
-        return '\n\n' + hPrefix + ' ' + innerHTML + '\n';
+        return innerHTML ? '\n\n' + prefix + ' ' + innerHTML + '\n\n' : '';
       }
     },
     {
-      patterns: 'hr',
-      type: 'void',
-      replacement: '\n\n* * *\n'
-    },
-    {
-      patterns: 'a',
-      replacement: function(str, attrs, innerHTML) {
-        var href = attrs.match(attrRegExp('href')),
-            title = attrs.match(attrRegExp('title'));
-        return href ? '[' + innerHTML + ']' + '(' + href[1] + (title && title[1] ? ' "' + title[1] + '"' : '') + ')' : str;
+      selector: 'hr',
+      replacement: function(innerHTML, el) {
+        return '\n\n* * *\n\n';
       }
     },
     {
-      patterns: ['b', 'strong'],
-      replacement: function(str, attrs, innerHTML) {
-        return innerHTML ? '**' + innerHTML + '**' : '';
+      selector: 'a[href]',
+      replacement: function(innerHTML, $el) {
+        if(innerHTML) {
+          var href = $el.attr('href'),
+              title = $el.attr('title') || '';
+          return '[' + innerHTML + ']' + '(' + href + (title ? ' "' + title + '"' : '') + ')';
+        }
+        else {
+          return false;
+        }
       }
     },
     {
-      patterns: ['i', 'em'],
-      replacement: function(str, attrs, innerHTML) {
-        return innerHTML ? '_' + innerHTML + '_' : '';
-      }
+      selector: 'b',
+      replacement: strongReplacement
     },
     {
-      patterns: 'code',
-      replacement: function(str, attrs, innerHTML) {
+      selector: 'strong',
+      replacement: strongReplacement
+    },
+    {
+      selector: 'i',
+      replacement: emReplacement
+    },
+    {
+      selector: 'em',
+      replacement: emReplacement
+    },
+    {
+      selector: 'code',
+      replacement: function(innerHTML, el) {
         return innerHTML ? '`' + innerHTML + '`' : '';
       }
     },
     {
-      patterns: 'img',
-      type: 'void',
-      replacement: function(str, attrs, innerHTML) {
-        var src = attrs.match(attrRegExp('src')),
-            alt = attrs.match(attrRegExp('alt')),
-            title = attrs.match(attrRegExp('title'));
-        return '![' + (alt && alt[1] ? alt[1] : '') + ']' + '(' + src[1] + (title && title[1] ? ' "' + title[1] + '"' : '') + ')';
+      selector: 'img',
+      replacement: function(innerHTML, $el) {
+        var alt = $el.attr('alt') || '',
+            src = $el.attr('src') || '',
+            title = $el.attr('title') || '';
+        return '![' + alt + ']' + '(' + src + (title ? ' "' + title + '"' : '') + ')';
+      }
+    },
+    {
+      selector: 'pre',
+      replacement: function(innerHTML, el) {
+        if(/^\s*\`/.test(innerHTML)) {
+          innerHTML = innerHTML.replace(/\`/g, '');
+          return '    ' + innerHTML.replace(/\n/g, '\n    ');
+        }
+        else {
+          return '';
+        }
+      }
+    },
+    {
+      selector: 'li',
+      replacement: function(innerHTML, $el) {
+        innerHTML = innerHTML.replace(/^\s+|\s+$/, '').replace(/\n/gm, '\n    ');
+        var prefix = '*   ';
+        var suffix = '';
+        var $parent = $el.parent();
+        var $children = $parent.contents().filter(function() {
+          return (this.nodeType === 1 && this.nodeName === 'LI') || (this.nodeType === 3);
+        });
+        var index = $children.index($el) + 1;
+        
+        prefix = $parent.is('ol') ? index + '.  ' : '*   ';
+        if(index == $children.length) {
+          if(!$el.parents('li').length) {
+            suffix = '\n';
+          }
+          innerHTML = innerHTML.replace(/\s+$/, ''); // Trim
+          $el.unwrap();
+        }
+        return prefix + innerHTML + suffix + '\n';
+      }
+    },
+    {
+      selector: 'blockquote',
+      replacement: function(innerHTML, el) {
+        innerHTML = innerHTML.replace(/^\s+|\s+$/g, '').replace(/\n{3,}/g, '\n\n');
+        innerHTML = innerHTML.replace(/\n/g, '\n&gt; ');
+        return "&gt; " + innerHTML;
       }
     }
   ];
   
+  var NON_MD_BLOCK_ELEMENTS = ['address', 'article', 'aside', 'audio', 'canvas', 'div', 'dl', 'dd', 'dt',
+    'fieldset', 'figcaption', 'figure', 'footer', 'form', 'header', 'hgroup', 'output',
+    'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'section', 'video'];
+  
+  var selectors = [];
   for(var i = 0, len = ELEMENTS.length; i < len; i++) {
-    if(typeof ELEMENTS[i].patterns === 'string') {
-      string = replaceEls(string, { tag: ELEMENTS[i].patterns, replacement: ELEMENTS[i].replacement, type:  ELEMENTS[i].type });
-    }
-    else {
-      for(var j = 0, pLen = ELEMENTS[i].patterns.length; j < pLen; j++) {
-        string = replaceEls(string, { tag: ELEMENTS[i].patterns[j], replacement: ELEMENTS[i].replacement, type:  ELEMENTS[i].type });
-      }
-    }
+    selectors.push(ELEMENTS[i].selector);
+  }
+  selectors = selectors.join(',');
+  
+  function strongReplacement(innerHTML) {
+    return innerHTML ? '**' + innerHTML + '**' : '';
+  }
+  function emReplacement(innerHTML) {
+    return innerHTML ? '_' + innerHTML + '_' : '';
   }
   
-  function replaceEls(html, elProperties) {
-    var pattern = elProperties.type === 'void' ? '<' + elProperties.tag + '\\b([^>]*)\\/?>' : '<' + elProperties.tag + '\\b([^>]*)>([\\s\\S]*?)<\\/' + elProperties.tag + '>',
-        regex = new RegExp(pattern, 'gi'),
-        markdown = '';
-    if(typeof elProperties.replacement === 'string') {
-      markdown = html.replace(regex, elProperties.replacement);
-    }
-    else {
-      markdown = html.replace(regex, function(str, p1, p2, p3) {
-        return elProperties.replacement.call(this, str, p1, p2, p3);
+  while(input.find(selectors).length) {
+    for(var i = 0, len = ELEMENTS.length; i < len; i++) {
+      
+      // Find the innermost elements containing NO children that convert to markdown
+      $matches = input.find(ELEMENTS[i].selector + ':not(:has("' + selectors + '"))');
+  
+      $matches.each(function(j, el) {
+        var $el = $(el);
+        $el.replaceWith(ELEMENTS[i].replacement($el.html(), $el));
       });
     }
-    return markdown;
   }
   
-  function attrRegExp(attr) {
-    return new RegExp(attr + '\\s*=\\s*["\']?([^"\']*)["\']?', 'i');
-  }
-  
-  // Pre code blocks
-  
-  string = string.replace(/<pre\b[^>]*>`([\s\S]*)`<\/pre>/gi, function(str, innerHTML) {
-    innerHTML = innerHTML.replace(/^\t+/g, '  '); // convert tabs to spaces (you know it makes sense)
-    innerHTML = innerHTML.replace(/\n/g, '\n    ');
-    return '\n\n    ' + innerHTML + '\n';
-  });
-  
-  // Lists
-  
-  // Escape numbers that could trigger an ol
-  string = string.replace(/(\d+). /g, '$1\\. ');
-  
-  // Converts lists that have no child lists (of same type) first, then works it's way up
-  var noChildrenRegex = /<(ul|ol)\b[^>]*>(?:(?!<ul|<ol)[\s\S])*?<\/\1>/gi;
-  while(string.match(noChildrenRegex)) {
-    string = string.replace(noChildrenRegex, function(str) {
-      return replaceLists(str);
-    });
-  }
-  
-  function replaceLists(html) {
-    
-    html = html.replace(/<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/gi, function(str, listType, innerHTML) {
-      var lis = innerHTML.split('</li>');
-      lis.splice(lis.length - 1, 1);
-      
-      for(i = 0, len = lis.length; i < len; i++) {
-        if(lis[i]) {
-          var prefix = (listType === 'ol') ? (i + 1) + ".  " : "*   ";
-          lis[i] = lis[i].replace(/\s*<li[^>]*>([\s\S]*)/i, function(str, innerHTML) {
-            
-            innerHTML = innerHTML.replace(/^\s+/, '');
-            innerHTML = innerHTML.replace(/\n\n/g, '\n\n    ');
-            // indent nested lists
-            innerHTML = innerHTML.replace(/\n([ ]*)+(\*|\d+\.) /g, '\n$1    $2 ');
-            return prefix + innerHTML;
-          });
-        }
-      }
-      return lis.join('\n');
-    });
-    return '\n\n' + html.replace(/[ \t]+\n|\s+$/g, '');
-  }
-  
-  // Blockquotes
-  var deepest = /<blockquote\b[^>]*>((?:(?!<blockquote)[\s\S])*?)<\/blockquote>/gi;
-  while(string.match(deepest)) {
-    string = string.replace(deepest, function(str) {
-      return replaceBlockquotes(str);
-    });
-  }
-  
-  function replaceBlockquotes(html) {
-    html = html.replace(/<blockquote\b[^>]*>([\s\S]*?)<\/blockquote>/gi, function(str, inner) {
-      inner = inner.replace(/^\s+|\s+$/g, '');
-      inner = cleanUp(inner);
-      inner = inner.replace(/^/gm, '> ');
-      inner = inner.replace(/^(>([ \t]{2,}>)+)/gm, '> >');
-      return inner;
-    });
-    return html;
-  }
+  // TODO: add line breaks to non-block-level 
+  // input.find(NON_MD_BLOCK_ELEMENTS.join(',')).before('\n\n').after('\n\n');
   
   function cleanUp(string) {
     string = string.replace(/^[\t\r\n]+|[\t\r\n]+$/g, ''); // trim leading/trailing whitespace
     string = string.replace(/\n\s+\n/g, '\n\n');
     string = string.replace(/\n{3,}/g, '\n\n'); // limit consecutive linebreaks to 2
+    string = string.replace(/&gt;/g, '>');  
     return string;
   }
   
-  return cleanUp(string);
+  return cleanUp(input.html());
 };
 
 if (typeof exports === 'object') {
