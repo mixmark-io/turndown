@@ -83,12 +83,28 @@ exports['converting code blocks'] = function(test) {
 };
 
 exports['converting list elements'] = function(test) {
-  test.equal(toMarkdown('1986. What a great season.'), '1986\\. What a great season.','We expect numbers that could trigger an ol to be escaped');
   test.equal(toMarkdown("<ol>\n\t<li>Hello world</li>\n\t<li>Lorem ipsum</li>\n</ol>"), "1.  Hello world\n2.  Lorem ipsum", "We expect ol elements to be converted properly");
   test.equal(toMarkdown("<ul>\n\t<li>Hello world</li>\n\t<li>Lorem ipsum</li>\n</ul>"), "*   Hello world\n*   Lorem ipsum", "We expect ul elements with line breaks and tabs to be converted properly");
   test.equal(toMarkdown("<ul class='blargh'><li class='first'>Hello world</li><li>Lorem ipsum</li></ul>"), "*   Hello world\n*   Lorem ipsum", "We expect ul elements with attributes to be converted properly");
   test.equal(toMarkdown("<ul><li>Hello world</li><li>Lorem ipsum</li></ul><ul><li>Hello world</li><li>Lorem ipsum</li></ul>"), "*   Hello world\n*   Lorem ipsum\n\n*   Hello world\n*   Lorem ipsum", "We expect multiple ul elements to be converted properly");
   test.equal(toMarkdown("<ul><li><p>Hello world</p></li><li>Lorem ipsum</li></ul>"), "*   Hello world\n\n*   Lorem ipsum", "We expect li elements with ps to be converted properly");
+
+  var numsToTriggerOlHtml = [
+    "1986. What a great season.",
+    "Dont apply to links that end in numbers <a href='http://mygreatsite/users/55'>Like This</a> and have spaces after them",
+    "Or like an address 123. or anything",
+    "<pre><code>1234. Four spaces make a code block</code></pre>"
+  ].join('\n'),
+
+  numsToTriggerOlMd = [
+    "1986\\. What a great season.",
+    "Dont apply to links that end in numbers [Like This](http://mygreatsite/users/55) and have spaces after them",
+    "Or like an address 123. or anything",
+    "",
+    "    1234. Four spaces make a code block"
+  ].join('\n');
+
+  test.equal(toMarkdown(numsToTriggerOlHtml), numsToTriggerOlMd, 'We expect only the numbers that could trigger an ol to be escaped');
     
   var lisWithPsHtml = [
     "<ol>",
