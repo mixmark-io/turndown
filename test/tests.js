@@ -245,4 +245,9 @@ $(function(){
     ].join('\n');
     strictEqual(toMarkdown(html), md, "We expect html in blockquotes to be converted");
   });
+
+  test("bugs", function() {
+    var str = "123 abc";
+    equal(toMarkdown(str), str, "It should not eat numbers");
+  });
 });
