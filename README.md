@@ -2,7 +2,7 @@
 
 An HTML to Markdown converter written in javascript.
 
-## Running in the browser
+## Running in the browser (requires jQuery)
 
 Include the script, and then:
 
