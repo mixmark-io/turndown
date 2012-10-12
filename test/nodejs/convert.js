@@ -1,4 +1,5 @@
-var toMarkdown = require(__dirname + '/../../src/to-markdown').toMarkdown;
+var toMarkdown = require(__dirname + '/../../src/to-markdown');
+var converter = new toMarkdown.converter();
 
 exports['converting p elements'] = function(test) {
   test.equal(toMarkdown("<p>Lorem ipsum</p>"), "Lorem ipsum", "We expect p tags to be wrapped with two line breaks");

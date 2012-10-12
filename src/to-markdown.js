@@ -6,20 +6,107 @@
  *
  */
 
-var toMarkdown = function(input) {
+(function() {
+  
+  var root = this;
+  var toMarkdown = {};
+  var isNode = false;
+  
+  if(typeof module !== 'undefined' && module.exports) {
+    module.exports = toMarkdown;
+    root.toMarkdown = toMarkdown;
+    isNode = true;
+  }
+  else {
+    root.toMarkdown = toMarkdown;
+  }
+  
+  toMarkdown.converter = function(options) {
     
-  // Escape potential ol triggers
-  // see bottom of lists section: http://daringfireball.net/projects/markdown/syntax#list
-  input = input.replace(/(\d+)\. /g, '$1\\. ');
+    this.makeMd = function(input, callback) {
+      var result;
+      if(isNode) {
+        var jsdom = require('jsdom');
+        jsdom.env({
+          html: input,
+          scripts: [
+            'http://code.jquery.com/jquery-1.6.4.min.js'
+          ],
+          done: function(errors, window) {
+            if(typeof callback === 'function') {
+              callback(process(input, window.$));
+            }
+          }
+        });
+      }
+      else {
+        result = process(input, $);
+      }
+      return result;
+    };
+  };
   
-  // Wrap in containing div
-  var $container = $('<div/>');
-  input = $container.html(input);
+  var process = function(input, $) {
+    // Escape potential ol triggers
+    // see bottom of lists section: http://daringfireball.net/projects/markdown/syntax#list
+    input = input.replace(/(\d+)\. /g, '$1\\. ');
+
+    // Wrap in containing div
+    var $container = $('<div/>');
+    var $input = $container.html(input);
+
+    // Remove whitespace
+    $input.find('*:not(pre, code)').contents().filter(function() {
+      return this.nodeType === 3 && (/^\s+|\s+$/.test(this.nodeValue));
+    }).remove();
+    
+    var selectors = [];
+    for(var i = 0, len = ELEMENTS.length; i < len; i++) {
+      selectors.push(ELEMENTS[i].selector);
+    }
+    selectors = selectors.join(',');
+    
+    while($input.find(selectors).length) {
+      for(var i = 0, len = ELEMENTS.length; i < len; i++) {
+
+        // Find the innermost elements containing NO children that convert to markdown
+        $matches = $input.find(ELEMENTS[i].selector + ':not(:has("' + selectors + '"))');
+
+        $matches.each(function(j, el) {
+          var $el = $(el);
+          $el.replaceWith(ELEMENTS[i].replacement($el.html(), $el));
+        });
+      }
+    }
+    return cleanUp($input.html());
+  };
   
-  // Remove whitespace
-  input.find('*:not(pre, code)').contents().filter(function() {
-    return this.nodeType === 3 && (/^\s+|\s+$/.test(this.nodeValue));
-  }).remove();
+  // =============
+  // = Utilities =
+  // =============
+  
+  var decodeHtmlEntities = function(str) {
+    return String(str).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+  };
+
+  var cleanUp = function(string) {
+    string = string.replace(/^[\t\r\n]+|[\t\r\n]+$/g, ''); // trim leading/trailing whitespace
+    string = string.replace(/\n\s+\n/g, '\n\n');
+    string = string.replace(/\n{3,}/g, '\n\n'); // limit consecutive linebreaks to 2
+    string = decodeHtmlEntities(string);
+    return string;
+  };
+  
+  var strongReplacement = function(innerHTML) {
+    return innerHTML ? '**' + innerHTML + '**' : '';
+  };
+  var emReplacement = function(innerHTML) {
+    return innerHTML ? '_' + innerHTML + '_' : '';
+  };
+  
+  // ============
+  // = Elements =
+  // ============
   
   var ELEMENTS = [
     {
@@ -118,7 +205,7 @@ var toMarkdown = function(input) {
           return (this.nodeType === 1 && this.nodeName === 'LI') || (this.nodeType === 3);
         });
         var index = $children.index($el) + 1;
-        
+
         prefix = $parent.is('ol') ? index + '.  ' : '*   ';
         if(index == $children.length) {
           if(!$el.parents('li').length) {
@@ -139,55 +226,9 @@ var toMarkdown = function(input) {
       }
     }
   ];
-  
+
   var NON_MD_BLOCK_ELEMENTS = ['address', 'article', 'aside', 'audio', 'canvas', 'div', 'dl', 'dd', 'dt',
     'fieldset', 'figcaption', 'figure', 'footer', 'form', 'header', 'hgroup', 'output',
     'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'section', 'video'];
-  
-  var selectors = [];
-  for(var i = 0, len = ELEMENTS.length; i < len; i++) {
-    selectors.push(ELEMENTS[i].selector);
-  }
-  selectors = selectors.join(',');
-  
-  function strongReplacement(innerHTML) {
-    return innerHTML ? '**' + innerHTML + '**' : '';
-  }
-  function emReplacement(innerHTML) {
-    return innerHTML ? '_' + innerHTML + '_' : '';
-  }
-  
-  while(input.find(selectors).length) {
-    for(var i = 0, len = ELEMENTS.length; i < len; i++) {
-      
-      // Find the innermost elements containing NO children that convert to markdown
-      $matches = input.find(ELEMENTS[i].selector + ':not(:has("' + selectors + '"))');
-  
-      $matches.each(function(j, el) {
-        var $el = $(el);
-        $el.replaceWith(ELEMENTS[i].replacement($el.html(), $el));
-      });
-    }
-  }
-  
-  // TODO: add line breaks to non-block-level 
-  // input.find(NON_MD_BLOCK_ELEMENTS.join(',')).before('\n\n').after('\n\n');
-  
-  function decodeHtmlEntities(str) {
-    return String(str).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
-  }
-  
-  function cleanUp(string) {
-    string = string.replace(/^[\t\r\n]+|[\t\r\n]+$/g, ''); // trim leading/trailing whitespace
-    string = string.replace(/\n\s+\n/g, '\n\n');
-    string = string.replace(/\n{3,}/g, '\n\n'); // limit consecutive linebreaks to 2
-    string = decodeHtmlEntities(string);
-    return string;
-  }
-  
-  return cleanUp(input.html());
-};
 
-if (typeof exports === 'object') {
-  exports.toMarkdown = toMarkdown;
-}
+})();
