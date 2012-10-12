@@ -248,4 +248,19 @@ $(function(){
     ].join('\n');
     strictEqual(converter.makeMd(html), md, "We expect html in blockquotes to be converted");
   });
+  
+  test("custom elements", function() {
+    var options = {
+      elements: [
+        {
+          selector: '.emphasized, span[style*=italic]',
+          replacement: function(innerHTML) {
+            return innerHTML ? '_' + innerHTML + '_' : '';
+          }
+        }
+      ]
+    };
+    var customConverter = new toMarkdown.converter(options);
+    equal(customConverter.makeMd("<span class='emphasized'>Hello world</span>"), "_Hello world_", "We expect <span class='emphasized'>Hello world</span> to be converted to _Hello world_");
+  });
 });

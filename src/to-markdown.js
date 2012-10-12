@@ -23,6 +23,10 @@
   
   toMarkdown.converter = function(options) {
     
+    if(options && options.elements && $.isArray(options.elements)) {
+      ELEMENTS = ELEMENTS.concat(options.elements);
+    }
+    
     this.makeMd = function(input, callback) {
       var result;
       if(isNode) {
