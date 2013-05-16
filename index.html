@@ -33,7 +33,7 @@
       $('.output').text(toMarkdown($input.val()));
     }
     updateOutput();
-    $(document).on('input', $input, updateOutput);
+    $(document).on('input keydown', $input, updateOutput);
   });
 </script>
 <script type="text/javascript">
