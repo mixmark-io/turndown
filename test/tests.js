@@ -263,4 +263,36 @@ $(function(){
     var customConverter = new toMarkdown.converter(options);
     equal(customConverter.makeMd("<span class='emphasized'>Hello world</span>"), "_Hello world_", "We expect <span class='emphasized'>Hello world</span> to be converted to _Hello world_");
   });
+  
+  test("elements with text nodes containing leading or trailing whitespace", function() {
+    var html = [
+      "<h1>",
+      "    Some header text</h1>"
+    ].join('\n');
+    equal(converter.makeMd(html), '# Some header text', "We expect leading whitespace to be removed");
+    
+    // html = [
+    //   "<ol>",
+    //   "  <li>Chapter One",
+    //   "    <ol>",
+    //   "      <li>Section One</li>",
+    //   "      <li>Section Two </li>",
+    //   "      <li>Section Three </li>",
+    //   "    </ol>",
+    //   "  </li>",
+    //   "  <li>Chapter Two</li>",
+    //   "  <li>Chapter Three  </li>",
+    //   "</ol>"
+    // ].join('\n');
+    // 
+    // var md = [
+    //   "1.  Chapter One",
+    //   "    1.  Section One",
+    //   "    2.  Section Two",
+    //   "    3.  Section Three",
+    //   "2.  Chapter Two",
+    //   "3.  Chapter Three"
+    // ].join('\n');
+    // equal(converter.makeMd(html), md, "We expect trailing whitespace to be removed");
+  });
 });

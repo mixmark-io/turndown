@@ -61,7 +61,7 @@
 
     // Remove whitespace
     $input.find('*:not(pre, code)').contents().filter(function() {
-      return this.nodeType === 3 && (/^\s+|\s+$/.test(this.nodeValue));
+      return this.nodeType === 3 && (/^\s+$/.test(this.nodeValue));
     }).remove();
     
     var selectors = [];
@@ -89,6 +89,10 @@
   // = Utilities =
   // =============
   
+  var trimNewLines = function(str) {
+    return str.replace(/^[\n\r\f]+|[\n\r\f]+$/g, '');
+  };
+  
   var decodeHtmlEntities = function(str) {
     return String(str).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
   };
@@ -102,9 +106,11 @@
   };
   
   var strongReplacement = function(innerHTML) {
+    innerHTML = trimNewLines(innerHTML);
     return innerHTML ? '**' + innerHTML + '**' : '';
   };
   var emReplacement = function(innerHTML) {
+    innerHTML = trimNewLines(innerHTML);
     return innerHTML ? '_' + innerHTML + '_' : '';
   };
   
@@ -116,6 +122,7 @@
     {
       selector: 'p',
       replacement: function(innerHTML, el) {
+        innerHTML = $.trim(innerHTML);
         return innerHTML ? '\n\n' + innerHTML + '\n\n' : '';
       }
     },
@@ -128,6 +135,7 @@
     {
       selector: 'h1,h2,h3,h4,h5,h6',
       replacement: function(innerHTML, $el) {
+        innerHTML = $.trim(innerHTML);
         var hLevel = $el.prop("nodeName").charAt(1),
             prefix = '';
         for(var i = 0; i < hLevel; i++) {
@@ -146,6 +154,7 @@
       selector: 'a[href]',
       replacement: function(innerHTML, $el) {
         if(innerHTML) {
+          innerHTML = trimNewLines(innerHTML);
           var href = $el.attr('href'),
               title = $el.attr('title') || '';
           return '[' + innerHTML + ']' + '(' + href + (title ? ' "' + title + '"' : '') + ')';
@@ -174,6 +183,7 @@
     {
       selector: 'code',
       replacement: function(innerHTML, el) {
+        innerHTML = trimNewLines(innerHTML);
         return innerHTML ? '`' + innerHTML + '`' : '';
       }
     },
@@ -224,7 +234,7 @@
     {
       selector: 'blockquote',
       replacement: function(innerHTML, el) {
-        innerHTML = innerHTML.replace(/^\s+|\s+$/g, '').replace(/\n{3,}/g, '\n\n');
+        innerHTML = innerHTML = $.trim(innerHTML).replace(/\n{3,}/g, '\n\n');
         innerHTML = innerHTML.replace(/\n/g, '\n&gt; ');
         return "&gt; " + innerHTML;
       }
