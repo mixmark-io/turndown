@@ -78,7 +78,7 @@
 
         $matches.each(function(j, el) {
           var $el = $(el);
-          $el.replaceWith(ELEMENTS[i].replacement($el.html(), $el));
+          $el.before(ELEMENTS[i].replacement($el.html(), $el)).remove();
         });
       }
     }
