@@ -24,6 +24,7 @@
 8.  if/else/for/while等语句必须用大括号包裹
 9.  函数必须有注释，建议使用YUIDoc格式，参数注释可选​
 
+
     //CDC JavaScript编写规范示例
     function wrInCdc(){
 
