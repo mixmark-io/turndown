@@ -13,6 +13,7 @@
 11.  属性值统一不加引号;
 12.  Margin，padding，border等属性可以简写的尽量简写，后续修改维护时，只需要改动单边属性值即可。
 13.  常用IE&nbsp;HACK:
+
         /**IE HACK 开始**/
         .ie{
         _color:#f00;/**ie6**/
