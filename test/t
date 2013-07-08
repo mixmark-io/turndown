@@ -1,7 +1,6 @@
 #CSS编写
 
 1.  CSS编码必须使用uft-8编码保存，并在头部声明 @charset "utf-8";
-
 2.  必须使用业务统一的CSS REST保持各浏览器表现基本统一(请用 [reset.css 生成工具](http://demo.cdc.im/tools/reset/)&nbsp;按需生成业务reset代码）；
 3.  CSS选择符使用class，尽可能避免选择符直接使用 HTML标签或通配符；
 4.  模块化编写，前期规划好通用模块并考虑重用性可能造成的瓶颈，同时在注释中书写关注点及使用方法，后期维护尽可能复用之前CSS片段和HTML片段；
