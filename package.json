@@ -14,5 +14,8 @@
   },
   "scripts":    {
     "test": "./node_modules/nodeunit/bin/nodeunit test/nodejs"
+  },
+  "bin": {
+    "html2markdown": "./bin/index.js"
   }
 }
