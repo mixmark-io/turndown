@@ -7,11 +7,11 @@
  */
 
 (function() {
-  
+
   var root = this;
   var toMarkdown = {};
   var isNode = false;
-  
+
   if(typeof module !== 'undefined' && module.exports) {
     module.exports = toMarkdown;
     root.toMarkdown = toMarkdown;
@@ -20,13 +20,13 @@
   else {
     root.toMarkdown = toMarkdown;
   }
-  
+
   toMarkdown.converter = function(options) {
-    
+
     if(options && options.elements && $.isArray(options.elements)) {
       ELEMENTS = ELEMENTS.concat(options.elements);
     }
-    
+
     this.makeMd = function(input, callback) {
       var result;
       if(isNode) {
@@ -49,7 +49,7 @@
       return result;
     };
   };
-  
+
   var process = function(input, $) {
     // Escape potential ol triggers
     // see bottom of lists section: http://daringfireball.net/projects/markdown/syntax#list
@@ -63,13 +63,13 @@
     $input.find('*:not(pre, code)').contents().filter(function() {
       return this.nodeType === 3 && (/^\s+$/.test(this.nodeValue));
     }).remove();
-    
+
     var selectors = [];
     for(var i = 0, len = ELEMENTS.length; i < len; i++) {
       selectors.push(ELEMENTS[i].selector);
     }
     selectors = selectors.join(',');
-    
+
     while($input.find(selectors).length) {
       for(var i = 0, len = ELEMENTS.length; i < len; i++) {
 
@@ -77,24 +77,33 @@
         $matches = $input.find(ELEMENTS[i].selector + ':not(:has("' + selectors + '"))');
 
         $matches.each(function(j, el) {
-          var $el = $(el);
-          $el.replaceWith(ELEMENTS[i].replacement($el.html(), $el));
+          var
+          	$el = $(el),
+          	tn = document.createTextNode(ELEMENTS[i].replacement($el.html(), $el));
+          	$el.replaceWith(tn)
         });
       }
     }
-    return cleanUp($input.html());
+    return cleanUp( replaceFakeNewlines( $input.text() ));
   };
-  
+
   // =============
   // = Utilities =
   // =============
-  
+
   var trimNewLines = function(str) {
     return str.replace(/^[\n\r\f]+|[\n\r\f]+$/g, '');
   };
-  
+
   var decodeHtmlEntities = function(str) {
     return String(str).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+  };
+
+  var replaceFakeNewlines = function replaceFakeNewlines(str){
+  	var ret = str+"";
+  	ret = ret.replace(/\\r/g, "\r");
+  	ret = ret.replace(/\\n/g, "\n");
+  	return ret;
   };
 
   var cleanUp = function(string) {
@@ -104,7 +113,7 @@
     string = decodeHtmlEntities(string);
     return string;
   };
-  
+
   var strongReplacement = function(innerHTML) {
     innerHTML = trimNewLines(innerHTML);
     return innerHTML ? '**' + innerHTML + '**' : '';
@@ -113,11 +122,11 @@
     innerHTML = trimNewLines(innerHTML);
     return innerHTML ? '_' + innerHTML + '_' : '';
   };
-  
+
   // ============
   // = Elements =
   // ============
-  
+
   var ELEMENTS = [
     {
       selector: 'p',
@@ -129,7 +138,7 @@
     {
       selector: 'br',
       replacement: function(innerHTML, el) {
-        return '\n';
+        return '  \\n';
       }
     },
     {
