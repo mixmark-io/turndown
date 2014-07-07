@@ -6,6 +6,9 @@
   "author":           "Dom Christie",
   "main":             "src/to-markdown.js",
   "version":          "0.0.1",
+  "dependencies": {
+    "he": ">=0.4.1"
+  },
   "devDependencies": {
     "nodeunit"  : ">=0.6.0",
     "zombie"    : ">=0.12.0",
