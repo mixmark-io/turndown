@@ -12,6 +12,13 @@ var toMarkdown = function(string) {
     {
       patterns: 'p',
       replacement: function(str, attrs, innerHTML) {
+        innerHTML = innerHTML.replace(/#/g,"\\#");
+        return innerHTML ? '\n\n' + innerHTML + '\n' : '';
+      }
+    },
+    {
+      patterns:'div',
+      replacement : function(str,attrs,innerHTML){
         return innerHTML ? '\n\n' + innerHTML + '\n' : '';
       }
     },
@@ -23,6 +30,7 @@ var toMarkdown = function(string) {
     {
       patterns: 'h([1-6])',
       replacement: function(str, hLevel, attrs, innerHTML) {
+        innerHTML = innerHTML.replace(/#/g,"\\#");
         var hPrefix = '';
         for(var i = 0; i < hLevel; i++) {
           hPrefix += '#';
@@ -40,6 +48,8 @@ var toMarkdown = function(string) {
       replacement: function(str, attrs, innerHTML) {
         var href = attrs.match(attrRegExp('href')),
             title = attrs.match(attrRegExp('title'));
+        innerHTML = innerHTML.replace(/\n/gi,"");
+        innerHTML = innerHTML.replace(/\s+/gi," ");
         return href ? '[' + innerHTML + ']' + '(' + href[1] + (title && title[1] ? ' "' + title[1] + '"' : '') + ')' : str;
       }
     },
@@ -70,9 +80,22 @@ var toMarkdown = function(string) {
             title = attrs.match(attrRegExp('title'));
         return '![' + (alt && alt[1] ? alt[1] : '') + ']' + '(' + src[1] + (title && title[1] ? ' "' + title[1] + '"' : '') + ')';
       }
+    },
+    {
+      patterns: 'big',
+      replacement: function(str, attrs, innerHTML) {
+        return innerHTML ? '**' + innerHTML + '**' : ''
+      }
+    },
+    {
+      patterns: 'tt',
+      replacement: function(str, attrs, innerHTML) {
+        return innerHTML ?   innerHTML  : ''
+      }
     }
   ];
-  
+  //压缩空格符
+  string = string.replace(/ +/g," ");
   for(var i = 0, len = ELEMENTS.length; i < len; i++) {
     if(typeof ELEMENTS[i].patterns === 'string') {
       string = replaceEls(string, { tag: ELEMENTS[i].patterns, replacement: ELEMENTS[i].replacement, type:  ELEMENTS[i].type });
@@ -105,18 +128,16 @@ var toMarkdown = function(string) {
   
   // Pre code blocks
   
-  string = string.replace(/<pre\b[^>]*>`([\s\S]*)`<\/pre>/gi, function(str, innerHTML) {
+  string = string.replace(/<pre\b[^>]*>(?:\n|`)*([\s\S]*?)(?:\n|`)*<\/pre>/gi, function(str, innerHTML) {
     innerHTML = innerHTML.replace(/^\t+/g, '  '); // convert tabs to spaces (you know it makes sense)
     innerHTML = innerHTML.replace(/\n/g, '\n    ');
     return '\n\n    ' + innerHTML + '\n';
   });
   
   // Lists
-
+  
   // Escape numbers that could trigger an ol
-  // If there are more than three spaces before the code, it would be in a pre tag
-  // Make sure we are escaping the period not matching any character
-  string = string.replace(/^(\s{0,3}\d+)\. /g, '$1\\. ');
+  string = string.replace(/(\d+)\. /g, '$1\\. ');
   
   // Converts lists that have no child lists (of same type) first, then works it's way up
   var noChildrenRegex = /<(ul|ol)\b[^>]*>(?:(?!<ul|<ol)[\s\S])*?<\/\1>/gi;
@@ -126,8 +147,8 @@ var toMarkdown = function(string) {
     });
   }
   
+
   function replaceLists(html) {
-    
     html = html.replace(/<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/gi, function(str, listType, innerHTML) {
       var lis = innerHTML.split('</li>');
       lis.splice(lis.length - 1, 1);
@@ -136,9 +157,9 @@ var toMarkdown = function(string) {
         if(lis[i]) {
           var prefix = (listType === 'ol') ? (i + 1) + ".  " : "*   ";
           lis[i] = lis[i].replace(/\s*<li[^>]*>([\s\S]*)/i, function(str, innerHTML) {
-            
+            innerHTML = deleteLineBreak(innerHTML);
             innerHTML = innerHTML.replace(/^\s+/, '');
-            innerHTML = innerHTML.replace(/\n\n/g, '\n\n    ');
+            //innerHTML = innerHTML.replace(/\n\n(?:\w|\s)/g, '\n\n    ');
             // indent nested lists
             innerHTML = innerHTML.replace(/\n([ ]*)+(\*|\d+\.) /g, '\n$1    $2 ');
             return prefix + innerHTML;
@@ -148,6 +169,37 @@ var toMarkdown = function(string) {
       return lis.join('\n');
     });
     return '\n\n' + html.replace(/[ \t]+\n|\s+$/g, '');
+  }
+  
+  var noChildrenRegex_span = /<(span)\b[^>]*>(?:(?!<span)[\s\S])*?<\/\1>/gi;
+  while(string.match(noChildrenRegex_span)) {
+      string = string.replace(noChildrenRegex_span, function(str) {
+        return replaceSpans(str);
+      });
+  }
+
+
+
+  function replaceSpans(html) {
+      html = html.replace(/<(span)\b[^>]*>([\s\S]*?)<\/\1>/gi, function(str, listType, innerHTML) {
+          if(innerHTML) {
+                innerHTML = innerHTML.replace(/\n/gi,"");
+                innerHTML = innerHTML.replace(/\s+/gi," ");   
+          }
+          return innerHTML;
+      });
+      return html;
+  }
+
+
+  function deleteLineBreak(html) {
+      var innerNotPreArray = html.split(/(<pre\b[^>]*>`[\s\S]*?`<\/pre>)/gi);
+      if(innerNotPreArray){
+        for(var i = 0 ; i < innerNotPreArray.length ; i += 2){
+          innerNotPreArray[i] = innerNotPreArray[i].replace("\n","");
+        }
+      }
+      return innerNotPreArray.join("");
   }
   
   // Blockquotes
@@ -168,11 +220,52 @@ var toMarkdown = function(string) {
     });
     return html;
   }
-  
+  function unescapeHTML(text){
+    return text.replace( /&amp;/g, "&" )
+             .replace( /&lt;/g , "<")
+             .replace( /&gt;/g , ">")
+             .replace( /&quot;/g, '"' )
+             .replace( /&#39;/g, "'" );
+  }
+
+  // CodeInLi
+  function codeInLi(text){
+    
+  }
+
+  function replaceTag(string,tag,replaceTagName){
+    replaceTagName = replaceTagName?"##" : "";
+    // replaceTagNameEnd = replaceTagName?'</'+replaceTagName+'>' : "";
+    var pattern = "<("+ tag +")\\b[^>]*>";
+    var patternTagEnd = "<\\/"+ tag +">";
+    var regexText = new RegExp(pattern, 'gi');
+    var regexTextEnd = new RegExp(patternTagEnd, 'gi');
+    string = string.replace(regexText, replaceTagName);
+    string = string.replace(regexTextEnd, "");
+
+
+    string = string.replace(/##\n/gi,"##");
+    return string;
+  }
+
+  function unescapeHTMLNotCodeTag(text){
+    var splitCodePart = text.split(/(<code\b[^>]*>[\s\S]*<\/code>)/gi);
+    if(splitCodePart){
+        for(var i = 0 ; i < splitCodePart.length ; i += 2){
+          splitCodePart[i] = unescapeHTML(splitCodePart[i]);
+        }
+    }
+    return splitCodePart.join("");
+  }
   function cleanUp(string) {
     string = string.replace(/^[\t\r\n]+|[\t\r\n]+$/g, ''); // trim leading/trailing whitespace
+    // console.log("s");
+    string = replaceTag(string,"dt","h2");
+    string = replaceTag(string,"dl");
+    string = replaceTag(string,"dd");
     string = string.replace(/\n\s+\n/g, '\n\n');
     string = string.replace(/\n{3,}/g, '\n\n'); // limit consecutive linebreaks to 2
+    string = unescapeHTMLNotCodeTag(string);
     return string;
   }
   
