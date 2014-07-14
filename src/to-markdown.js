@@ -80,6 +80,19 @@
         var titlePart = title ? ' "'+ title +'"' : '';
         return src ? '![' + alt + ']' + '(' + src + titlePart + ')' : node;
       }
+    },
+    pre: {
+      name: tagName('pre'),
+      replacement: function(node) {
+        var innerHTML = node.innerHTML;
+        if(/^\s*\`/.test(innerHTML)) {
+          innerHTML = innerHTML.replace(/\`/g, '');
+          return '    ' + innerHTML.replace(/\n/g, '\n    ');
+        }
+        else {
+          return '';
+        }
+      }
     }
   };
 
