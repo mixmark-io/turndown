@@ -7,178 +7,208 @@
  */
 
 (function (global) {
-  var toMarkdown = function(string) {
 
-    var ELEMENTS = [
-      {
-        patterns: 'p',
-        replacement: function(str, attrs, innerHTML) {
-          return innerHTML ? '\n\n' + innerHTML + '\n' : '';
-        }
-      },
-      {
-        patterns: 'br',
-        type: 'void',
-        replacement: '\n'
-      },
-      {
-        patterns: 'h([1-6])',
-        replacement: function(str, hLevel, attrs, innerHTML) {
-          var hPrefix = '';
-          for(var i = 0; i < hLevel; i++) {
-            hPrefix += '#';
-          }
-          return '\n\n' + hPrefix + ' ' + innerHTML + '\n';
-        }
-      },
-      {
-        patterns: 'hr',
-        type: 'void',
-        replacement: '\n\n* * *\n'
-      },
-      {
-        patterns: 'a',
-        replacement: function(str, attrs, innerHTML) {
-          var href = attrs.match(attrRegExp('href')),
-              title = attrs.match(attrRegExp('title'));
-          return href ? '[' + innerHTML + ']' + '(' + href[1] + (title && title[1] ? ' "' + title[1] + '"' : '') + ')' : str;
-        }
-      },
-      {
-        patterns: ['b', 'strong'],
-        replacement: function(str, attrs, innerHTML) {
-          return innerHTML ? '**' + innerHTML + '**' : '';
-        }
-      },
-      {
-        patterns: ['i', 'em'],
-        replacement: function(str, attrs, innerHTML) {
-          return innerHTML ? '_' + innerHTML + '_' : '';
-        }
-      },
-      {
-        patterns: 'code',
-        replacement: function(str, attrs, innerHTML) {
-          return innerHTML ? '`' + innerHTML + '`' : '';
-        }
-      },
-      {
-        patterns: 'img',
-        type: 'void',
-        replacement: function(str, attrs, innerHTML) {
-          var src = attrs.match(attrRegExp('src')),
-              alt = attrs.match(attrRegExp('alt')),
-              title = attrs.match(attrRegExp('title'));
-          return '![' + (alt && alt[1] ? alt[1] : '') + ']' + '(' + src[1] + (title && title[1] ? ' "' + title[1] + '"' : '') + ')';
-        }
+  var ELEMENTS = {
+    p: {
+      name: tagName('p'),
+      replacement: function (node) {
+        return '\n' + trim(node.innerHTML) + '\n\n';
       }
-    ];
+    },
 
-    for(var i = 0, len = ELEMENTS.length; i < len; i++) {
-      if(typeof ELEMENTS[i].patterns === 'string') {
-        string = replaceEls(string, { tag: ELEMENTS[i].patterns, replacement: ELEMENTS[i].replacement, type:  ELEMENTS[i].type });
-      }
-      else {
-        for(var j = 0, pLen = ELEMENTS[i].patterns.length; j < pLen; j++) {
-          string = replaceEls(string, { tag: ELEMENTS[i].patterns[j], replacement: ELEMENTS[i].replacement, type:  ELEMENTS[i].type });
+    br: {
+      name: tagName('br'),
+      replacement: '\n'
+    },
+
+    headers: {
+      name: tagName('h[1-6]'),
+      replacement: function(node) {
+        var hLevel = Number(node.tagName.charAt(1));
+        var hPrefix = '';
+        for(var i = 0; i < hLevel; i++) {
+          hPrefix += '#';
         }
+        return '\n' + hPrefix + ' ' + trim(node.innerHTML) + '\n\n';
+      }
+    },
+
+    hr: {
+      name: tagName('hr'),
+      replacement: '\n* * *\n\n'
+    },
+
+    em: {
+      name: /^em$|^i$/i,
+      replacement: function (node) {
+        return '_' + trim(node.innerHTML) + '_';
+      }
+    },
+
+    strong: {
+      name: /^strong$|^b$/i,
+      replacement: function (node) {
+        return '**' + trim(node.innerHTML) + '**';
+      }
+    },
+
+    code: {
+      name: tagName('code'),
+      replacement: function(node) {
+        return '`' + node.innerHTML + '`';
+      }
+    },
+
+    a: {
+      name: tagName('a'),
+      replacement: function(node) {
+        var href = node.getAttribute('href');
+        var title = node.title;
+        var textPart = href ? '[' + node.innerHTML + ']' : '';
+        var titlePart = title ? ' "'+ title +'"' : '';
+
+        return href ? textPart + '(' + href + titlePart + ')' : node;
+      }
+    },
+
+    img: {
+      name: tagName('img'),
+      replacement: function(node) {
+        var alt = node.alt || '';
+        var src = node.src || '';
+        var title = node.title || '';
+        var titlePart = title ? ' "'+ title +'"' : '';
+        return src ? '![' + alt + ']' + '(' + src + titlePart + ')' : node;
       }
     }
-
-    function replaceEls(html, elProperties) {
-      var pattern = elProperties.type === 'void' ? '<' + elProperties.tag + '\\b([^>]*)\\/?>' : '<' + elProperties.tag + '\\b([^>]*)>([\\s\\S]*?)<\\/' + elProperties.tag + '>',
-          regex = new RegExp(pattern, 'gi'),
-          markdown = '';
-      if(typeof elProperties.replacement === 'string') {
-        markdown = html.replace(regex, elProperties.replacement);
-      }
-      else {
-        markdown = html.replace(regex, function(str, p1, p2, p3) {
-          return elProperties.replacement.call(this, str, p1, p2, p3);
-        });
-      }
-      return markdown;
-    }
-
-    function attrRegExp(attr) {
-      return new RegExp(attr + '\\s*=\\s*["\']?([^"\']*)["\']?', 'i');
-    }
-
-    // Pre code blocks
-
-    string = string.replace(/<pre\b[^>]*>`([\s\S]*)`<\/pre>/gi, function(str, innerHTML) {
-      innerHTML = innerHTML.replace(/^\t+/g, '  '); // convert tabs to spaces (you know it makes sense)
-      innerHTML = innerHTML.replace(/\n/g, '\n    ');
-      return '\n\n    ' + innerHTML + '\n';
-    });
-
-    // Lists
-
-    // Escape numbers that could trigger an ol
-    // If there are more than three spaces before the code, it would be in a pre tag
-    // Make sure we are escaping the period not matching any character
-    string = string.replace(/^(\s{0,3}\d+)\. /g, '$1\\. ');
-
-    // Converts lists that have no child lists (of same type) first, then works it's way up
-    var noChildrenRegex = /<(ul|ol)\b[^>]*>(?:(?!<ul|<ol)[\s\S])*?<\/\1>/gi;
-    while(string.match(noChildrenRegex)) {
-      string = string.replace(noChildrenRegex, function(str) {
-        return replaceLists(str);
-      });
-    }
-
-    function replaceLists(html) {
-
-      html = html.replace(/<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/gi, function(str, listType, innerHTML) {
-        var lis = innerHTML.split('</li>');
-        lis.splice(lis.length - 1, 1);
-
-        for(i = 0, len = lis.length; i < len; i++) {
-          if(lis[i]) {
-            var prefix = (listType === 'ol') ? (i + 1) + ".  " : "*   ";
-            lis[i] = lis[i].replace(/\s*<li[^>]*>([\s\S]*)/i, function(str, innerHTML) {
-
-              innerHTML = innerHTML.replace(/^\s+/, '');
-              innerHTML = innerHTML.replace(/\n\n/g, '\n\n    ');
-              // indent nested lists
-              innerHTML = innerHTML.replace(/\n([ ]*)+(\*|\d+\.) /g, '\n$1    $2 ');
-              return prefix + innerHTML;
-            });
-          }
-        }
-        return lis.join('\n');
-      });
-      return '\n\n' + html.replace(/[ \t]+\n|\s+$/g, '');
-    }
-
-    // Blockquotes
-    var deepest = /<blockquote\b[^>]*>((?:(?!<blockquote)[\s\S])*?)<\/blockquote>/gi;
-    while(string.match(deepest)) {
-      string = string.replace(deepest, function(str) {
-        return replaceBlockquotes(str);
-      });
-    }
-
-    function replaceBlockquotes(html) {
-      html = html.replace(/<blockquote\b[^>]*>([\s\S]*?)<\/blockquote>/gi, function(str, inner) {
-        inner = inner.replace(/^\s+|\s+$/g, '');
-        inner = cleanUp(inner);
-        inner = inner.replace(/^/gm, '> ');
-        inner = inner.replace(/^(>([ \t]{2,}>)+)/gm, '> >');
-        return inner;
-      });
-      return html;
-    }
-
-    function cleanUp(string) {
-      string = string.replace(/^[\t\r\n]+|[\t\r\n]+$/g, ''); // trim leading/trailing whitespace
-      string = string.replace(/\n\s+\n/g, '\n\n');
-      string = string.replace(/\n{3,}/g, '\n\n'); // limit consecutive linebreaks to 2
-      return string;
-    }
-
-    return cleanUp(string);
   };
+
+  var VOID_ELEMENTS = [
+    'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
+    'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
+  ];
+
+  var toMarkdown = function(input) {
+
+    var clone = document.createElement('div');
+
+    if (typeof input === 'string') {
+      clone.innerHTML = input;
+    }
+    else if (isDomElement(input)) {
+      clone.appendChild(input.cloneNode(true));
+    }
+    else {
+      throw 'first argument needs to be an HTML string or a DOM element';
+    }
+
+    removeBlankTextNodes(clone);
+
+    var nodes = bfsOrder(clone);
+
+    // Loop through nodes in reverse (so deepest child element is first).
+    // Replace nodes as necessary.
+    for (var i = nodes.length - 1; i >= 0; i--) {
+      var node = nodes[i];
+      var replacement = replacementForNode(node);
+      if (replacement) { node.parentNode.replaceChild(replacement, node); }
+    }
+
+    return clone.innerHTML.replace(/^[\t\r\n]+|[\t\r\n]+$/g, '')
+                          .replace(/\n\s+\n/g, '\n\n')
+                          .replace(/\n{3,}/g, '\n\n');
+  };
+
+  // =============
+  // = Utilities =
+  // =============
+
+  function trim(string) {
+    return string.replace(/^\s+|\s+$/g, '');
+  }
+
+  function isDomElement(o) {
+    return (
+      typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
+      o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
+    );
+  }
+
+  function tagName(regExp) {
+    return new RegExp('^' + regExp + '$', 'i');
+  }
+
+  // Flattens node tree into a single array
+  function bfsOrder(root) {
+    var inqueue = [root];
+    var outqueue = [];
+    while (inqueue.length > 0) {
+      var elem = inqueue.shift();
+      outqueue.push(elem);
+      var children = elem.childNodes;
+      for (var i = 0 ; i < children.length; i++) {
+        if (children[i].nodeType == 1) {
+          inqueue.push(children[i]);
+        }
+      }
+    }
+    outqueue.shift();
+    return outqueue;
+  }
+
+  // Loops through all ELEMENTS, checking to see if the node tagName matches.
+  // Returns the replacement text node or null.
+  function replacementForNode(node) {
+
+    // Remove blank nodes
+    if (VOID_ELEMENTS.indexOf(node.tagName.toLowerCase()) === -1 &&
+        /^\s*$/i.test(node.innerHTML)) {
+          return document.createTextNode('');
+    }
+
+    for (var key in ELEMENTS) {
+      var tag = ELEMENTS[key];
+      if (tag.name.test(node.tagName)) {
+        var replacement = tag.replacement;
+        var text;
+
+        if (typeof replacement === 'function') {
+          text = replacement.call(ELEMENTS, node);
+        }
+        else if (typeof replacement === 'string') {
+          text = replacement;
+        }
+        else {
+          throw '`replacement` needs to be a string or a function';
+        }
+
+        return document.createTextNode(text);
+      }
+    }
+    return null;
+  }
+
+  function removeBlankTextNodes(node) {
+    var child, next;
+    switch (node.nodeType) {
+      case 3: // Text node
+        if (/^\s{2,}$/.test(node.nodeValue) &&
+            node.parentNode.tagName !== 'PRE' &&
+            node.parentNode.tagName !== 'CODE') {
+              node.parentNode.removeChild(node);
+            }
+        break;
+      case 1: // Element node
+      case 9: // Document node
+        child = node.firstChild;
+        while (child) {
+          next = child.nextSibling;
+          removeBlankTextNodes(child);
+          child = next;
+        }
+        break;
+    }
+  }
 
   if (typeof exports === 'object') {
     exports.toMarkdown = toMarkdown;
