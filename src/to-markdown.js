@@ -18,7 +18,7 @@
 
     {
       name: tagName('br'),
-      replacement: '\n'
+      replacement: '  \n'
     },
 
     {

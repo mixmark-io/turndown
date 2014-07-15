@@ -25,6 +25,7 @@ $(function(){
     equal(toMarkdown("<h1>Hello world</h1>"), "# Hello world", "We expect <h1>Hello world</h1> to be converted to # Hello world");
     equal(toMarkdown("<h3>Hello world</h3>"), "### Hello world", "We expect <h3>Hello world</h3> to be converted to ### Hello world");
     equal(toMarkdown("<h6>Hello world</h6>"), "###### Hello world", "We expect <h6>Hello world</h6> to be converted to ###### Hello world");
+    equal(toMarkdown("<h4><i>Hello</i> world</h4>"), "#### _Hello_ world", "We expect <h4><i>Hello</i> world</h4> to be converted to #### Hello world");
 
     equal(toMarkdown("<h8>Hello world</h8>"), "<h8>Hello world</h8>", "We expect <h8>Hello world</h8> to be converted to <h8>Hello world</h8>");
   });
@@ -37,9 +38,9 @@ $(function(){
   });
 
   test("converting br elements", function() {
-    equal(toMarkdown("Hello<br />world"), "Hello\nworld", "We expect br elements to be converted to \n");
-    equal(toMarkdown("Hello<br/>world"), "Hello\nworld", "We expect br elements to be converted to \n");
-    equal(toMarkdown("Hello<br>world"), "Hello\nworld", "We expect br elements to be converted to \n");
+    equal(toMarkdown("Hello<br />world"), "Hello  \nworld", "We expect br elements to be converted to   \n");
+    equal(toMarkdown("Hello<br/>world"), "Hello  \nworld", "We expect br elements to be converted to   \n");
+    equal(toMarkdown("Hello<br>world"), "Hello  \nworld", "We expect br elements to be converted to   \n");
   });
 
   test("converting img elements", function() {
