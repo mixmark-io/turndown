@@ -8,20 +8,20 @@
 
 (function (global) {
 
-  var ELEMENTS = {
-    p: {
+  var ELEMENTS = [
+    {
       name: tagName('p'),
       replacement: function (node) {
         return '\n' + trim(node.innerHTML) + '\n\n';
       }
     },
 
-    br: {
+    {
       name: tagName('br'),
       replacement: '\n'
     },
 
-    headers: {
+    {
       name: tagName('h[1-6]'),
       replacement: function(node) {
         var hLevel = Number(node.tagName.charAt(1));
@@ -33,33 +33,33 @@
       }
     },
 
-    hr: {
+    {
       name: tagName('hr'),
       replacement: '\n* * *\n\n'
     },
 
-    em: {
+    {
       name: /^em$|^i$/i,
       replacement: function (node) {
         return '_' + trim(node.innerHTML) + '_';
       }
     },
 
-    strong: {
+    {
       name: /^strong$|^b$/i,
       replacement: function (node) {
         return '**' + trim(node.innerHTML) + '**';
       }
     },
 
-    code: {
+    {
       name: tagName('code'),
       replacement: function(node) {
         return '`' + node.innerHTML + '`';
       }
     },
 
-    a: {
+    {
       name: tagName('a'),
       replacement: function(node) {
         var href = node.getAttribute('href');
@@ -67,11 +67,18 @@
         var textPart = href ? '[' + node.innerHTML + ']' : '';
         var titlePart = title ? ' "'+ title +'"' : '';
 
-        return href ? textPart + '(' + href + titlePart + ')' : node;
+        if (href) {
+          return textPart + '(' + href + titlePart + ')';
+        }
+        else {
+          var dummy = document.createElement('div');
+          dummy.appendChild(node.cloneNode(true));
+          return dummy.innerHTML;
+        }
       }
     },
 
-    img: {
+    {
       name: tagName('img'),
       replacement: function(node) {
         var alt = node.alt || '';
@@ -81,7 +88,8 @@
         return src ? '![' + alt + ']' + '(' + src + titlePart + ')' : node;
       }
     },
-    pre: {
+
+    {
       name: tagName('pre'),
       replacement: function(node) {
         var innerHTML = node.innerHTML;
@@ -93,8 +101,46 @@
           return '';
         }
       }
+    },
+
+    {
+      name: tagName('blockquote'),
+      replacement: function (node) {
+        var innerHTML = trim(node.innerHTML);
+        innerHTML = innerHTML.replace(/\n{3,}/g, '\n\n');
+        innerHTML = innerHTML.replace(/^/gm, '> ');
+        return '\n' + innerHTML + '\n\n';
+      }
+    },
+
+    {
+      name: tagName('li'),
+      replacement: function (node) {
+        var innerHTML = node.innerHTML.replace(/^\s+/, '').replace(/\n/gm, '\n    ');
+        var prefix = '*   ';
+        var parent = node.parentNode;
+        var index = Array.prototype.indexOf.call(parent.childNodes, node) + 1;
+
+        prefix = /ol/i.test(parent.tagName) ? index + '.  ' : '*   ';
+        return prefix + innerHTML;
+      }
+    },
+
+    {
+      name: /^ul$|^ol$/i,
+      replacement: function (node) {
+        var strings = [];
+        for (var i = 0; i < node.childNodes.length; i++) {
+          strings.push(node.childNodes[i].nodeValue);
+        }
+
+        if (/li/i.test(node.parentNode.tagName)) {
+          return '\n' + strings.join('\n');
+        }
+        return '\n' + strings.join('\n') + '\n\n';
+      }
     }
-  };
+  ];
 
   var VOID_ELEMENTS = [
     'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
@@ -115,11 +161,11 @@
       throw 'first argument needs to be an HTML string or a DOM element';
     }
 
-    removeBlankTextNodes(clone);
+    removeBlankNodes(clone);
 
     var nodes = bfsOrder(clone);
 
-    // Loop through nodes in reverse (so deepest child element is first).
+    // Loop through nodes in reverse (so deepest child elements are first).
     // Replace nodes as necessary.
     for (var i = nodes.length - 1; i >= 0; i--) {
       var node = nodes[i];
@@ -127,7 +173,9 @@
       if (replacement) { node.parentNode.replaceChild(replacement, node); }
     }
 
-    return clone.innerHTML.replace(/^[\t\r\n]+|[\t\r\n]+$/g, '')
+    var output = decodeHtmlEntities(clone.innerHTML);
+
+    return output.replace(/^[\t\r\n]+|[\t\r\n\s]+$/g, '')
                           .replace(/\n\s+\n/g, '\n\n')
                           .replace(/\n{3,}/g, '\n\n');
   };
@@ -139,6 +187,13 @@
   function trim(string) {
     return string.replace(/^\s+|\s+$/g, '');
   }
+
+  var decodeHtmlEntities = function(str) {
+    return String(str).replace(/&amp;/g, '&')
+                      .replace(/&lt;/g, '<')
+                      .replace(/&gt;/g, '>')
+                      .replace(/&quot;/g, '"');
+  };
 
   function isDomElement(o) {
     return (
@@ -179,8 +234,8 @@
           return document.createTextNode('');
     }
 
-    for (var key in ELEMENTS) {
-      var tag = ELEMENTS[key];
+    for (var i = ELEMENTS.length - 1; i >= 0; i--) {
+      var tag = ELEMENTS[i];
       if (tag.name.test(node.tagName)) {
         var replacement = tag.replacement;
         var text;
@@ -201,11 +256,11 @@
     return null;
   }
 
-  function removeBlankTextNodes(node) {
+  function removeBlankNodes(node) {
     var child, next;
     switch (node.nodeType) {
       case 3: // Text node
-        if (/^\s{2,}$/.test(node.nodeValue) &&
+        if (/(^\s{2,}$)|^[\t\r\n\f]+$/.test(node.nodeValue) &&
             node.parentNode.tagName !== 'PRE' &&
             node.parentNode.tagName !== 'CODE') {
               node.parentNode.removeChild(node);
@@ -216,7 +271,7 @@
         child = node.firstChild;
         while (child) {
           next = child.nextSibling;
-          removeBlankTextNodes(child);
+          removeBlankNodes(child);
           child = next;
         }
         break;
