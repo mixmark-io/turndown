@@ -15,6 +15,10 @@ A basic implementation is there, but it's not yet fully bulletproof (contributio
 
     <script>toMarkdown('<h1>Hello world</h1>')</script>
 
+### Bower
+
+    bower install to-markdown
+
 ### Node.js
 
     npm install to-markdown
