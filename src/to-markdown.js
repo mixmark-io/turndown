@@ -12,7 +12,7 @@
     {
       name: tagName('p'),
       replacement: function (node) {
-        return '\n' + trim(node.innerHTML) + '\n\n';
+        return '\n' + node.innerHTML + '\n\n';
       }
     },
 
@@ -29,7 +29,7 @@
         for(var i = 0; i < hLevel; i++) {
           hPrefix += '#';
         }
-        return '\n' + hPrefix + ' ' + trim(node.innerHTML) + '\n\n';
+        return '\n' + hPrefix + ' ' + node.innerHTML + '\n\n';
       }
     },
 
@@ -41,14 +41,14 @@
     {
       name: /^em$|^i$/i,
       replacement: function (node) {
-        return '_' + trim(node.innerHTML) + '_';
+        return '_' + node.innerHTML + '_';
       }
     },
 
     {
       name: /^strong$|^b$/i,
       replacement: function (node) {
-        return '**' + trim(node.innerHTML) + '**';
+        return '**' + node.innerHTML + '**';
       }
     },
 
@@ -260,10 +260,15 @@
     var child, next;
     switch (node.nodeType) {
       case 3: // Text node
-        if (/(^\s{2,}$)|^[\t\r\n\f]+$/.test(node.nodeValue) &&
-            node.parentNode.tagName !== 'PRE' &&
+        if (node.parentNode.tagName !== 'PRE' &&
             node.parentNode.tagName !== 'CODE') {
-              node.parentNode.removeChild(node);
+              var value = node.nodeValue;
+              if (/\S/.test(value)) {
+                node.nodeValue = trim(value);
+              }
+              else {
+                node.parentNode.removeChild(node);
+              }
             }
         break;
       case 1: // Element node

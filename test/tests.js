@@ -35,6 +35,7 @@ $(function(){
     equal(toMarkdown("<hr/>"), "* * *", "We expect hr elements to be converted to * * *");
     equal(toMarkdown("<hr>"), "* * *", "We expect hr elements to be converted to * * *");
     equal(toMarkdown("<hr class='fancy' />"), "* * *", "We expect hr elements to be converted to * * *");
+    equal(toMarkdown("<hr></hr>"), "* * *", "We expect hr elements to be converted to * * *");
   });
 
   test("converting br elements", function() {
@@ -245,5 +246,37 @@ $(function(){
       ">     return shell_exec(\"echo $input | $markdown_script\");"
     ].join('\n');
     strictEqual(toMarkdown(html), md, "We expect html in blockquotes to be converted");
+  });
+
+  test("elements with text nodes containing leading or trailing whitespace", function() {
+    var html = [
+      "<h1>",
+      "    Some header text</h1>"
+    ].join('\n');
+    equal(toMarkdown(html), '# Some header text', "We expect leading whitespace to be removed");
+
+    html = [
+      "<ol>",
+      "  <li>Chapter One",
+      "    <ol>",
+      "      <li>Section One</li>",
+      "      <li>Section Two </li>",
+      "      <li>Section Three </li>",
+      "    </ol>",
+      "  </li>",
+      "  <li>Chapter Two</li>",
+      "  <li>Chapter Three  </li>",
+      "</ol>"
+    ].join('\n');
+
+    var md = [
+      "1.  Chapter One",
+      "    1.  Section One",
+      "    2.  Section Two",
+      "    3.  Section Three",
+      "2.  Chapter Two",
+      "3.  Chapter Three"
+    ].join('\n');
+    equal(toMarkdown(html), md, "We expect trailing whitespace to be removed");
   });
 });
