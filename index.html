@@ -2,26 +2,105 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>to-markdown.js - an HTML to Markdown converter written in javascript</title>
-<link rel="stylesheet" href="normalise.css"></link>
+<meta name="viewport" content="initial-scale=1">
+<title>to-markdown - an HTML to Markdown converter written in javascript</title>
+<link rel="stylesheet" href="bower_components/normalize.css/normalize.css"></link>
 <style>
+  .cf:before,
+  .cf:after {
+      content: " ";
+      display: table;
+  }
+
+  .cf:after {
+      clear: both;
+  }
+
+  .cf {
+      *zoom: 1;
+  }
+
+  * {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+
   body {
-    width: 751.538px;
+    background-color: #ccc;
     margin: 0 auto;
+    font-size: 14px;
     font-family: sans-serif;
     line-height: 1.4;
+    color: #333;
   }
-  .lock-x {
-    margin-right: 10px;
+
+  header {
+    padding: 1em;
+    overflow: hidden;
+    background-color: #fff;
   }
-  .lock-x textarea {
+
+  footer {
+    text-align: center;
+    color: #666;
+    text-shadow: 0 1px 0 #ddd;
+  }
+
+  a,
+  a:visited {
+    font-weight: 700;
+    color: #4A90E2;
+    text-decoration: none;
+  }
+
+  h1 {
+    float: left;
+    margin: 0;
+    font-size: 1em;
+  }
+
+  h2 {
+    color: #fff;
+    margin-bottom: 0;
+  }
+
+  .col {
+    padding: 0 10px;
+  }
+
+  textarea {
     width: 100%;
-    padding: 4px;
+    height: 600px;
+    margin: 0;
+    padding: .5em;
+    overflow: auto;
+    border: none;
+    background-color: #fff;
+    font-family: courier, monospace;
+    font-size: inherit;
+    color: inherit;
   }
-  .output {
-    border: 1px dashed #999;
-    padding: 4px;
-    min-height: px;
+
+  .input {
+    background: #333;
+    color: #fff;
+  }
+
+  @media (min-width: 768px) {
+    body {
+      font-size: 16px;
+    }
+
+    .col {
+      float: left;
+      width: 50%;
+      padding: 0 15px;
+    }
+
+    .row {
+      padding: 0 15px;
+    }
   }
 </style>
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
@@ -34,7 +113,7 @@
       $('.output').text(toMarkdown($input.val()));
     }
     updateOutput();
-    $(document).on('input keydown', $input, updateOutput);
+    $(document).on('input keydown', '.input', updateOutput);
   });
 </script>
 <script type="text/javascript">
@@ -52,14 +131,16 @@
 </script>
 </head>
 <body>
-  <h1>to-markdown.js</h1>
+  <header>
+    <h1>to-markdown</h1>
+    <a style="float: right" href="https://github.com/domchristie/to-markdown">Source on GitHub</a>
+  </header>
+  <div class="row cf">
+    <div class="col">
+      <h2>HTML</h2>
+      <textarea class="input" cols="100" rows="10"><h3>Some HTML</h3>
 
-  <h2>Try it</h2>
-  <h3>HTML input:</h3>
-  <div class="lock-x">
-    <textarea class="input" cols="100" rows="10"><h3>Some HTML</h3>
-
-<p>Hello world! This demonstrates <a href="https://github.com/domchristie/to-markdown">to-markdown.js</a> – an HTML to Markdown converter.</p>
+<p>Hello world! This demonstrates <a href="https://github.com/domchristie/to-markdown">to-markdown</a> – an HTML to Markdown converter.</p>
 
 <hr />
 
@@ -67,14 +148,15 @@
   <li>Number 1</li>
   <li>Number Two</li>
 </ol></textarea>
-  </div>
+    </div>
 
-  <h3>Markdown output:</h3>
-  <div class="lock-x">
-    <textarea class="output" cols="100" rows="10" class="output"></textarea>
+    <div class="col">
+      <h2>Markdown</h2>
+      <textarea readonly class="output" class="output"></textarea>
+    </div>
   </div>
-
-  <p><a href="https://github.com/domchristie/to-markdown">Source on GitHub</a></p>
-  <p><small>to-markdown is copyright &copy; 2011-14 <a href="http://domchristie.co.uk">Dom Christie</a> and is released under the MIT licence.</small></p>
+  <footer>
+    <p>to-markdown is copyright &copy; 2011-14 <a href="http://domchristie.co.uk">Dom Christie</a> and is released under the MIT licence.</p>
+  </footer>
 </body>
 </html>
