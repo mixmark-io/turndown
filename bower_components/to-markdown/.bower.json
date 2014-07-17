@@ -1,0 +1,35 @@
+{
+  "name": "to-markdown",
+  "version": "0.0.2",
+  "homepage": "https://github.com/domchristie/to-markdown",
+  "authors": [
+    "Dom Christie <christiedom@gmail.com>"
+  ],
+  "description": "An HTML to Markdown converter written in JavaScript",
+  "main": "src/to-markdown.js",
+  "keywords": [
+    "markdown",
+    "html"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "he": "~0.4.1"
+  },
+  "_release": "0.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.0.2",
+    "commit": "f2c51e4cf0f136e97cb1d65fd5376110d877d544"
+  },
+  "_source": "git://github.com/domchristie/to-markdown.git",
+  "_target": "0.0.2",
+  "_originalSource": "to-markdown"
+}

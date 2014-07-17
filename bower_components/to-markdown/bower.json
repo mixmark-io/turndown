@@ -1,0 +1,26 @@
+{
+  "name": "to-markdown",
+  "version": "0.0.2",
+  "homepage": "https://github.com/domchristie/to-markdown",
+  "authors": [
+    "Dom Christie <christiedom@gmail.com>"
+  ],
+  "description": "An HTML to Markdown converter written in JavaScript",
+  "main": "src/to-markdown.js",
+  "keywords": [
+    "markdown",
+    "html"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "he": "~0.4.1"
+  }
+}

@@ -24,8 +24,9 @@
     min-height: px;
   }
 </style>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script src="https://rawgithub.com/domchristie/to-markdown/master/src/to-markdown.js"></script>
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/to-markdown/src/to-markdown.js"></script>
+<script src="bower_components/he/he.js"></script>
 <script>
   $(function(){
     var $input = $('.input');
@@ -52,7 +53,7 @@
 </head>
 <body>
   <h1>to-markdown.js</h1>
-  
+
   <h2>Try it</h2>
   <h3>HTML input:</h3>
   <div class="lock-x">
@@ -67,13 +68,13 @@
   <li>Number Two</li>
 </ol></textarea>
   </div>
-  
+
   <h3>Markdown output:</h3>
   <div class="lock-x">
     <textarea class="output" cols="100" rows="10" class="output"></textarea>
   </div>
-  
+
   <p><a href="https://github.com/domchristie/to-markdown">Source on GitHub</a></p>
-  <p><small>to-markdown is copyright &copy; 2011 <a href="http://domchristie.co.uk">Dom Christie</a> and is released under the MIT licence.</small></p>
+  <p><small>to-markdown is copyright &copy; 2011-14 <a href="http://domchristie.co.uk">Dom Christie</a> and is released under the MIT licence.</small></p>
 </body>
 </html>
