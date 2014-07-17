@@ -264,7 +264,7 @@
             node.parentNode.tagName !== 'CODE') {
               var value = node.nodeValue;
               if (/\S/.test(value)) {
-                node.nodeValue = trim(value);
+                node.nodeValue = value.replace(/^[\n\r\t\f]+[\s]*|\s+$/gm, '');
               }
               else {
                 node.parentNode.removeChild(node);
