@@ -149,18 +149,15 @@
 
   var toMarkdown = function(input) {
 
+    if (typeof input !== 'string') {
+      throw 'first argument needs to be an HTML string';
+    }
+
+    // Escape potential ol triggers
+    input = input.replace(/(\d+)\. /g, '$1\\. ');
+
     var clone = document.createElement('div');
-
-    if (typeof input === 'string') {
-      clone.innerHTML = input;
-    }
-    else if (isDomElement(input)) {
-      clone.appendChild(input.cloneNode(true));
-    }
-    else {
-      throw 'first argument needs to be an HTML string or a DOM element';
-    }
-
+    clone.innerHTML = input;
     removeBlankNodes(clone);
 
     var nodes = bfsOrder(clone);
