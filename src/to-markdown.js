@@ -7,6 +7,7 @@
  */
 
 (function (global) {
+  'use strict';
 
   var ELEMENTS = [
     {
@@ -192,13 +193,6 @@
                       .replace(/&quot;/g, '"');
   };
 
-  function isDomElement(o) {
-    return (
-      typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
-      o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
-    );
-  }
-
   function tagName(regExp) {
     return new RegExp('^' + regExp + '$', 'i');
   }
@@ -228,7 +222,7 @@
     // Remove blank nodes
     if (VOID_ELEMENTS.indexOf(node.tagName.toLowerCase()) === -1 &&
         /^\s*$/i.test(node.innerHTML)) {
-          return document.createTextNode('');
+      return document.createTextNode('');
     }
 
     for (var i = ELEMENTS.length - 1; i >= 0; i--) {
@@ -259,14 +253,14 @@
       case 3: // Text node
         if (node.parentNode.tagName !== 'PRE' &&
             node.parentNode.tagName !== 'CODE') {
-              var value = node.nodeValue;
-              if (/\S/.test(value)) {
-                node.nodeValue = value.replace(/^[\n\r\t\f]+[\s]*|\s+$/gm, '');
-              }
-              else {
-                node.parentNode.removeChild(node);
-              }
-            }
+          var value = node.nodeValue;
+          if (/\S/.test(value)) {
+            node.nodeValue = value.replace(/^[\n\r\t\f]+[\s]*|\s+$/gm, '');
+          }
+          else {
+            node.parentNode.removeChild(node);
+          }
+        }
         break;
       case 1: // Element node
       case 9: // Document node
