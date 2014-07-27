@@ -276,7 +276,7 @@
     }
   }
 
-  if (typeof exports === 'object') {
+  if (isNode) {
     exports.toMarkdown = toMarkdown;
   }
   else {
