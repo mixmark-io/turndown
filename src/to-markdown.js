@@ -8,6 +8,8 @@
 
 (function (global) {
   'use strict';
+  var isNode = typeof module !== 'undefined' && module.exports;
+  var _document = isNode ? require('jsdom').jsdom() : document;
 
   var ELEMENTS = [
     {
@@ -72,7 +74,7 @@
           return textPart + '(' + href + titlePart + ')';
         }
         else {
-          var dummy = document.createElement('div');
+          var dummy = _document.createElement('div');
           dummy.appendChild(node.cloneNode(true));
           return dummy.innerHTML;
         }
@@ -157,7 +159,7 @@
     // Escape potential ol triggers
     input = input.replace(/(\d+)\. /g, '$1\\. ');
 
-    var clone = document.createElement('div');
+    var clone = _document.createElement('div');
     clone.innerHTML = input;
     removeBlankNodes(clone);
 
@@ -222,7 +224,7 @@
     // Remove blank nodes
     if (VOID_ELEMENTS.indexOf(node.tagName.toLowerCase()) === -1 &&
         /^\s*$/i.test(node.innerHTML)) {
-      return document.createTextNode('');
+      return _document.createTextNode('');
     }
 
     for (var i = ELEMENTS.length - 1; i >= 0; i--) {
@@ -241,7 +243,7 @@
           throw '`replacement` needs to be a string or a function';
         }
 
-        return document.createTextNode(text);
+        return _document.createTextNode(text);
       }
     }
     return null;
@@ -280,4 +282,4 @@
   else {
     global.toMarkdown = toMarkdown;
   }
-})(window);
+})(this);
