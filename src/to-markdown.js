@@ -6,16 +6,28 @@
  *
  */
 
-(function (global) {
+if (typeof he !== 'object' && typeof require === 'function') {
+  var he = require('he');
+}
+
+(function (root) {
   'use strict';
+
   var isNode = typeof module !== 'undefined' && module.exports;
-  var _document = isNode ? require('jsdom').jsdom() : document;
+  var _document;
+
+  if (isNode) {
+    _document = require('jsdom').jsdom();
+  }
+  else {
+    _document = document;
+  }
 
   var ELEMENTS = [
     {
       name: tagName('p'),
-      replacement: function (node) {
-        return '\n' + node.innerHTML + '\n\n';
+      replacement: function (innerHTML) {
+        return '\n' + innerHTML + '\n\n';
       }
     },
 
@@ -26,13 +38,13 @@
 
     {
       name: tagName('h[1-6]'),
-      replacement: function(node) {
+      replacement: function(innerHTML, node) {
         var hLevel = Number(node.tagName.charAt(1));
         var hPrefix = '';
         for(var i = 0; i < hLevel; i++) {
           hPrefix += '#';
         }
-        return '\n' + hPrefix + ' ' + node.innerHTML + '\n\n';
+        return '\n' + hPrefix + ' ' + innerHTML + '\n\n';
       }
     },
 
@@ -43,31 +55,31 @@
 
     {
       name: /^em$|^i$/i,
-      replacement: function (node) {
-        return '_' + node.innerHTML + '_';
+      replacement: function (innerHTML) {
+        return '_' + innerHTML + '_';
       }
     },
 
     {
       name: /^strong$|^b$/i,
-      replacement: function (node) {
-        return '**' + node.innerHTML + '**';
+      replacement: function (innerHTML) {
+        return '**' + innerHTML + '**';
       }
     },
 
     {
       name: tagName('code'),
-      replacement: function(node) {
-        return '`' + node.innerHTML + '`';
+      replacement: function(innerHTML) {
+        return '`' + innerHTML + '`';
       }
     },
 
     {
       name: tagName('a'),
-      replacement: function(node) {
+      replacement: function(innerHTML, node) {
         var href = node.getAttribute('href');
         var title = node.title;
-        var textPart = href ? '[' + node.innerHTML + ']' : '';
+        var textPart = href ? '[' + innerHTML + ']' : '';
         var titlePart = title ? ' "'+ title +'"' : '';
 
         if (href) {
@@ -83,7 +95,7 @@
 
     {
       name: tagName('img'),
-      replacement: function(node) {
+      replacement: function(innerHTML, node) {
         var alt = node.alt || '';
         var src = node.src || '';
         var title = node.title || '';
@@ -94,8 +106,7 @@
 
     {
       name: tagName('pre'),
-      replacement: function(node) {
-        var innerHTML = node.innerHTML;
+      replacement: function(innerHTML) {
         if(/^\s*\`/.test(innerHTML)) {
           innerHTML = innerHTML.replace(/\`/g, '');
           return '    ' + innerHTML.replace(/\n/g, '\n    ');
@@ -108,8 +119,8 @@
 
     {
       name: tagName('blockquote'),
-      replacement: function (node) {
-        var innerHTML = trim(node.innerHTML);
+      replacement: function (innerHTML) {
+        innerHTML = trim(innerHTML);
         innerHTML = innerHTML.replace(/\n{3,}/g, '\n\n');
         innerHTML = innerHTML.replace(/^/gm, '> ');
         return '\n' + innerHTML + '\n\n';
@@ -118,8 +129,8 @@
 
     {
       name: tagName('li'),
-      replacement: function (node) {
-        var innerHTML = node.innerHTML.replace(/^\s+/, '').replace(/\n/gm, '\n    ');
+      replacement: function (innerHTML, node) {
+        innerHTML = innerHTML.replace(/^\s+/, '').replace(/\n/gm, '\n    ');
         var prefix = '*   ';
         var parent = node.parentNode;
         var index = Array.prototype.indexOf.call(parent.childNodes, node) + 1;
@@ -131,7 +142,7 @@
 
     {
       name: /^ul$|^ol$/i,
-      replacement: function (node) {
+      replacement: function (innerHTML, node) {
         var strings = [];
         for (var i = 0; i < node.childNodes.length; i++) {
           strings.push(node.childNodes[i].nodeValue);
@@ -173,7 +184,7 @@
       if (replacement) { node.parentNode.replaceChild(replacement, node); }
     }
 
-    var output = decodeHtmlEntities(clone.innerHTML);
+    var output = he.decode(clone.innerHTML);
 
     return output.replace(/^[\t\r\n]+|[\t\r\n\s]+$/g, '')
                           .replace(/\n\s+\n/g, '\n\n')
@@ -187,13 +198,6 @@
   function trim(string) {
     return string.replace(/^\s+|\s+$/g, '');
   }
-
-  var decodeHtmlEntities = function(str) {
-    return String(str).replace(/&amp;/g, '&')
-                      .replace(/&lt;/g, '<')
-                      .replace(/&gt;/g, '>')
-                      .replace(/&quot;/g, '"');
-  };
 
   function tagName(regExp) {
     return new RegExp('^' + regExp + '$', 'i');
@@ -234,7 +238,7 @@
         var text;
 
         if (typeof replacement === 'function') {
-          text = replacement.call(ELEMENTS, node);
+          text = replacement(he.decode(node.innerHTML), node);
         }
         else if (typeof replacement === 'string') {
           text = replacement;
@@ -280,6 +284,6 @@
     exports.toMarkdown = toMarkdown;
   }
   else {
-    global.toMarkdown = toMarkdown;
+    root.toMarkdown = toMarkdown;
   }
 })(this);

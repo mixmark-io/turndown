@@ -22,5 +22,8 @@
   ],
   "devDependencies": {
     "qunit": "~1.14.0"
+  },
+  "dependencies": {
+    "he": "~0.4.1"
   }
 }

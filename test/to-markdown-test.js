@@ -62,11 +62,13 @@ test("converting anchor elements", function() {
 test("converting code blocks", function() {
   var codeHtml = [
     "<pre><code>def hello_world",
+    "  # 42 &lt; 9001",
     "  'Hello world!'",
     "end</code></pre>"
   ],
   codeMd = [
     "    def hello_world",
+    "      # 42 < 9001",
     "      'Hello world!'",
     "    end"
   ];
@@ -230,7 +232,7 @@ test("converting blockquotes", function() {
     "    <li>This is the second list item.</li>",
     "  </ol>",
     "  <p>Here's some example code:</p>",
-    "  <pre><code>return shell_exec(\"echo $input | $markdown_script\");</code></pre>",
+    "  <pre><code>return 1 &lt; 2 ? shell_exec(\"echo $input | $markdown_script\") : 0;</code></pre>",
     "</blockquote>"
   ].join('\n');
   md = [
@@ -241,7 +243,7 @@ test("converting blockquotes", function() {
     "> ",
     "> Here's some example code:",
     "> ",
-    ">     return shell_exec(\"echo $input | $markdown_script\");"
+    ">     return 1 < 2 ? shell_exec(\"echo $input | $markdown_script\") : 0;"
   ].join('\n');
   strictEqual(toMarkdown(html), md, "We expect html in blockquotes to be converted");
 });

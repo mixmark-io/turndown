@@ -13,6 +13,7 @@
     "test": "qunit -c ./src/to-markdown.js -t ./test/to-markdown-test.js"
   },
   "dependencies": {
+    "he": "^0.4.1",
     "jsdom": "^0.11.1"
   }
 }
