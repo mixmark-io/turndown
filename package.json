@@ -4,13 +4,13 @@
   "url": "http://domchristie.github.com/to-markdown/",
   "keywords": "markdown",
   "author": "Dom Christie",
-  "main": "src/to-markdown.js",
+  "main": "to-markdown.js",
   "version": "0.0.1",
   "devDependencies": {
     "qunit": "^0.7.2"
   },
   "scripts": {
-    "test": "qunit -c ./src/to-markdown.js -t ./test/to-markdown-test.js"
+    "test": "qunit -c ./to-markdown.js -t ./test/to-markdown-test.js"
   },
   "dependencies": {
     "he": "^0.4.1",

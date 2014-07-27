@@ -6,7 +6,7 @@
     "Dom Christie <christiedom@gmail.com>"
   ],
   "description": "An HTML to Markdown converter written in JavaScript",
-  "main": "src/to-markdown.js",
+  "main": "to-markdown.js",
   "keywords": [
     "markdown",
     "html"
