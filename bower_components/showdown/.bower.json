@@ -1,0 +1,15 @@
+{
+  "name": "showdown",
+  "homepage": "https://github.com/coreyti/showdown",
+  "version": "0.3.1",
+  "_release": "0.3.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.3.1",
+    "commit": "6b21d1497d6720e2f6279105b07764ce349b32ce"
+  },
+  "_source": "git://github.com/coreyti/showdown.git",
+  "_target": "~0.3.1",
+  "_originalSource": "showdown",
+  "_direct": true
+}
