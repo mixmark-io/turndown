@@ -1,8 +1,9 @@
 language: node_js
 node_js:
-  - 0.6
+  - 0.10
 
 before_script:
+  - bower install --dev
   - npm install --dev
 
 script: npm test
