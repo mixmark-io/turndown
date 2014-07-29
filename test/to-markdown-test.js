@@ -279,3 +279,40 @@ test("elements with text nodes containing leading or trailing whitespace", funct
   ].join('\n');
   equal(toMarkdown(html), md, "We expect trailing whitespace to be removed");
 });
+
+test("extending with custom converters", function () {
+  var actual = toMarkdown('<span style="font-style: italic">Hello world</span>', {
+    converters: [{
+      filter: function (node) {
+        return /span/i.test(node.tagName) && /italic/i.test(node.style.fontStyle);
+      },
+
+      replacement: function (innerHTML) {
+        return '_' + innerHTML + '_';
+      }
+    }]
+  });
+
+  equal(actual, '_Hello world_', 'We expect custom converters with a filter function to convert');
+
+  actual = toMarkdown('<h1>Hello world</h1>', {
+    converters: [{
+      filter: 'h1',
+
+      replacement: function (innerHTML) {
+        var underline = '';
+        for (var i = 0; i < innerHTML.length; i++) {
+          underline += '=';
+        }
+        return '\n' + innerHTML + '\n' + underline + '\n\n';
+      }
+    }]
+  });
+
+  var expected = [
+    "Hello world",
+    "==========="
+  ].join('\n');
+
+  equal(actual, expected, 'We expect custom converters to override existing converters');
+});

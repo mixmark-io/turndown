@@ -23,23 +23,25 @@ if (typeof he !== 'object' && typeof require === 'function') {
     _document = document;
   }
 
-  var ELEMENTS = [
+  var converters = [
     {
-      name: tagName('p'),
+      filter: 'p',
       replacement: function (innerHTML) {
         return '\n' + innerHTML + '\n\n';
       }
     },
 
     {
-      name: tagName('br'),
-      replacement: '  \n'
+      filter: 'br',
+      replacement: function () {
+        return '  \n';
+      }
     },
 
     {
-      name: tagName('h[1-6]'),
+      filter: 'h[1-6]',
       replacement: function(innerHTML, node) {
-        var hLevel = Number(node.tagName.charAt(1));
+        var hLevel = node.tagName.charAt(1);
         var hPrefix = '';
         for(var i = 0; i < hLevel; i++) {
           hPrefix += '#';
@@ -49,33 +51,35 @@ if (typeof he !== 'object' && typeof require === 'function') {
     },
 
     {
-      name: tagName('hr'),
-      replacement: '\n* * *\n\n'
+      filter: 'hr',
+      replacement: function () {
+        return '\n* * *\n\n';
+      }
     },
 
     {
-      name: /^em$|^i$/i,
+      filter: /^em$|^i$/i,
       replacement: function (innerHTML) {
         return '_' + innerHTML + '_';
       }
     },
 
     {
-      name: /^strong$|^b$/i,
+      filter: /^strong$|^b$/i,
       replacement: function (innerHTML) {
         return '**' + innerHTML + '**';
       }
     },
 
     {
-      name: tagName('code'),
+      filter: 'code',
       replacement: function(innerHTML) {
         return '`' + innerHTML + '`';
       }
     },
 
     {
-      name: tagName('a'),
+      filter: 'a',
       replacement: function(innerHTML, node) {
         var href = node.getAttribute('href');
         var title = node.title;
@@ -94,7 +98,7 @@ if (typeof he !== 'object' && typeof require === 'function') {
     },
 
     {
-      name: tagName('img'),
+      filter: 'img',
       replacement: function(innerHTML, node) {
         var alt = node.alt || '';
         var src = node.src || '';
@@ -105,7 +109,7 @@ if (typeof he !== 'object' && typeof require === 'function') {
     },
 
     {
-      name: tagName('pre'),
+      filter: 'pre',
       replacement: function(innerHTML) {
         if(/^\s*\`/.test(innerHTML)) {
           innerHTML = innerHTML.replace(/\`/g, '');
@@ -118,7 +122,7 @@ if (typeof he !== 'object' && typeof require === 'function') {
     },
 
     {
-      name: tagName('blockquote'),
+      filter: 'blockquote',
       replacement: function (innerHTML) {
         innerHTML = trim(innerHTML);
         innerHTML = innerHTML.replace(/\n{3,}/g, '\n\n');
@@ -128,7 +132,7 @@ if (typeof he !== 'object' && typeof require === 'function') {
     },
 
     {
-      name: tagName('li'),
+      filter: 'li',
       replacement: function (innerHTML, node) {
         innerHTML = innerHTML.replace(/^\s+/, '').replace(/\n/gm, '\n    ');
         var prefix = '*   ';
@@ -141,7 +145,7 @@ if (typeof he !== 'object' && typeof require === 'function') {
     },
 
     {
-      name: /^ul$|^ol$/i,
+      filter: /^ul$|^ol$/i,
       replacement: function (innerHTML, node) {
         var strings = [];
         for (var i = 0; i < node.childNodes.length; i++) {
@@ -161,10 +165,15 @@ if (typeof he !== 'object' && typeof require === 'function') {
     'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
   ];
 
-  var toMarkdown = function(input) {
+  var toMarkdown = function(input, options) {
 
     if (typeof input !== 'string') {
       throw 'first argument needs to be an HTML string';
+    }
+
+    // Add any custom converters to the front of the array
+    if (options && options.converters) {
+      converters = options.converters.concat(converters);
     }
 
     // Escape potential ol triggers
@@ -187,20 +196,20 @@ if (typeof he !== 'object' && typeof require === 'function') {
     var output = he.decode(clone.innerHTML);
 
     return output.replace(/^[\t\r\n]+|[\t\r\n\s]+$/g, '')
-                          .replace(/\n\s+\n/g, '\n\n')
-                          .replace(/\n{3,}/g, '\n\n');
+                 .replace(/\n\s+\n/g, '\n\n')
+                 .replace(/\n{3,}/g, '\n\n');
   };
 
   // =============
   // = Utilities =
   // =============
 
-  function trim(string) {
-    return string.replace(/^\s+|\s+$/g, '');
+  function isRegExp(obj) {
+    return Object.prototype.toString.call(obj) === '[object RegExp]';
   }
 
-  function tagName(regExp) {
-    return new RegExp('^' + regExp + '$', 'i');
+  function trim(string) {
+    return string.replace(/^\s+|\s+$/g, '');
   }
 
   // Flattens node tree into a single array
@@ -212,7 +221,7 @@ if (typeof he !== 'object' && typeof require === 'function') {
       outqueue.push(elem);
       var children = elem.childNodes;
       for (var i = 0 ; i < children.length; i++) {
-        if (children[i].nodeType == 1) {
+        if (children[i].nodeType === 1) {
           inqueue.push(children[i]);
         }
       }
@@ -221,7 +230,7 @@ if (typeof he !== 'object' && typeof require === 'function') {
     return outqueue;
   }
 
-  // Loops through all ELEMENTS, checking to see if the node tagName matches.
+  // Loops through all converters, checking to see if the node tagName matches.
   // Returns the replacement text node or null.
   function replacementForNode(node) {
 
@@ -231,26 +240,38 @@ if (typeof he !== 'object' && typeof require === 'function') {
       return _document.createTextNode('');
     }
 
-    for (var i = ELEMENTS.length - 1; i >= 0; i--) {
-      var tag = ELEMENTS[i];
-      if (tag.name.test(node.tagName)) {
-        var replacement = tag.replacement;
+    for (var i = 0; i < converters.length; i++) {
+      var converter = converters[i];
+
+      if (canConvertNode(node, converter.filter)) {
+        var replacement = converter.replacement;
         var text;
 
-        if (typeof replacement === 'function') {
-          text = replacement(he.decode(node.innerHTML), node);
+        if (typeof replacement !== 'function') {
+          throw '`replacement` needs to be a function that returns a string';
         }
-        else if (typeof replacement === 'string') {
-          text = replacement;
-        }
-        else {
-          throw '`replacement` needs to be a string or a function';
-        }
+
+        text = replacement(he.decode(node.innerHTML), node);
 
         return _document.createTextNode(text);
       }
     }
     return null;
+  }
+
+  function canConvertNode(node, filter) {
+    if (isRegExp(filter)) {
+      return filter.test(node.tagName);
+    }
+    else if (typeof filter === 'string') {
+      return new RegExp('^' + filter + '$', 'i').test(node.tagName);
+    }
+    else if (typeof filter === 'function') {
+      return filter(node);
+    }
+    else {
+      throw '`filter` needs to be a RegExp, string, or function';
+    }
   }
 
   function removeBlankNodes(node) {
