@@ -1,6 +1,6 @@
 {
   "name": "to-markdown",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "homepage": "https://github.com/domchristie/to-markdown",
   "authors": [
     "Dom Christie <christiedom@gmail.com>"
@@ -17,6 +17,7 @@
     "node_modules",
     "bower_components",
     "app/bower_components",
+    "package.json",
     "test",
     "tests"
   ],
