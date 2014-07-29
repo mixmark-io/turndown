@@ -4,7 +4,7 @@ An HTML to Markdown converter written in JavaScript.
 
 The basic API is as follows:
 
-    toMarkdown(stringOfHTML, options);
+    toMarkdown.makeMD(stringOfHTML, options);
 
 ## Installation
 
@@ -15,7 +15,7 @@ to-markdown depends on [he.js](https://github.com/mathiasbynens/he):
     <script src="PATH/TO/he.js"></script>
     <script src="PATH/TO/to-markdown.js"></script>
 
-    <script>toMarkdown('<h1>Hello world!</h1>')</script>
+    <script>toMarkdown.makeMD('<h1>Hello world!</h1>')</script>
 
 #### Bower
 
@@ -26,7 +26,7 @@ to-markdown depends on [he.js](https://github.com/mathiasbynens/he):
     <script src="PATH/TO/bower_components/he/he.js"></script>
     <script src="PATH/TO/bower_components/to-markdown/to-markdown.js"></script>
 
-    <script>toMarkdown('<h1>Hello world!</h1>')</script>
+    <script>toMarkdown.makeMD('<h1>Hello world!</h1>')</script>
 
 ### Node.js
 
@@ -35,7 +35,7 @@ to-markdown depends on [he.js](https://github.com/mathiasbynens/he):
 …
 
     var toMarkdown = require('to-markdown').toMarkdown;
-    toMarkdown('<h1>Hello world!</h1>');
+    toMarkdown.makeMD('<h1>Hello world!</h1>');
 
 
 ## Options
@@ -44,7 +44,7 @@ to-markdown depends on [he.js](https://github.com/mathiasbynens/he):
 
 to-markdown can be extended by passing in an array of converters to the options object. A converter object consists of a **filter** and a **replacement** function. For example, the following will treat `span`s with an italic font-style like an `em` element:
 
-    toMarkdown('<span style="font-style: italic">Hello world!</span>', {
+    toMarkdown.makeMD('<span style="font-style: italic">Hello world!</span>', {
       converters: [
         {
           filter: function (node) {

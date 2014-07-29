@@ -13,14 +13,16 @@ if (typeof he !== 'object' && typeof require === 'function') {
 (function (root) {
   'use strict';
 
-  var isNode = typeof module !== 'undefined' && module.exports;
+  var toMarkdown = {};
   var _document;
 
-  if (isNode) {
+  if (typeof module !== 'undefined' && module.exports) {
     _document = require('jsdom').jsdom();
+    exports.toMarkdown = toMarkdown;
   }
   else {
     _document = document;
+    root.toMarkdown = toMarkdown;
   }
 
   var converters = [
@@ -165,7 +167,7 @@ if (typeof he !== 'object' && typeof require === 'function') {
     'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
   ];
 
-  var toMarkdown = function(input, options) {
+  toMarkdown.makeMD = function(input, options) {
 
     if (typeof input !== 'string') {
       throw 'first argument needs to be an HTML string';
@@ -299,12 +301,5 @@ if (typeof he !== 'object' && typeof require === 'function') {
         }
         break;
     }
-  }
-
-  if (isNode) {
-    exports.toMarkdown = toMarkdown;
-  }
-  else {
-    root.toMarkdown = toMarkdown;
   }
 })(this);
