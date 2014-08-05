@@ -5,8 +5,8 @@
  * Licenced under the MIT licence
  *
  */
-define(function(require, exports, module){
-  var he = require('he');
+define(['require','he'], function(require, he){
+
   var toMarkdown = function(string) {
 
     var ELEMENTS = [
