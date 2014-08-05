@@ -5,9 +5,12 @@
  * Licenced under the MIT licence
  *
  */
-define(['require','he'], function(require, he){
+//define(['require','he'], function(require, he){
 
-  var toMarkdown = function(string) {
+(function(root){
+
+  var Factory = function(he){
+    var toMarkdown = function(string) {
 
     var ELEMENTS = [
       {
@@ -179,9 +182,25 @@ define(['require','he'], function(require, he){
     }
 
     return cleanUp(string);
-  };
-  if (typeof exports === 'object') {
-    exports.toMarkdown = toMarkdown;
+    };
+    return toMarkdown;
   }
-  return toMarkdown;
-})
+  
+
+  if (
+    typeof define == 'function' &&
+    typeof define.amd == 'object' &&
+    define.amd
+  ) {
+    define(['require', 'he'], function(he) {
+      return Factory(he);
+    });
+  } else { // in Rhino or a web browser
+    root.toMarkdown = Factory(root.he);
+  }
+
+
+}(this));
+
+
+//})
