@@ -8,9 +8,8 @@ A basic implementation is there, but it's not yet fully bulletproof (contributio
 
 ### Browser
 
-**to-markdown** depends on [he.js](https://github.com/mathiasbynens/he). Include both he.js and to-markdown:
+**to-markdown** depends on [he.js](https://github.com/mathiasbynens/he). Include to-markdown (using the one in the dist of course ;):
 
-    <script src="PATH/TO/he.js"></script>
     <script src="PATH/TO/to-markdown.js"></script>
 
     <script>toMarkdown('<h1>Hello world</h1>')</script>
