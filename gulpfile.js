@@ -9,11 +9,8 @@ gulp.task('clean', function(cb){
 });
 
 gulp.task('build', ['clean'], function(){
-	var files = mainBowerFiles();
-	files.push('./src/to-markdown.js');
-	gulp.src(files)
+	gulp.src('./src/to-markdown.js')
 	.pipe(uglify())
-	.pipe(concat('to-markdown.js'))
 	.pipe(gulp.dest('dist/'));
 })
 

@@ -1,11 +1,12 @@
 {
   "name": "to-markdown",
-  "version": "0.0.3",
-  "homepage": "https://github.com/domchristie/to-markdown",
+  "version": "0.0.4",
+  "homepage": "https://github.com/flovilmart/to-markdown",
   "authors": [
-    "Dom Christie <christiedom@gmail.com>"
+    "Dom Christie <christiedom@gmail.com>",
+    "Florent Vilmart<flo@icgw.io>"
   ],
-  "description": "An HTML to Markdown converter written in JavaScript",
+  "description": "An HTML to Markdown converter written in JavaScript with a require flavour",
   "main": "dist/to-markdown.js",
   "keywords": [
     "markdown",
