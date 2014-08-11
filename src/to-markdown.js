@@ -187,7 +187,7 @@ var toMarkdown = function(string) {
 };
 
 if (typeof exports === 'object') {
-  module.exports = toMarkdown;
+  exports = module.exports = toMarkdown;
 }
 else if (typeof define === 'function' && define.amd) {
   define(function() {
