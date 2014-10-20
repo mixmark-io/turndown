@@ -82,6 +82,36 @@ exports['converting code blocks'] = function(test) {
   test.done();
 };
 
+exports['converting multiple code blocks'] = function(test) {
+  var codeHtml = [
+      "<pre><code>def foo",
+      "  # 42 &lt; 9001",
+      "  'Hello world!'",
+      "end</code></pre>",
+      "<p>next:</p>",
+      "<pre><code>def bar",
+      "  # 42 &lt; 9001",
+      "  'Hello world!'",
+      "end</code></pre>"
+    ],
+    codeMd = [
+      "    def foo",
+      "      # 42 < 9001",
+      "      'Hello world!'",
+      "    end",
+      "",
+      "next:",
+      "",
+      "    def bar",
+      "      # 42 < 9001",
+      "      'Hello world!'",
+      "    end"
+    ];
+  test.equal(toMarkdown(codeHtml.join('\n')), codeMd.join('\n'), "We expect code blocks to be converted");
+
+  test.done();
+};
+
 exports['converting list elements'] = function(test) {
   test.equal(toMarkdown("<ol>\n\t<li>Hello world</li>\n\t<li>Lorem ipsum</li>\n</ol>"), "1.  Hello world\n2.  Lorem ipsum", "We expect ol elements to be converted properly");
   test.equal(toMarkdown("<ul>\n\t<li>Hello world</li>\n\t<li>Lorem ipsum</li>\n</ul>"), "*   Hello world\n*   Lorem ipsum", "We expect ul elements with line breaks and tabs to be converted properly");
