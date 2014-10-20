@@ -75,6 +75,34 @@ test("converting code blocks", function() {
   equal(toMarkdown(codeHtml.join('\n')), codeMd.join('\n'), "We expect code blocks to be converted");
 });
 
+test("converting multiple code blocks", function() {
+  var codeHtml = [
+      "<pre><code>def foo",
+      "  # 42 &lt; 9001",
+      "  'Hello world!'",
+      "end</code></pre>",
+      "<p>next:</p>",
+      "<pre><code>def bar",
+      "  # 42 &lt; 9001",
+      "  'Hello world!'",
+      "end</code></pre>"
+    ],
+    codeMd = [
+      "    def foo",
+      "      # 42 < 9001",
+      "      'Hello world!'",
+      "    end",
+      "",
+      "next:",
+      "",
+      "    def bar",
+      "      # 42 < 9001",
+      "      'Hello world!'",
+      "    end"
+    ];
+  equal(toMarkdown(codeHtml.join('\n')), codeMd.join('\n'), "We expect multiple code blocks to be converted");
+});
+
 test("converting list elements", function() {
   equal(toMarkdown('1986. What a great season.'), '1986\\. What a great season.','We expect numbers that could trigger an ol to be escaped');
   equal(toMarkdown("<ol>\n\t<li>Hello world</li>\n\t<li>Lorem ipsum</li>\n</ol>"), "1.  Hello world\n2.  Lorem ipsum", "We expect ol elements to be converted properly");
