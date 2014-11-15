@@ -149,9 +149,11 @@ var toMarkdown = function(string) {
             return prefix + innerHTML;
           });
         }
+        lis[i] = lis[i].replace(/(.) +$/m, '$1');
       }
       return lis.join('\n');
     });
+
     return '\n\n' + html.replace(/[ \t]+\n|\s+$/g, '');
   }
 
