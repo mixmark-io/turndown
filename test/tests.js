@@ -1,3 +1,8 @@
+test("converting div elements", function() {
+  equal(toMarkdown("Lorem<div>ipsum</div>"), "Lorem\n\nipsum", "We expect div tags to be wrapped with two line breaks");
+  equal(toMarkdown("<div>Lorem ipsum</div>"), "Lorem ipsum", "We expect p tags to be wrapped with two line breaks");
+});
+
 test("converting p elements", function() {
   equal(toMarkdown("<p>Lorem ipsum</p>"), "Lorem ipsum", "We expect p tags to be wrapped with two line breaks");
   equal(toMarkdown("<p class='intro'>Lorem ipsum</p>"), "Lorem ipsum", "We expect p tags to be wrapped with two line breaks");
