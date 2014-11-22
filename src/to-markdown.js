@@ -74,6 +74,30 @@ var toMarkdown = function(string) {
             title = attrs.match(attrRegExp('title'));
         return '![' + (alt && alt[1] ? alt[1] : '') + ']' + '(' + src[1] + (title && title[1] ? ' "' + title[1] + '"' : '') + ')';
       }
+    },
+    {
+      patterns: 'table',
+      replacement: function(str, attrs, innerHTML) {
+          var sRc = "";
+          var aRows = innerHTML.split("<tr>");
+          for(var nRow = 1; nRow < aRows.length; nRow++){
+            var aCols = aRows[nRow].split(/<t[dh]>/);
+            var nCol = 1;
+            for(; nCol < aCols.length; nCol++){
+                if(nCol > 1) sRc += "|";
+                sRc += aCols[nCol].replace(/<\/t[dh]>[.\s\S]*$/, "");
+            }
+            if(nRow == 1){
+                sRc += "\n";
+                for(var n= 0; n < nCol - 1; n++){
+                    if(n != 0) sRc += "|";
+                    sRc += "-";
+                }
+            }
+            sRc += "\n";
+          }
+        return sRc;
+      }
     }
   ];
 

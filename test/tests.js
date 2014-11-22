@@ -275,3 +275,28 @@ test("converting blockquotes", function() {
   ].join('\n');
   strictEqual(toMarkdown(html), md, "We expect HTML in blockquotes to be converted");
 });
+
+test("converting table", function() {
+  var html = [
+    "<table>",
+    "<thead>",
+    "<tr>",
+    "<th>Col 1</th>",
+    "<th>Col 2</th>",
+    "</tr>",
+    "</thead>",
+    "<tbody>",
+    "<tr>",
+    "<td>1</td>",
+    "<td>2</td>",
+    "</tr>",
+    "</tbody>",
+    "</table>"
+  ].join('\n');
+  var md = [
+    "Col 1|Col 2",
+    "-|-",
+    "1|2"
+  ].join('\n');
+  equal(toMarkdown(html), md, "We expect tables to be converted");
+});
