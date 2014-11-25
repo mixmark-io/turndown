@@ -37,9 +37,9 @@ test("converting hr elements", function() {
 });
 
 test("converting br elements", function() {
-  equal(toMarkdown("Hello<br />world"), "Hello\nworld", "We expect br elements to be converted to \n");
-  equal(toMarkdown("Hello<br/>world"), "Hello\nworld", "We expect br elements to be converted to \n");
-  equal(toMarkdown("Hello<br>world"), "Hello\nworld", "We expect br elements to be converted to \n");
+  equal(toMarkdown("Hello<br />world"), "Hello  \nworld", "We expect br elements to be converted to: two spaces \n");
+  equal(toMarkdown("Hello<br/>world"), "Hello  \nworld", "We expect br elements to be converted to: two spaces \n");
+  equal(toMarkdown("Hello<br>world"), "Hello  \nworld", "We expect br elements to be converted to: two spaces \n");
 });
 
 test("converting img elements", function() {
