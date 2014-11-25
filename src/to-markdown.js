@@ -22,7 +22,7 @@ var toMarkdown = function(string) {
     {
       patterns: 'br',
       type: 'void',
-      replacement: '\n'
+      replacement: '  \n'
     },
     {
       patterns: 'h([1-6])',
