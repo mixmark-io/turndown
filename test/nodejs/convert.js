@@ -11,7 +11,7 @@ exports['converting emphasis elements'] = function(test) {
   test.equal(toMarkdown("<b>Hello world</b>"), "**Hello world**", "We expect <b>Hello world</b> to be converted to **Hello world**");
   test.equal(toMarkdown("<strong>Hello world</strong>"), "**Hello world**", "We expect <strong>Hello world</strong> to be converted to **Hello world**");
   test.equal(toMarkdown("<b></b>"), "", "We expect b tags to be removed");
-    
+
   test.equal(toMarkdown("<i>Hello world</i>"), "_Hello world_", "We expect <i>Hello world</i> to be converted to _Hello world_");
   test.equal(toMarkdown("<em>Hello world</em>"), "_Hello world_", "We expect <em>Hello world</em> to be converted to _Hello world_");
   test.equal(toMarkdown("<em id='one' class='cowabunga'>Hello world</em>"), "_Hello world_", "We expect <em id='one' class='cowabunga'>Hello world</em> to be converted to _Hello world_");
@@ -31,7 +31,7 @@ exports['converting heading elements'] = function(test) {
   test.equal(toMarkdown("<h1>Hello world</h1>"), "# Hello world", "We expect <h1>Hello world</h1> to be converted to # Hello world");
   test.equal(toMarkdown("<h3>Hello world</h3>"), "### Hello world", "We expect <h3>Hello world</h3> to be converted to ### Hello world");
   test.equal(toMarkdown("<h6>Hello world</h6>"), "###### Hello world", "We expect <h6>Hello world</h6> to be converted to ###### Hello world");
-    
+
   test.equal(toMarkdown("<h8>Hello world</h8>"), "<h8>Hello world</h8>", "We expect <h8>Hello world</h8> to be converted to <h8>Hello world</h8>");
 
   test.done();
@@ -135,7 +135,34 @@ exports['converting list elements'] = function(test) {
   ].join('\n');
 
   test.equal(toMarkdown(numsToTriggerOlHtml), numsToTriggerOlMd, 'We expect only the numbers that could trigger an ol to be escaped');
-    
+
+  var lisWithTrailingWhitespaceHtml = [
+    "<ul>",
+    "  <li>Hello world. </li>", // Sentences
+    "  <li>Lorem   </li>", // Phrases
+    "  <li>Take 5 </li>", // Numbers
+    "  <li>Foo!   </li>", // Special Characters
+    "  <li>", // Multilined
+    "    Bar ",
+    "  </li>",
+    "  <li>", // Bizarre formatting
+    "    <strong>Buz </strong> </li>",
+    "  <li>Anchor</li>",
+    "</ul>"
+  ].join('\n'),
+
+  lisWithTrailingWhitespaceMd = [
+    "*   Hello world.",
+    "*   Lorem",
+    "*   Take 5",
+    "*   Foo!",
+    "*   Bar",
+    "*   **Buz **",
+    "*   Anchor",
+  ].join('\n');
+
+  test.equal(toMarkdown(lisWithTrailingWhitespaceHtml), lisWithTrailingWhitespaceMd,'We expect list items with trailing whitespace to be converted');
+
   var lisWithPsHtml = [
     "<ol>",
     "  <li>",
@@ -147,7 +174,7 @@ exports['converting list elements'] = function(test) {
     "  </li>",
     "</ol>"
   ].join('\n'),
-  
+
   lisWithPsMd = [
     "1.  This is a list item with two paragraphs. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.",
     "",
@@ -155,9 +182,9 @@ exports['converting list elements'] = function(test) {
     "",
     "2.  Suspendisse id sem consectetuer libero luctus adipiscing."
   ].join('\n');
-  
+
   test.equal(toMarkdown(lisWithPsHtml), lisWithPsMd,'We expect lists with paragraphs to be converted');
-  
+
   var nestedListHtml = [
     "<ul>",
     "  <li>This is a list item at root level</li>",
@@ -189,7 +216,7 @@ exports['converting list elements'] = function(test) {
     "*   This is a third item at root level"
   ].join('\n');
   test.equal(toMarkdown(nestedListHtml), nestedListMd, "We expect nested lists to be converted properly");
-  
+
   nestedListHtml = [
     "<ul>",
     "  <li>This is a list item at root level</li>",
@@ -221,7 +248,7 @@ exports['converting list elements'] = function(test) {
     "*   This is a third item at root level"
   ].join('\n');
   test.equal(toMarkdown(nestedListHtml), nestedListMd, "We expect nested lists to be converted properly");
-  
+
   var html = [
     "<ul>",
     "  <li>",
@@ -237,7 +264,7 @@ exports['converting list elements'] = function(test) {
     "",
     "    > This is a blockquote inside a list item."
   ].join('\n');
-  
+
   // needs fixing: see https://github.com/domchristie/to-markdown/issues/2
   test.equal(toMarkdown(html), md, "We expect lists with blockquotes to be converted");
 
@@ -258,7 +285,7 @@ exports['converting blockquotes'] = function(test) {
     "> Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing."
   ].join('\n');
   test.equal(toMarkdown(html), md, "We expect blockquotes with two paragraphs to be converted");
-  
+
   html = [
     "<blockquote>",
     "  <p>This is the first level of quoting.</p>",
@@ -278,7 +305,7 @@ exports['converting blockquotes'] = function(test) {
     "> Back to the first level."
   ].join('\n');
   test.equal(toMarkdown(html), md, "We expect nested blockquotes to be converted");
-  
+
   html = [
     "<blockquote>",
     "  <h2>This is a header.</h2>",
@@ -301,6 +328,6 @@ exports['converting blockquotes'] = function(test) {
     ">     return shell_exec(\"echo $input | $markdown_script\");"
   ].join('\n');
   test.equal(toMarkdown(html), md, "We expect html in blockquotes to be converted");
-  
+
   test.done();
 };
