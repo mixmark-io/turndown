@@ -72,7 +72,7 @@ var toMarkdown = function(string) {
         var src = attrs.match(attrRegExp('src')),
             alt = attrs.match(attrRegExp('alt')),
             title = attrs.match(attrRegExp('title'));
-        return '![' + (alt && alt[1] ? alt[1] : '') + ']' + '(' + src[1] + (title && title[1] ? ' "' + title[1] + '"' : '') + ')';
+        return src ? '![' + (alt && alt[1] ? alt[1] : '') + ']' + '(' + src[1] + (title && title[1] ? ' "' + title[1] + '"' : '') + ')' : str;
       }
     }
   ];

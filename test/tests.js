@@ -50,6 +50,7 @@ test("converting img elements", function() {
 
   equal(toMarkdown("<img src='http://example.com/logo.png' alt='Example logo' />"), "![Example logo](http://example.com/logo.png)", "We expect img elements to be converted properly with alt attrs");
   equal(toMarkdown("<img src='http://example.com/logo.png' alt='Example logo' title='Example title' />"), "![Example logo](http://example.com/logo.png \"Example title\")", "We expect img elements to be converted properly with alt and title attrs");
+  equal(toMarkdown("<img>"), "<img>", "img tags without a src should not be converted");
 });
 
 test("converting anchor elements", function() {
