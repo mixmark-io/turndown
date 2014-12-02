@@ -50,13 +50,13 @@ var toMarkdown = function(string) {
     {
       patterns: ['b', 'strong'],
       replacement: function(str, attrs, innerHTML) {
-        return innerHTML ? '**' + innerHTML + '**' : '';
+        return innerHTML ? emphasizeString(innerHTML, '**') : '';
       }
     },
     {
       patterns: ['i', 'em'],
       replacement: function(str, attrs, innerHTML) {
-        return innerHTML ? '_' + innerHTML + '_' : '';
+        return innerHTML ? emphasizeString(innerHTML, '_') : '';
       }
     },
     {
@@ -105,6 +105,17 @@ var toMarkdown = function(string) {
 
   function attrRegExp(attr) {
     return new RegExp(attr + '\\s*=\\s*["\']?([^"\']*)["\']?', 'i');
+  }
+
+  function emphasizeString(string, emphChar) {
+    // ensure that whitespaces are placed outside of emphasized element
+    var trimmedString = trim(string);
+    var index = string.indexOf(trimmedString);
+    var leadingWhiteSpaces = string.substring(0,index);
+    var trailingWhiteSpaces = string.substring(index + trimmedString.length, string.length);
+    var outputstring = leadingWhiteSpaces + emphChar + trimmedString + emphChar + trailingWhiteSpaces;
+
+    return outputstring
   }
 
   // Pre code blocks
@@ -181,6 +192,14 @@ var toMarkdown = function(string) {
     string = string.replace(/\n\s+\n/g, '\n\n');
     string = string.replace(/\n{3,}/g, '\n\n'); // limit consecutive linebreaks to 2
     return string;
+  }
+
+  function trim(string) {
+    var string = string.replace(/^\s\s*/, ''),
+      ws = /\s/,
+      i = string.length;
+    while (ws.test(string.charAt(--i)));
+    return string.slice(0, i + 1);
   }
 
   return cleanUp(string);

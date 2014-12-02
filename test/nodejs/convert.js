@@ -17,6 +17,11 @@ exports['converting emphasis elements'] = function(test) {
   test.equal(toMarkdown("<em id='one' class='cowabunga'>Hello world</em>"), "_Hello world_", "We expect <em id='one' class='cowabunga'>Hello world</em> to be converted to _Hello world_");
   test.equal(toMarkdown("<em id='one' class='cowabunga'></em>"), "", "We expect empty em tags to be removed");
 
+  test.equal(toMarkdown("<b> Hello world </b>"), " **Hello world** ", "We expect whitespaces to be placed outside of emphasis");
+  test.equal(toMarkdown("<b>Hello world </b>"), "**Hello world** ", "We expect whitespaces to be placed outside of emphasis");
+  test.equal(toMarkdown("<b> Hello world</b>"), " **Hello world**", "We expect whitespaces to be placed outside of emphasis");
+  test.equal(toMarkdown("<em> Hello world </em>"), " _Hello world_ ", "We expect whitespaces to be placed outside of emphasis");
+
   test.done();
 };
 
