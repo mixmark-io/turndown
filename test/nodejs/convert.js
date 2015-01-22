@@ -331,3 +331,29 @@ exports['converting blockquotes'] = function(test) {
 
   test.done();
 };
+
+exports['converting table'] = function(test) {
+  var html = [
+     "<table>",
+    "<thead>",
+    "<tr>",
+    "<th>Col 1</th>",
+    "<th>Col 2</th>",
+    "</tr>",
+    "</thead>",
+    "<tbody>",
+    "<tr>",
+    "<td>1</td>",
+    "<td>2</td>",
+    "</tr>",
+    "</tbody>",
+    "</table>"
+  ].join('\n');
+  var md = [
+    "Col 1|Col 2",
+    "-|-",
+    "1|2"
+  ].join('\n');
+  test.equal(toMarkdown(html), md, "We expect tables to be converted");
+  test.done();
+};
