@@ -12,6 +12,12 @@ test("converting emphasis elements", function() {
   equal(toMarkdown("<em>Hello world</em>"), "_Hello world_", "We expect <em>Hello world</em> to be converted to _Hello world_");
   equal(toMarkdown("<em id='one' class='cowabunga'>Hello world</em>"), "_Hello world_", "We expect <em id='one' class='cowabunga'>Hello world</em> to be converted to _Hello world_");
   equal(toMarkdown("<em id='one' class='cowabunga'></em>"), "", "We expect empty em tags to be removed");
+
+  // testing for whitespace support
+  equal(toMarkdown("<b> Hello world </b>"), " **Hello world** ", "We expect <b> Hello world </b> to be converted to  **Hello world** ");
+  equal(toMarkdown("<b>Hello world </b>"), "**Hello world** ", "We expect <b>Hello world </b> to be converted to **Hello world** ");
+  equal(toMarkdown("<b> Hello world</b>"), "**Hello world** ", "We expect <b> Hello world </b> to be converted to  **Hello world** ");
+  equal(toMarkdown("<em> Hello world </em>"), "_Hello world_", "We expect <em> Hello world </em> to be converted to  _Hello world_ ");
 });
 
 test("converting inline code elements", function() {
