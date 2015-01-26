@@ -104,7 +104,7 @@ var toMarkdown = function(string) {
   }
 
   function attrRegExp(attr) {
-    return new RegExp(attr + '\\s*=\\s*["\']?([^"\']*)["\']?', 'i');
+    return new RegExp(attr + '\\s*=\\s*(?:(?:"(.*?)")|(?:\'(.*?)\'))?', 'i');
   }
 
   // Pre code blocks
