@@ -141,7 +141,9 @@ var toMarkdown = function(string) {
         if(lis[i]) {
           var prefix = (listType === 'ol') ? (i + 1) + ".  " : "*   ";
           lis[i] = lis[i].replace(/\s*<li[^>]*>([\s\S]*)/i, function(str, innerHTML) {
-
+            innerHTML = innerHTML.replace(/\s*<input[^>]*?(checked[^>]*)?type=['"]?checkbox['"]?[^>]>/, function(inputStr, checked){
+                  return checked ? '[X]' : '[ ]';
+            });
             innerHTML = innerHTML.replace(/^\s+/, '');
             innerHTML = innerHTML.replace(/\n\n/g, '\n\n    ');
             // indent nested lists
