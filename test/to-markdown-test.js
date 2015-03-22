@@ -78,6 +78,33 @@ test('pre/code', function() {
     '    end'
   ];
   equal(toMarkdown(codeHtml.join('\n')), codeMd.join('\n'), 'We expect code blocks to be converted');
+
+  codeHtml = [
+    '<pre><code>def foo',
+    '  # 42 &lt; 9001',
+    '  \'Hello world!\'',
+    'end</code></pre>',
+    '<p>next:</p>',
+    '<pre><code>def bar',
+    '  # 42 &lt; 9001',
+    '  \'Hello world!\'',
+    'end</code></pre>'
+  ].join('\n');
+
+  codeMd = [
+    '    def foo',
+    '      # 42 < 9001',
+    '      \'Hello world!\'',
+    '    end',
+    '',
+    'next:',
+    '',
+    '    def bar',
+    '      # 42 < 9001',
+    '      \'Hello world!\'',
+    '    end'
+  ].join('\n');
+  equal(toMarkdown(codeHtml), codeMd, 'We expect multiple code blocks to be converted');
 });
 
 test('list', function() {
