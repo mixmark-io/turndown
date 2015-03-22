@@ -54,6 +54,7 @@ test('img', function() {
 
   equal(toMarkdown('<img src="http://example.com/logo.png" alt="Example logo" />'), '![Example logo](http://example.com/logo.png)', 'We expect img elements to be converted properly with alt attrs');
   equal(toMarkdown('<img src="http://example.com/logo.png" alt="Example logo" title="Example title" />'), '![Example logo](http://example.com/logo.png "Example title")', 'We expect img elements to be converted properly with alt and title attrs');
+  equal(toMarkdown('<img>'), '', 'We expect an image with no src to be removed.');
 });
 
 test('anchor', function() {
