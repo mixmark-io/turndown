@@ -281,7 +281,7 @@ test('blockquote', function() {
 });
 
 test('comment', function () {
-  equal(toMarkdown('<!-- comment -->'), ''), 'We expect comment nodes to be removed.';
+  equal(toMarkdown('<!-- comment -->'), '', 'We expect comment nodes to be removed.');
 });
 
 test('elements with text nodes containing leading or trailing whitespace', function() {
