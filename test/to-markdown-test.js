@@ -252,6 +252,10 @@ test('blockquote', function() {
   strictEqual(toMarkdown(html), md, 'We expect html in blockquotes to be converted');
 });
 
+test('comment', function () {
+  equal(toMarkdown('<!-- comment -->'), ''), 'We expect comment nodes to be removed.';
+});
+
 test('elements with text nodes containing leading or trailing whitespace', function() {
   var html = [
     '<h1>',

@@ -125,6 +125,9 @@ function removeBlankNodes(node) {
         }
       }
       break;
+    case 8: // Comment node
+      node.parentNode.removeChild(node);
+      break;
     case 1: // Element node
     case 9: // Document node
       child = node.firstChild;
