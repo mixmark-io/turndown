@@ -7,7 +7,7 @@
   "main": "to-markdown.js",
   "version": "0.0.1",
   "scripts": {
-    "start": "watchify -s toMarkdown -do dist/to-markdown.js to-markdown.js -v",
+    "start": "watchify -s toMarkdown -o dist/to-markdown.js to-markdown.js -v",
     "test": "qunit -c ./to-markdown.js -t ./test/to-markdown-test.js"
   },
   "devDependencies": {
