@@ -246,6 +246,18 @@ test('list', function() {
   ].join('\n');
 
   equal(toMarkdown(lisWithTrailingWhitespaceHtml), lisWithTrailingWhitespaceMd, 'We expect list items with trailing whitespace to be converted');
+
+  lisWithTrailingWhitespaceHtml = [
+    '<ol>',
+    '  <li> first text',
+    '                      some text',
+    '  </li>',
+    '</ol>'].join('\n');
+
+  lisWithTrailingWhitespaceMd = [
+    '1.  first text some text'
+  ].join('\n');
+  equal(toMarkdown(lisWithTrailingWhitespaceHtml), lisWithTrailingWhitespaceMd, 'We expect list items with trailing whitespace to be converted');
 });
 
 test('blockquote', function() {

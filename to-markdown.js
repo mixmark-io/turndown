@@ -118,7 +118,9 @@ function removeBlankNodes(node) {
       if (node.parentNode.tagName !== 'PRE' && node.parentNode.tagName !== 'CODE') {
         var value = node.nodeValue;
         if (/\S/.test(value)) {
-          node.nodeValue = value.replace(/^[\n\r\t\f]+[\s]*|\s+$/gm, '');
+          node.nodeValue = value.replace(/^[\n\r\t\f]+\s*|\s+$/gm, '')
+                                .replace(/[\n\r\t\f]+/gm, ' ')
+                                .replace(/ {2,}/gm, ' ');
         }
         else {
           node.parentNode.removeChild(node);
