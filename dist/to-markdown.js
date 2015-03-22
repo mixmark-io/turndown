@@ -10,7 +10,7 @@ else {
 
 module.exports = _document;
 
-},{"jsdom":4}],2:[function(require,module,exports){
+},{"jsdom":6}],2:[function(require,module,exports){
 'use strict';
 
 var _document = require('./document');
@@ -162,8 +162,6 @@ exports.trim = function (string) {
 };
 
 },{}],4:[function(require,module,exports){
-
-},{}],5:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.4.1 by @mathias | MIT license */
 ;(function(root) {
@@ -492,7 +490,7 @@ exports.trim = function (string) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /*
  * to-markdown - an HTML to Markdown converter
  *
@@ -637,5 +635,7 @@ function removeBlankNodes(node) {
   }
 }
 
-},{"./lib/document":1,"./lib/md-converters":2,"./lib/utilities":3,"he":5}]},{},[6])(6)
+},{"./lib/document":1,"./lib/md-converters":2,"./lib/utilities":3,"he":4}],6:[function(require,module,exports){
+
+},{}]},{},[5])(5)
 });
