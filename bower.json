@@ -6,7 +6,7 @@
     "Dom Christie <christiedom@gmail.com>"
   ],
   "description": "An HTML to Markdown converter written in JavaScript",
-  "main": "to-markdown.js",
+  "main": "dist/to-markdown.js",
   "keywords": [
     "markdown",
     "html"
@@ -23,8 +23,5 @@
   ],
   "devDependencies": {
     "qunit": "~1.14.0"
-  },
-  "dependencies": {
-    "he": "~0.4.1"
   }
 }
