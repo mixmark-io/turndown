@@ -192,6 +192,33 @@ test('list', function() {
 
   // needs fixing: see https://github.com/domchristie/to-markdown/issues/2
   equal(toMarkdown(html), md, 'We expect lists with blockquotes to be converted');
+
+  var lisWithTrailingWhitespaceHtml = [
+    '<ul>',
+    '  <li>Hello world. </li>', // Sentences
+    '  <li>Lorem   </li>', // Phrases
+    '  <li>Take 5 </li>', // Numbers
+    '  <li>Foo!   </li>', // Special Characters
+    '  <li>', // Multilined
+    '    Bar ',
+    '  </li>',
+    '  <li>', // Bizarre formatting
+    '    <strong>Buz </strong> </li>',
+    '  <li>Anchor</li>',
+    '</ul>'
+  ].join('\n'),
+
+  lisWithTrailingWhitespaceMd = [
+    '*   Hello world.',
+    '*   Lorem',
+    '*   Take 5',
+    '*   Foo!',
+    '*   Bar',
+    '*   **Buz**',
+    '*   Anchor',
+  ].join('\n');
+
+  equal(toMarkdown(lisWithTrailingWhitespaceHtml), lisWithTrailingWhitespaceMd, 'We expect list items with trailing whitespace to be converted');
 });
 
 test('blockquote', function() {
