@@ -5,7 +5,7 @@
   "keywords": "markdown",
   "author": "Dom Christie",
   "main": "to-markdown.js",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "scripts": {
     "start": "watchify -s toMarkdown -o dist/to-markdown.js to-markdown.js -v",
     "test": "qunit -c ./to-markdown.js -t ./test/to-markdown-test.js"
