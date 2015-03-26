@@ -2,36 +2,36 @@
 
 An HTML to Markdown converter written in JavaScript.
 
-The basic API is as follows:
+The API is as follows:
 
-    toMarkdown(stringOfHTML, options);
+    toMarkdown(stringOfHTML);
 
 ## Installation
 
 ### Browser
 
+Download the compiled script located at `dist/to-markdown.js`.
+
     <script src="PATH/TO/to-markdown.js"></script>
 
     <script>toMarkdown('<h1>Hello world!</h1>')</script>
 
-#### Bower
+Or with **Bower**:
 
     $ bower install to-markdown
 
-…
+    <script src="PATH/TO/bower_components/to-markdown/dist/to-markdown.js"></script>
 
-    <script src="PATH/TO/bower_components/to-markdown/to-markdown.js"></script>
-
-    <script>toMarkdown.makeMD('<h1>Hello world!</h1>')</script>
+    <script>toMarkdown('<h1>Hello world!</h1>')</script>
 
 ### Node.js
 
     $ npm install to-markdown
 
-…
-
     var toMarkdown = require('to-markdown');
     toMarkdown('<h1>Hello world!</h1>');
+
+(Note it is no longer necessary to call `.toMarkdown` on the required module as of v1.)
 
 ## Tests
 
