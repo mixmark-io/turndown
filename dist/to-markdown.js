@@ -10,10 +10,45 @@ else {
 
 module.exports = _document;
 
-},{"jsdom":6}],2:[function(require,module,exports){
+},{"jsdom":5}],2:[function(require,module,exports){
 'use strict';
 
-var _document = require('./document');
+var doc = require('./document');
+var root = (typeof window !== 'undefined' ? window : this);
+
+var Parser = root.DOMParser || function () {};
+var canParseHtml = false;
+
+// Adapted from https://gist.github.com/1129031
+// Firefox/Opera/IE throw errors on unsupported types
+try {
+  // WebKit returns null on unsupported types
+  if (new Parser().parseFromString('', 'text/html')) {
+    canParseHtml = true;
+  }
+} catch (e) {}
+
+if (!canParseHtml) {
+  Parser.prototype.parseFromString = function (input) {
+    var newDoc = doc.implementation.createHTMLDocument('');
+
+    if (input.toLowerCase().indexOf('<!doctype') > -1) {
+      newDoc.documentElement.innerHTML = input;
+    }
+    else {
+      newDoc.body.innerHTML = input;
+    }
+    return newDoc;
+  };
+}
+
+module.exports = function (input) {
+  return new Parser().parseFromString(input, 'text/html');
+};
+
+},{"./document":1}],3:[function(require,module,exports){
+'use strict';
+
 var trim = require('./utilities').trim;
 
 module.exports = [
@@ -83,9 +118,7 @@ module.exports = [
         return textPart + '(' + href + titlePart + ')';
       }
       else {
-        var dummy = _document.createElement('div');
-        dummy.appendChild(node.cloneNode(true));
-        return dummy.innerHTML;
+        return node.outerHTML;
       }
     }
   },
@@ -94,7 +127,7 @@ module.exports = [
     filter: 'img',
     replacement: function(innerHTML, node) {
       var alt = node.alt || '';
-      var src = node.src || '';
+      var src = node.getAttribute('src') || '';
       var title = node.title || '';
       var titlePart = title ? ' "'+ title +'"' : '';
       return src ? '![' + alt + ']' + '(' + src + titlePart + ')' : '';
@@ -152,7 +185,7 @@ module.exports = [
     }
   }
 ];
-},{"./document":1,"./utilities":3}],3:[function(require,module,exports){
+},{"./utilities":4}],4:[function(require,module,exports){
 exports.isRegExp = function (obj) {
   return Object.prototype.toString.call(obj) === '[object RegExp]';
 };
@@ -161,7 +194,9 @@ exports.trim = function (string) {
   return string.replace(/^\s+|\s+$/g, '');
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
+
+},{}],6:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.4.1 by @mathias | MIT license */
 ;(function(root) {
@@ -490,7 +525,7 @@ exports.trim = function (string) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*
  * to-markdown - an HTML to Markdown converter
  *
@@ -503,7 +538,7 @@ exports.trim = function (string) {
 
 var he = require('he');
 
-var _document = require('./lib/document');
+var htmlToDom = require('./lib/html-to-dom');
 var converters = require('./lib/md-converters');
 
 var isRegExp = require('./lib/utilities').isRegExp;
@@ -522,8 +557,9 @@ module.exports = function (input) {
   // Escape potential ol triggers
   input = input.replace(/(\d+)\. /g, '$1\\. ');
 
-  var clone = _document.createElement('div');
-  clone.innerHTML = input;
+  var doc = htmlToDom(input);
+  var clone = doc.body;
+
   removeBlankNodes(clone);
 
   // Flattens node tree into a single array
@@ -533,7 +569,7 @@ module.exports = function (input) {
   // Replace nodes as necessary.
   for (var i = nodes.length - 1; i >= 0; i--) {
     var node = nodes[i];
-    var replacement = replacementForNode(node);
+    var replacement = replacementForNode(node, doc);
     if (replacement) { node.parentNode.replaceChild(replacement, node); }
   }
 
@@ -578,11 +614,11 @@ function canConvertNode(node, filter) {
 
 // Loops through all md converters, checking to see if the node tagName matches.
 // Returns the replacement text node or null.
-function replacementForNode(node) {
+function replacementForNode(node, doc) {
 
   // Remove blank nodes
   if (VOID_ELEMENTS.indexOf(node.tagName.toLowerCase()) === -1 && /^\s*$/i.test(node.innerHTML)) {
-    return _document.createTextNode('');
+    return doc.createTextNode('');
   }
 
   for (var i = 0; i < converters.length; i++) {
@@ -598,7 +634,7 @@ function replacementForNode(node) {
 
       text = replacement(he.decode(node.innerHTML), node);
 
-      return _document.createTextNode(text);
+      return doc.createTextNode(text);
     }
   }
   return null;
@@ -635,7 +671,5 @@ function removeBlankNodes(node) {
   }
 }
 
-},{"./lib/document":1,"./lib/md-converters":2,"./lib/utilities":3,"he":4}],6:[function(require,module,exports){
-
-},{}]},{},[5])(5)
+},{"./lib/html-to-dom":2,"./lib/md-converters":3,"./lib/utilities":4,"he":6}]},{},[7])(7)
 });

@@ -10,7 +10,7 @@
 
 var he = require('he');
 
-var _document = require('./lib/document');
+var htmlToDom = require('./lib/html-to-dom');
 var converters = require('./lib/md-converters');
 
 var isRegExp = require('./lib/utilities').isRegExp;
@@ -29,8 +29,9 @@ module.exports = function (input) {
   // Escape potential ol triggers
   input = input.replace(/(\d+)\. /g, '$1\\. ');
 
-  var clone = _document.createElement('div');
-  clone.innerHTML = input;
+  var doc = htmlToDom(input);
+  var clone = doc.body;
+
   removeBlankNodes(clone);
 
   // Flattens node tree into a single array
@@ -40,7 +41,7 @@ module.exports = function (input) {
   // Replace nodes as necessary.
   for (var i = nodes.length - 1; i >= 0; i--) {
     var node = nodes[i];
-    var replacement = replacementForNode(node);
+    var replacement = replacementForNode(node, doc);
     if (replacement) { node.parentNode.replaceChild(replacement, node); }
   }
 
@@ -85,11 +86,11 @@ function canConvertNode(node, filter) {
 
 // Loops through all md converters, checking to see if the node tagName matches.
 // Returns the replacement text node or null.
-function replacementForNode(node) {
+function replacementForNode(node, doc) {
 
   // Remove blank nodes
   if (VOID_ELEMENTS.indexOf(node.tagName.toLowerCase()) === -1 && /^\s*$/i.test(node.innerHTML)) {
-    return _document.createTextNode('');
+    return doc.createTextNode('');
   }
 
   for (var i = 0; i < converters.length; i++) {
@@ -105,7 +106,7 @@ function replacementForNode(node) {
 
       text = replacement(he.decode(node.innerHTML), node);
 
-      return _document.createTextNode(text);
+      return doc.createTextNode(text);
     }
   }
   return null;
