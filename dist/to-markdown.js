@@ -1,4 +1,150 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.toMarkdown = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/*
+ * to-markdown - an HTML to Markdown converter
+ *
+ * Copyright 2011-15, Dom Christie
+ * Licenced under the MIT licence
+ *
+ */
+
+'use strict';
+
+var he = require('he');
+
+var htmlToDom = require('./lib/html-to-dom');
+var converters = require('./lib/md-converters');
+
+var isRegExp = require('./lib/utilities').isRegExp;
+
+var VOID_ELEMENTS = [
+  'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
+  'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
+];
+
+module.exports = function (input) {
+
+  if (typeof input !== 'string') {
+    throw 'first argument needs to be an HTML string';
+  }
+
+  // Escape potential ol triggers
+  input = input.replace(/(\d+)\. /g, '$1\\. ');
+
+  var doc = htmlToDom(input);
+  var clone = doc.body;
+
+  removeBlankNodes(clone);
+
+  // Flattens node tree into a single array
+  var nodes = bfsOrder(clone);
+
+  // Loop through nodes in reverse (so deepest child elements are first).
+  // Replace nodes as necessary.
+  for (var i = nodes.length - 1; i >= 0; i--) {
+    var node = nodes[i];
+    var replacement = replacementForNode(node, doc);
+    if (replacement) { node.parentNode.replaceChild(replacement, node); }
+  }
+
+  var output = he.decode(clone.innerHTML);
+
+  return output.replace(/^[\t\r\n]+|[\t\r\n\s]+$/g, '')
+               .replace(/\n\s+\n/g, '\n\n')
+               .replace(/\n{3,}/g, '\n\n');
+};
+
+function bfsOrder(root) {
+  var inqueue = [root];
+  var outqueue = [];
+  while (inqueue.length > 0) {
+    var elem = inqueue.shift();
+    outqueue.push(elem);
+    var children = elem.childNodes;
+    for (var i = 0 ; i < children.length; i++) {
+      if (children[i].nodeType === 1) {
+        inqueue.push(children[i]);
+      }
+    }
+  }
+  outqueue.shift();
+  return outqueue;
+}
+
+function canConvertNode(node, filter) {
+  if (isRegExp(filter)) {
+    return filter.test(node.tagName);
+  }
+  else if (typeof filter === 'string') {
+    return new RegExp('^' + filter + '$', 'i').test(node.tagName);
+  }
+  else if (typeof filter === 'function') {
+    return filter(node);
+  }
+  else {
+    throw '`filter` needs to be a RegExp, string, or function';
+  }
+}
+
+// Loops through all md converters, checking to see if the node tagName matches.
+// Returns the replacement text node or null.
+function replacementForNode(node, doc) {
+
+  // Remove blank nodes
+  if (VOID_ELEMENTS.indexOf(node.tagName.toLowerCase()) === -1 && /^\s*$/i.test(node.innerHTML)) {
+    return doc.createTextNode('');
+  }
+
+  for (var i = 0; i < converters.length; i++) {
+    var converter = converters[i];
+
+    if (canConvertNode(node, converter.filter)) {
+      var replacement = converter.replacement;
+      var text;
+
+      if (typeof replacement !== 'function') {
+        throw '`replacement` needs to be a function that returns a string';
+      }
+
+      text = replacement(he.decode(node.innerHTML), node);
+
+      return doc.createTextNode(text);
+    }
+  }
+  return null;
+}
+
+function removeBlankNodes(node) {
+  var child, next;
+  switch (node.nodeType) {
+    case 3: // Text node
+      if (node.parentNode.tagName !== 'PRE' && node.parentNode.tagName !== 'CODE') {
+        var value = node.nodeValue;
+        if (/\S/.test(value)) {
+          node.nodeValue = value.replace(/^[\n\r\t\f]+\s*|\s+$/gm, '')
+                                .replace(/[\n\r\t\f]+/gm, ' ')
+                                .replace(/ {2,}/gm, ' ');
+        }
+        else {
+          node.parentNode.removeChild(node);
+        }
+      }
+      break;
+    case 8: // Comment node
+      node.parentNode.removeChild(node);
+      break;
+    case 1: // Element node
+    case 9: // Document node
+      child = node.firstChild;
+      while (child) {
+        next = child.nextSibling;
+        removeBlankNodes(child);
+        child = next;
+      }
+      break;
+  }
+}
+
+},{"./lib/html-to-dom":3,"./lib/md-converters":4,"./lib/utilities":5,"he":7}],2:[function(require,module,exports){
 var _document;
 
 if (typeof document === 'undefined') {
@@ -10,7 +156,7 @@ else {
 
 module.exports = _document;
 
-},{"jsdom":5}],2:[function(require,module,exports){
+},{"jsdom":6}],3:[function(require,module,exports){
 'use strict';
 
 var doc = require('./document');
@@ -46,7 +192,7 @@ module.exports = function (input) {
   return new Parser().parseFromString(input, 'text/html');
 };
 
-},{"./document":1}],3:[function(require,module,exports){
+},{"./document":2}],4:[function(require,module,exports){
 'use strict';
 
 var trim = require('./utilities').trim;
@@ -185,7 +331,7 @@ module.exports = [
     }
   }
 ];
-},{"./utilities":4}],4:[function(require,module,exports){
+},{"./utilities":5}],5:[function(require,module,exports){
 exports.isRegExp = function (obj) {
   return Object.prototype.toString.call(obj) === '[object RegExp]';
 };
@@ -194,9 +340,9 @@ exports.trim = function (string) {
   return string.replace(/^\s+|\s+$/g, '');
 };
 
-},{}],5:[function(require,module,exports){
-
 },{}],6:[function(require,module,exports){
+
+},{}],7:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.4.1 by @mathias | MIT license */
 ;(function(root) {
@@ -525,151 +671,5 @@ exports.trim = function (string) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],7:[function(require,module,exports){
-/*
- * to-markdown - an HTML to Markdown converter
- *
- * Copyright 2011-15, Dom Christie
- * Licenced under the MIT licence
- *
- */
-
-'use strict';
-
-var he = require('he');
-
-var htmlToDom = require('./lib/html-to-dom');
-var converters = require('./lib/md-converters');
-
-var isRegExp = require('./lib/utilities').isRegExp;
-
-var VOID_ELEMENTS = [
-  'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
-  'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
-];
-
-module.exports = function (input) {
-
-  if (typeof input !== 'string') {
-    throw 'first argument needs to be an HTML string';
-  }
-
-  // Escape potential ol triggers
-  input = input.replace(/(\d+)\. /g, '$1\\. ');
-
-  var doc = htmlToDom(input);
-  var clone = doc.body;
-
-  removeBlankNodes(clone);
-
-  // Flattens node tree into a single array
-  var nodes = bfsOrder(clone);
-
-  // Loop through nodes in reverse (so deepest child elements are first).
-  // Replace nodes as necessary.
-  for (var i = nodes.length - 1; i >= 0; i--) {
-    var node = nodes[i];
-    var replacement = replacementForNode(node, doc);
-    if (replacement) { node.parentNode.replaceChild(replacement, node); }
-  }
-
-  var output = he.decode(clone.innerHTML);
-
-  return output.replace(/^[\t\r\n]+|[\t\r\n\s]+$/g, '')
-               .replace(/\n\s+\n/g, '\n\n')
-               .replace(/\n{3,}/g, '\n\n');
-};
-
-function bfsOrder(root) {
-  var inqueue = [root];
-  var outqueue = [];
-  while (inqueue.length > 0) {
-    var elem = inqueue.shift();
-    outqueue.push(elem);
-    var children = elem.childNodes;
-    for (var i = 0 ; i < children.length; i++) {
-      if (children[i].nodeType === 1) {
-        inqueue.push(children[i]);
-      }
-    }
-  }
-  outqueue.shift();
-  return outqueue;
-}
-
-function canConvertNode(node, filter) {
-  if (isRegExp(filter)) {
-    return filter.test(node.tagName);
-  }
-  else if (typeof filter === 'string') {
-    return new RegExp('^' + filter + '$', 'i').test(node.tagName);
-  }
-  else if (typeof filter === 'function') {
-    return filter(node);
-  }
-  else {
-    throw '`filter` needs to be a RegExp, string, or function';
-  }
-}
-
-// Loops through all md converters, checking to see if the node tagName matches.
-// Returns the replacement text node or null.
-function replacementForNode(node, doc) {
-
-  // Remove blank nodes
-  if (VOID_ELEMENTS.indexOf(node.tagName.toLowerCase()) === -1 && /^\s*$/i.test(node.innerHTML)) {
-    return doc.createTextNode('');
-  }
-
-  for (var i = 0; i < converters.length; i++) {
-    var converter = converters[i];
-
-    if (canConvertNode(node, converter.filter)) {
-      var replacement = converter.replacement;
-      var text;
-
-      if (typeof replacement !== 'function') {
-        throw '`replacement` needs to be a function that returns a string';
-      }
-
-      text = replacement(he.decode(node.innerHTML), node);
-
-      return doc.createTextNode(text);
-    }
-  }
-  return null;
-}
-
-function removeBlankNodes(node) {
-  var child, next;
-  switch (node.nodeType) {
-    case 3: // Text node
-      if (node.parentNode.tagName !== 'PRE' && node.parentNode.tagName !== 'CODE') {
-        var value = node.nodeValue;
-        if (/\S/.test(value)) {
-          node.nodeValue = value.replace(/^[\n\r\t\f]+\s*|\s+$/gm, '')
-                                .replace(/[\n\r\t\f]+/gm, ' ')
-                                .replace(/ {2,}/gm, ' ');
-        }
-        else {
-          node.parentNode.removeChild(node);
-        }
-      }
-      break;
-    case 8: // Comment node
-      node.parentNode.removeChild(node);
-      break;
-    case 1: // Element node
-    case 9: // Document node
-      child = node.firstChild;
-      while (child) {
-        next = child.nextSibling;
-        removeBlankNodes(child);
-        child = next;
-      }
-      break;
-  }
-}
-
-},{"./lib/html-to-dom":2,"./lib/md-converters":3,"./lib/utilities":4,"he":6}]},{},[7])(7)
+},{}]},{},[1])(1)
 });

@@ -19,7 +19,7 @@
     "package.json",
     "test",
     "lib",
-    "to-markdown.js"
+    "index.js"
   ],
   "devDependencies": {
     "qunit": "~1.14.0"
