@@ -1,6 +1,6 @@
 {
   "name": "to-markdown",
-  "version": "0.1.0",
+  "version": "1.0.0-rc.1",
   "homepage": "https://github.com/domchristie/to-markdown",
   "authors": [
     "Dom Christie <christiedom@gmail.com>"
@@ -16,10 +16,10 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "app/bower_components",
     "package.json",
     "test",
-    "tests"
+    "lib",
+    "to-markdown.js"
   ],
   "devDependencies": {
     "qunit": "~1.14.0"
