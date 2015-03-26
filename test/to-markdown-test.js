@@ -2,7 +2,9 @@ if (typeof module !== 'undefined' && module.exports) {
   var toMarkdown = require('../to-markdown');
 }
 
-test('p', function() {
+QUnit.module('Markdown');
+
+test('paragraphs', function() {
   equal(toMarkdown('<p>Lorem ipsum</p>'), 'Lorem ipsum', 'We expect p tags to be wrapped with two line breaks');
   equal(toMarkdown('<p class="intro">Lorem ipsum</p>'), 'Lorem ipsum', 'We expect p tags to be wrapped with two line breaks');
 });
@@ -18,12 +20,12 @@ test('emphasis', function() {
   equal(toMarkdown('<em id="one" class="cowabunga"></em>'), '', 'We expect empty em tags to be removed');
 });
 
-test('inline code', function() {
+test('code', function() {
   equal(toMarkdown('<code>print()</code>'), '`print()`', 'We expect inline code tags to be converted to backticks');
   equal(toMarkdown('<code></code>'), '', 'We expect empty code tags to be removed');
 });
 
-test('heading', function() {
+test('headings', function() {
   equal(toMarkdown('<h1>Hello world</h1>'), '# Hello world', 'We expect <h1>Hello world</h1> to be converted to # Hello world');
   equal(toMarkdown('<h3>Hello world</h3>'), '### Hello world', 'We expect <h3>Hello world</h3> to be converted to ### Hello world');
   equal(toMarkdown('<h6>Hello world</h6>'), '###### Hello world', 'We expect <h6>Hello world</h6> to be converted to ###### Hello world');
@@ -32,7 +34,7 @@ test('heading', function() {
   equal(toMarkdown('<h8>Hello world</h8>'), '<h8>Hello world</h8>', 'We expect <h8>Hello world</h8> to be converted to <h8>Hello world</h8>');
 });
 
-test('hr', function() {
+test('horizontal rules', function() {
   equal(toMarkdown('<hr />'), '* * *', 'We expect hr elements to be converted to * * *');
   equal(toMarkdown('<hr/>'), '* * *', 'We expect hr elements to be converted to * * *');
   equal(toMarkdown('<hr>'), '* * *', 'We expect hr elements to be converted to * * *');
@@ -40,31 +42,33 @@ test('hr', function() {
   equal(toMarkdown('<hr></hr>'), '* * *', 'We expect hr elements to be converted to * * *');
 });
 
-test('br', function() {
+test('line breaks', function() {
   equal(toMarkdown('Hello<br />world'), 'Hello  \nworld', 'We expect br elements to be converted to   \n');
   equal(toMarkdown('Hello<br/>world'), 'Hello  \nworld', 'We expect br elements to be converted to   \n');
   equal(toMarkdown('Hello<br>world'), 'Hello  \nworld', 'We expect br elements to be converted to   \n');
 });
 
-test('img', function() {
+test('images', function() {
   equal(toMarkdown('<img src="http://example.com/logo.png" />'), '![](http://example.com/logo.png)', 'We expect img elements to be converted properly');
   equal(toMarkdown('<img src="http://example.com/logo.png" />'), '![](http://example.com/logo.png)', 'We expect img elements to be converted properly');
   equal(toMarkdown('<img src="http://example.com/logo.png">'), '![](http://example.com/logo.png)', 'We expect img elements to be converted properly');
   equal(toMarkdown('<img src=http://example.com/logo.png>'), '![](http://example.com/logo.png)', 'We expect img elements to be converted properly');
+
+  equal(toMarkdown('<img src=logo.png>'), '![](logo.png)', 'We expect img elements to be converted properly');
 
   equal(toMarkdown('<img src="http://example.com/logo.png" alt="Example logo" />'), '![Example logo](http://example.com/logo.png)', 'We expect img elements to be converted properly with alt attrs');
   equal(toMarkdown('<img src="http://example.com/logo.png" alt="Example logo" title="Example title" />'), '![Example logo](http://example.com/logo.png "Example title")', 'We expect img elements to be converted properly with alt and title attrs');
   equal(toMarkdown('<img>'), '', 'We expect an image with no src to be removed.');
 });
 
-test('anchor', function() {
+test('anchors', function() {
   equal(toMarkdown('<a href="http://example.com/about">About us</a>'), '[About us](http://example.com/about)', 'We expect anchor elements to be converted properly');
   equal(toMarkdown('<a href="http://www.example.com/about" title="About this company">About us</a>'), '[About us](http://www.example.com/about "About this company")', 'We expect an anchor element with a title tag to have correct markdown');
   equal(toMarkdown('<a class="some really messy stuff" href="/about" id="donuts3" title="About this company">About us</a>'), '[About us](/about "About this company")', 'We expect an anchor element with a title tag to have correct markdown');
   equal(toMarkdown('<a id="donuts3">About us</a>'), '<a id="donuts3">About us</a>', 'Anchor tags without an href should not be converted');
 });
 
-test('pre/code', function() {
+test('pre/code blocks', function() {
   var codeHtml = [
     '<pre><code>def hello_world',
     '  # 42 &lt; 9001',
@@ -107,7 +111,7 @@ test('pre/code', function() {
   equal(toMarkdown(codeHtml), codeMd, 'We expect multiple code blocks to be converted');
 });
 
-test('list', function() {
+test('lists', function() {
   equal(toMarkdown('1986. What a great season.'), '1986\\. What a great season.','We expect numbers that could trigger an ol to be escaped');
   equal(toMarkdown('<ol>\n\t<li>Hello world</li>\n\t<li>Lorem ipsum</li>\n</ol>'), '1.  Hello world\n2.  Lorem ipsum', 'We expect ol elements to be converted properly');
   equal(toMarkdown('<ul>\n\t<li>Hello world</li>\n\t<li>Lorem ipsum</li>\n</ul>'), '*   Hello world\n*   Lorem ipsum', 'We expect ul elements with line breaks and tabs to be converted properly');
@@ -217,50 +221,10 @@ test('list', function() {
     '    > This is a blockquote inside a list item.'
   ].join('\n');
 
-  // needs fixing: see https://github.com/domchristie/to-markdown/issues/2
   equal(toMarkdown(html), md, 'We expect lists with blockquotes to be converted');
-
-  var lisWithTrailingWhitespaceHtml = [
-    '<ul>',
-    '  <li>Hello world. </li>', // Sentences
-    '  <li>Lorem   </li>', // Phrases
-    '  <li>Take 5 </li>', // Numbers
-    '  <li>Foo!   </li>', // Special Characters
-    '  <li>', // Multilined
-    '    Bar ',
-    '  </li>',
-    '  <li>', // Bizarre formatting
-    '    <strong>Buz </strong> </li>',
-    '  <li>Anchor</li>',
-    '</ul>'
-  ].join('\n'),
-
-  lisWithTrailingWhitespaceMd = [
-    '*   Hello world.',
-    '*   Lorem',
-    '*   Take 5',
-    '*   Foo!',
-    '*   Bar',
-    '*   **Buz**',
-    '*   Anchor',
-  ].join('\n');
-
-  equal(toMarkdown(lisWithTrailingWhitespaceHtml), lisWithTrailingWhitespaceMd, 'We expect list items with trailing whitespace to be converted');
-
-  lisWithTrailingWhitespaceHtml = [
-    '<ol>',
-    '  <li> first text',
-    '                      some text',
-    '  </li>',
-    '</ol>'].join('\n');
-
-  lisWithTrailingWhitespaceMd = [
-    '1.  first text some text'
-  ].join('\n');
-  equal(toMarkdown(lisWithTrailingWhitespaceHtml), lisWithTrailingWhitespaceMd, 'We expect list items with trailing whitespace to be converted');
 });
 
-test('blockquote', function() {
+test('blockquotes', function() {
   var html = [
     '<blockquote>',
     '  <p>This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.</p>',
@@ -319,11 +283,11 @@ test('blockquote', function() {
   strictEqual(toMarkdown(html), md, 'We expect html in blockquotes to be converted');
 });
 
-test('comment', function () {
+test('comments', function () {
   equal(toMarkdown('<!-- comment -->'), '', 'We expect comment nodes to be removed.');
 });
 
-test('elements with text nodes containing leading or trailing whitespace', function() {
+test('leading/trailing whitespace', function() {
   var html = [
     '<h1>',
     '    Some header text</h1>'
@@ -353,41 +317,37 @@ test('elements with text nodes containing leading or trailing whitespace', funct
     '3.  Chapter Three'
   ].join('\n');
   equal(toMarkdown(html), md, 'We expect trailing whitespace to be removed');
-});
 
-// test('extending with custom converters', function () {
-//   var actual = toMarkdown('<span style="font-style: italic">Hello world</span>', {
-//     converters: [{
-//       filter: function (node) {
-//         return /span/i.test(node.tagName) && /italic/i.test(node.style.fontStyle);
-//       },
-//
-//       replacement: function (innerHTML) {
-//         return '_' + innerHTML + '_';
-//       }
-//     }]
-//   });
-//
-//   equal(actual, '_Hello world_', 'We expect custom converters with a filter function to convert');
-//
-//   actual = toMarkdown('<h1>Hello world</h1>', {
-//     converters: [{
-//       filter: 'h1',
-//
-//       replacement: function (innerHTML) {
-//         var underline = '';
-//         for (var i = 0; i < innerHTML.length; i++) {
-//           underline += '=';
-//         }
-//         return '\n' + innerHTML + '\n' + underline + '\n\n';
-//       }
-//     }]
-//   });
-//
-//   var expected = [
-//     'Hello world',
-//     '==========='
-//   ].join('\n');
-//
-//   equal(actual, expected, 'We expect custom converters to override existing converters');
-// });
+  var lisWithTrailingWhitespaceHtml = [
+    '<ul>',
+    '  <li>Hello world. </li>', // Sentences
+    '  <li>Lorem   </li>', // Phrases
+    '  <li>Take 5 </li>', // Numbers
+    '  <li>Foo!   </li>', // Special Characters
+    '  <li>', // Multilined
+    '    Bar ',
+    '  </li>',
+    '  <li>', // Bizarre formatting
+    '    <strong>Buz </strong> </li>',
+    '  <li>Anchor</li>',
+    '</ul>',
+    '<ol>',
+    '  <li> first text',
+    '                      some text',
+    '  </li>',
+    '</ol>'].join('\n');
+
+  lisWithTrailingWhitespaceMd = [
+    '*   Hello world.',
+    '*   Lorem',
+    '*   Take 5',
+    '*   Foo!',
+    '*   Bar',
+    '*   **Buz**',
+    '*   Anchor',
+    '',
+    '1.  first text some text'
+  ].join('\n');
+
+  equal(toMarkdown(lisWithTrailingWhitespaceHtml), lisWithTrailingWhitespaceMd, 'We expect list items with trailing whitespace to be converted');
+});
