@@ -137,19 +137,34 @@ function replacementForNode(node, doc) {
 
     if (canConvertNode(node, converter.filter)) {
       var replacement = converter.replacement;
+<<<<<<< HEAD
       var text;
       var leadingSpace = '';
       var trailingSpace = '';
+=======
+>>>>>>> Build
 
       if (typeof replacement !== 'function') {
         throw '`replacement` needs to be a function that returns a string';
       }
 
+<<<<<<< HEAD
       if (!isBlockLevel(node)) {
         var hasLeadingWhitespace = /^[ \r\n\t]/.test(node.innerHTML);
         var hasTrailingWhitespace = /[ \r\n\t]$/.test(node.innerHTML);
 
         node.innerHTML = trim(node.innerHTML);
+=======
+      var string = replacement(he.decode(node.innerHTML), node);
+      var textNode = doc.createTextNode(string);
+      textNode._attributes = node.attributes;
+
+      return textNode;
+    }
+  }
+  return null;
+}
+>>>>>>> Build
 
         if (hasLeadingWhitespace && !isFlankedByExternalSpace('left', node)) {
           leadingSpace = ' ';
@@ -167,7 +182,11 @@ function replacementForNode(node, doc) {
   return null;
 }
 
+<<<<<<< HEAD
 },{"./lib/html-to-dom":3,"./lib/md-converters":4,"./lib/utilities":5,"he":9}],2:[function(require,module,exports){
+=======
+},{"./lib/gfm-converters":3,"./lib/html-to-dom":4,"./lib/md-converters":5,"./lib/utilities":6,"he":8}],2:[function(require,module,exports){
+>>>>>>> Build
 var _document;
 
 if (typeof document === 'undefined') {
@@ -179,7 +198,73 @@ else {
 
 module.exports = _document;
 
-},{"jsdom":6}],3:[function(require,module,exports){
+},{"jsdom":7}],3:[function(require,module,exports){
+'use strict';
+
+function cell(content, node) {
+  var index = Array.prototype.indexOf.call(node.parentNode.childNodes, node);
+  var prefix = ' ';
+  if (index === 0) { prefix = '| '; }
+  return prefix + content + ' |';
+}
+
+module.exports = [
+  {
+    filter: /^del$|^s$|^strike$/i,
+    replacement: function (innerHTML) {
+      return '~~' + innerHTML + '~~';
+    }
+  },
+
+  {
+    filter: /^input$/i,
+    replacement: function (innerHTML, node) {
+      if (node.type === 'checkbox' && node.parentNode.tagName === 'LI') {
+        return (node.checked ? '[x]' : '[ ]') + ' ';
+      }
+      else {
+        return node.outerHTML;
+      }
+    }
+  },
+
+  {
+    filter: /^th$|^td$/i,
+    replacement: function (innerHTML, node) {
+      return cell(innerHTML, node);
+    }
+  },
+
+  {
+    filter: 'tr',
+    replacement: function (innerHTML, node) {
+      var borderCells = '';
+      var alignMap = { left: ':--', right: '--:' };
+
+      if (node.parentNode.tagName === 'THEAD') {
+        for (var i = 0; i < node.childNodes.length; i++) {
+          var childNode = node.childNodes[i];
+          var align = childNode._attributes.align;
+          var border = '---';
+
+          if (align) { border = alignMap[align.value]; }
+
+          borderCells += cell(border, node.childNodes[i]);
+        }
+      }
+      return '\n' + innerHTML + (borderCells ? '\n' + borderCells : '');
+    }
+  },
+
+  {
+    filter: /^table$|^thead$|^tbody$|^tfoot$/i,
+    replacement: function (innerHTML) {
+      return innerHTML;
+    }
+  }
+];
+
+},{}],4:[function(require,module,exports){
 'use strict';
 
 var collapse = require('collapse-whitespace');
@@ -219,7 +304,11 @@ module.exports = function (input) {
   return tree;
 };
 
+<<<<<<< HEAD
 },{"./document":2,"./utilities":5,"collapse-whitespace":8}],4:[function(require,module,exports){
+=======
+},{"./document":2}],5:[function(require,module,exports){
+>>>>>>> Build
 'use strict';
 
 module.exports = [
@@ -369,6 +458,7 @@ module.exports = [
     }
   }
 ];
+<<<<<<< HEAD
 },{}],5:[function(require,module,exports){
 'use strict';
 
@@ -376,6 +466,9 @@ exports.trim = function (string) {
   return string.replace(/^[ \r\n\t]+|[ \r\n\t]+$/g, '');
 };
 
+=======
+},{"./utilities":6}],6:[function(require,module,exports){
+>>>>>>> Build
 exports.isRegExp = function (obj) {
   return Object.prototype.toString.call(obj) === '[object RegExp]';
 };
@@ -385,9 +478,8 @@ exports.isBlockLevel = function (node) {
   return blockRegex.test(node.nodeName);
 };
 
-},{}],6:[function(require,module,exports){
-
 },{}],7:[function(require,module,exports){
+<<<<<<< HEAD
 /**
  * This file automatically generated from `build.js`.
  * Do not manually edit.
@@ -550,6 +642,10 @@ function whitespace (root, isBlock) {
 module.exports = whitespace
 
 },{"block-elements":7}],9:[function(require,module,exports){
+=======
+
+},{}],8:[function(require,module,exports){
+>>>>>>> Build
 (function (global){
 /*! http://mths.be/he v0.4.1 by @mathias | MIT license */
 ;(function(root) {
