@@ -11,7 +11,11 @@
 
 var htmlToDom = require('./lib/html-to-dom');
 var converters = require('./lib/md-converters');
+<<<<<<< HEAD
 var utilities = require('./lib/utilities');
+=======
+var gfmConverters = require('./lib/gfm-converters');
+>>>>>>> Add gfm converters for strikethough, task lists and tables
 
 var isRegExp = utilities.isRegExp;
 var isBlockLevel = utilities.isBlockLevel;
@@ -39,6 +43,8 @@ module.exports = toMarkdown = function (input) {
 
   // Flattens node tree into a single array
   var nodes = bfsOrder(clone);
+
+  converters = converters.concat(gfmConverters);
 
   // Loop through nodes in reverse (so deepest child elements are first).
   // Replace nodes as necessary.
