@@ -5,7 +5,7 @@
   "keywords": "markdown",
   "author": "Dom Christie",
   "main": "index.js",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "scripts": {
     "start": "watchify -s toMarkdown -o dist/to-markdown.js index.js -v",
     "test": "qunit -c ./index.js -t ./test/to-markdown-test.js"
