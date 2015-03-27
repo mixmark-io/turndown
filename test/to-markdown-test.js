@@ -1,5 +1,5 @@
 if (typeof module !== 'undefined' && module.exports) {
-  var toMarkdown = require('../to-markdown');
+  var toMarkdown = require('../index');
 }
 
 QUnit.module('Markdown');

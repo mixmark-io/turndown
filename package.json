@@ -8,7 +8,7 @@
   "version": "1.0.0-rc.1",
   "scripts": {
     "start": "watchify -s toMarkdown -o dist/to-markdown.js index.js -v",
-    "test": "qunit -c ./to-markdown.js -t ./test/to-markdown-test.js"
+    "test": "qunit -c ./index.js -t ./test/to-markdown-test.js"
   },
   "devDependencies": {
     "browserify": "^9.0.3",
