@@ -1,6 +1,6 @@
 {
   "name": "to-markdown",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "homepage": "https://github.com/domchristie/to-markdown",
   "authors": [
     "Dom Christie <christiedom@gmail.com>"
@@ -24,13 +24,13 @@
   "devDependencies": {
     "qunit": "~1.14.0"
   },
-  "_release": "1.0.0-rc.1",
+  "_release": "1.0.0-rc.2",
   "_resolution": {
     "type": "version",
-    "tag": "v1.0.0-rc.1",
-    "commit": "9ebca404300ae64dff26974b80c7fdfb87c3d94a"
+    "tag": "v1.0.0-rc.2",
+    "commit": "261b627af2b17a0ca60d06105ce42f194afaff06"
   },
   "_source": "git://github.com/domchristie/to-markdown.git",
-  "_target": "1.0.0-rc.1",
+  "_target": "1.0.0-rc.2",
   "_originalSource": "to-markdown"
 }
