@@ -1,43 +1,52 @@
 # to-markdown
 
-An HTML to Markdown converter written in javascript.
+An HTML to Markdown converter written in JavaScript.
 
-A basic implementation is there, but it's not yet fully bulletproof (contributions welcome!).
+The API is as follows:
 
-## Usage
+    toMarkdown(stringOfHTML);
+
+## Installation
 
 ### Browser
 
-**to-markdown** depends on [he.js](https://github.com/mathiasbynens/he). Include both he.js and to-markdown:
+Download the compiled script located at `dist/to-markdown.js`.
 
-    <script src="PATH/TO/he.js"></script>
     <script src="PATH/TO/to-markdown.js"></script>
 
-    <script>toMarkdown('<h1>Hello world</h1>')</script>
+    <script>toMarkdown('<h1>Hello world!</h1>')</script>
 
-### Bower
+Or with **Bower**:
 
-    bower install to-markdown
+    $ bower install to-markdown
+
+    <script src="PATH/TO/bower_components/to-markdown/dist/to-markdown.js"></script>
+
+    <script>toMarkdown('<h1>Hello world!</h1>')</script>
 
 ### Node.js
 
-    npm install to-markdown
+    $ npm install to-markdown
 
-    var toMarkdown = require('to-markdown').toMarkdown;
-    toMarkdown('<h1>Hello world</h1>');
+    var toMarkdown = require('to-markdown');
+    toMarkdown('<h1>Hello world!</h1>');
 
-### Unit tests
+(Note it is no longer necessary to call `.toMarkdown` on the required module as of v1.)
 
-Node.js unit tests can be run with NodeUnit:
+## Tests
 
+to-markdown uses QUnit for testing. To run the tests in the browser, first make sure you have node.js/npm installed, then:
+
+    $ npm install --dev
+    $ bower install --dev
+
+Then open `test/test-runner.html`.
+
+To run in node.js:
+
+    $ npm install --dev
     $ npm test
-
-This will test both server-side and client-side tests (using [zombie-qunit](https://github.com/bergie/zombie-qunit)).
-
-## Known issues
-
-There are a couple of known issues surrounding blockquotes in lists (and perhaps vice versa) &mdash; #2; and also how to handle HTML elements outside of the markdown subset (keep them/strip them?) &mdash; #3.
 
 ## Licence
 
-to-markdown is copyright &copy; 2011-14 [Dom Christie](http://domchristie.co.uk) and released under the MIT license.
+to-markdown is copyright &copy; 2011-15 [Dom Christie](http://domchristie.co.uk) and released under the MIT license.
