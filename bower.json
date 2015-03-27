@@ -1,9 +1,8 @@
 {
   "name": "to-markdown-demo",
   "dependencies": {
-    "to-markdown": "0.0.2",
+    "to-markdown": "1.0.0-rc.1",
     "jquery": "^1.11.1",
-    "normalize.css": "~3.0.1",
-    "showdown": "~0.3.1"
+    "normalize.css": "~3.0.1"
   }
 }
