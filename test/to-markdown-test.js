@@ -109,6 +109,9 @@ test('pre/code blocks', function() {
     '    end'
   ].join('\n');
   equal(toMarkdown(codeHtml), codeMd, 'We expect multiple code blocks to be converted');
+
+  var preBlock = '<pre>preformatted</pre>';
+  equal(toMarkdown(preBlock), preBlock, 'We expect pre blocks containing no code to be converted');
 });
 
 test('lists', function() {
