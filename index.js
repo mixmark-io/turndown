@@ -12,8 +12,7 @@ var he = require('he');
 
 var htmlToDom = require('./lib/html-to-dom');
 var converters = require('./lib/md-converters');
-
-var isRegExp = require('./lib/utilities').isRegExp;
+var isArray = require('./lib/utilities').isArray;
 
 var VOID_ELEMENTS = [
   'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
@@ -70,11 +69,11 @@ function bfsOrder(root) {
 }
 
 function canConvertNode(node, filter) {
-  if (isRegExp(filter)) {
-    return filter.test(node.tagName);
+  if (isArray(filter)) {
+    return filter.indexOf(node.tagName.toLowerCase()) !== -1;
   }
   else if (typeof filter === 'string') {
-    return new RegExp('^' + filter + '$', 'i').test(node.tagName);
+    return filter === node.tagName.toLowerCase();
   }
   else if (typeof filter === 'function') {
     return filter(node);
