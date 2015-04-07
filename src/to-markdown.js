@@ -10,6 +10,8 @@ if (typeof he !== 'object' && typeof require === 'function') {
   var he = require('he');
 }
 
+;(function() {
+
 var toMarkdown = function(string) {
 
   var ELEMENTS = [
@@ -185,5 +187,14 @@ var toMarkdown = function(string) {
 };
 
 if (typeof exports === 'object') {
-  exports.toMarkdown = toMarkdown;
+  module.exports = toMarkdown;
 }
+else if (typeof define === 'function' && define.amd) {
+  define(function() {
+    return toMarkdown;
+  });
+}
+else {
+  this.toMarkdown = toMarkdown;
+}
+}).call(this);
