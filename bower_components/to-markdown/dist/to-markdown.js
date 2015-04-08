@@ -117,10 +117,11 @@ function removeBlankNodes(node) {
   var child, next;
   switch (node.nodeType) {
     case 3: // Text node
-      if (node.parentNode.tagName !== 'PRE' && node.parentNode.tagName !== 'CODE') {
+      var parentTagName = node.parentNode.tagName;
+      if (parentTagName !== 'PRE' && parentTagName !== 'CODE') {
         var value = node.nodeValue;
         if (/\S/.test(value)) {
-          node.nodeValue = value.replace(/^[\n\r\t\f]+\s*|\s+$/gm, '')
+          node.nodeValue = value.replace(/^[\n\r\t\f]+\s*/gm, '')
                                 .replace(/[\n\r\t\f]+/gm, ' ')
                                 .replace(/ {2,}/gm, ' ');
         }
@@ -144,7 +145,7 @@ function removeBlankNodes(node) {
   }
 }
 
-},{"./lib/html-to-dom":3,"./lib/md-converters":4,"./lib/utilities":5,"he":7}],2:[function(require,module,exports){
+},{"./lib/html-to-dom":3,"./lib/md-converters":4,"./lib/utilities":5,"he":6}],2:[function(require,module,exports){
 var _document;
 
 if (typeof document === 'undefined') {
@@ -156,7 +157,7 @@ else {
 
 module.exports = _document;
 
-},{"jsdom":6}],3:[function(require,module,exports){
+},{"jsdom":7}],3:[function(require,module,exports){
 'use strict';
 
 var doc = require('./document');
@@ -201,7 +202,7 @@ module.exports = [
   {
     filter: 'p',
     replacement: function (innerHTML) {
-      return '\n\n' + innerHTML + '\n\n';
+      return '\n' + innerHTML + '\n\n';
     }
   },
 
@@ -285,7 +286,7 @@ module.exports = [
     replacement: function(innerHTML, node) {
       if(/^\s*\`/.test(innerHTML)) {
         innerHTML = innerHTML.replace(/\`/g, '');
-        return '    ' + innerHTML.replace(/\n/g, '\n    ');
+        return '\n' + '    ' + innerHTML.replace(/\n/g, '\n    ') + '\n\n';
       }
       else {
         return node.outerHTML;
@@ -341,8 +342,6 @@ exports.trim = function (string) {
 };
 
 },{}],6:[function(require,module,exports){
-
-},{}],7:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.4.1 by @mathias | MIT license */
 ;(function(root) {
@@ -671,5 +670,7 @@ exports.trim = function (string) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],7:[function(require,module,exports){
+
 },{}]},{},[1])(1)
 });
