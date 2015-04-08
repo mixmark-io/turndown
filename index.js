@@ -116,10 +116,11 @@ function removeBlankNodes(node) {
   var child, next;
   switch (node.nodeType) {
     case 3: // Text node
-      if (node.parentNode.tagName !== 'PRE' && node.parentNode.tagName !== 'CODE') {
+      var parentTagName = node.parentNode.tagName;
+      if (parentTagName !== 'PRE' && parentTagName !== 'CODE') {
         var value = node.nodeValue;
         if (/\S/.test(value)) {
-          node.nodeValue = value.replace(/^[\n\r\t\f]+\s*|\s+$/gm, '')
+          node.nodeValue = value.replace(/^[\n\r\t\f]+\s*/gm, '')
                                 .replace(/[\n\r\t\f]+/gm, ' ')
                                 .replace(/ {2,}/gm, ' ');
         }
