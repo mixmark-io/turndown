@@ -291,7 +291,13 @@ test('comments', function () {
 });
 
 test('leading/trailing whitespace', function() {
-  var html = [
+  var html, md;
+
+  html = '<p>I <a href="http://example.com">need</a> a space</p>';
+  md = 'I [need](http://example.com) a space';
+  equal(toMarkdown(html), md, 'Inline elements');
+
+  html = [
     '<h1>',
     '    Some header text</h1>'
   ].join('\n');
@@ -311,7 +317,7 @@ test('leading/trailing whitespace', function() {
     '</ol>'
   ].join('\n');
 
-  var md = [
+  md = [
     '1.  Chapter One',
     '    1.  Section One',
     '    2.  Section Two',
