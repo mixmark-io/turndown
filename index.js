@@ -12,22 +12,24 @@ var he = require('he');
 
 var htmlToDom = require('./lib/html-to-dom');
 var converters = require('./lib/md-converters');
-
-var isRegExp = require('./lib/utilities').isRegExp;
+var isArray = require('./lib/utilities').isArray;
 
 var VOID_ELEMENTS = [
   'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
   'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
 ];
 
-module.exports = function (input) {
-
+module.exports = function (input, opts) {
   if (typeof input !== 'string') {
     throw 'first argument needs to be an HTML string';
   }
-
   // Escape potential ol triggers
   input = input.replace(/(\d+)\. /g, '$1\\. ');
+  opts = opts || {};
+  var customConverters = opts.converters || [];
+  // custom converters come first, because the replacement is executed on
+  // a first come first serve basis
+  converters = customConverters.concat(converters);
 
   var doc = htmlToDom(input);
   var clone = doc.body;
@@ -70,11 +72,11 @@ function bfsOrder(root) {
 }
 
 function canConvertNode(node, filter) {
-  if (isRegExp(filter)) {
-    return filter.test(node.tagName);
+  if (isArray(filter)) {
+    return filter.indexOf(node.tagName.toLowerCase()) !== -1;
   }
   else if (typeof filter === 'string') {
-    return new RegExp('^' + filter + '$', 'i').test(node.tagName);
+    return filter === node.tagName.toLowerCase();
   }
   else if (typeof filter === 'function') {
     return filter(node);

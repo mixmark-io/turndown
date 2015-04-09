@@ -361,6 +361,33 @@ test('leading/trailing whitespace', function() {
   equal(toMarkdown(lisWithTrailingWhitespaceHtml), lisWithTrailingWhitespaceMd, 'We expect list items with trailing whitespace to be converted');
 });
 
+test('custom converters/sub, sup', function() {
+  var converters = [{
+    filter: 'sub',
+    replacement: function(innerHTML) {
+      return '~' + innerHTML + '~';
+    }
+  }];
+  var html = 'This is normal text<sub>subscript</sub>';
+  var md = 'This is normal text~subscript~';
+  equal(toMarkdown(html, {converters: converters}), md, 'We expect sub to be converted');
+
+  converters = [{
+    filter: 'sub',
+    replacement: function(innerHTML) {
+      return '~' + innerHTML + '~';
+    }
+  }, {
+    filter: 'sup',
+    replacement: function(innerHTML) {
+      return '^' + innerHTML + '^';
+    }
+  }];
+  html = 'This is normal text<sub>subscript</sub>. Another normal text<sup>superscript</sup>';
+  md = 'This is normal text~subscript~. Another normal text^superscript^';
+  equal(toMarkdown(html, {converters: converters}), md, 'We expect sup to be converted');
+});
+
 asyncTest('img[onerror]', 1, function () {
   start();
   equal(toMarkdown('>\'>"><img src=x onerror="(function () { ok(true); })()">'), '>\'>">![](x)', 'We expect img[onerror] functions not to run');

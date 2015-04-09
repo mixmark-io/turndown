@@ -13,22 +13,24 @@ var he = require('he');
 
 var htmlToDom = require('./lib/html-to-dom');
 var converters = require('./lib/md-converters');
-
-var isRegExp = require('./lib/utilities').isRegExp;
+var isArray = require('./lib/utilities').isArray;
 
 var VOID_ELEMENTS = [
   'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
   'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
 ];
 
-module.exports = function (input) {
-
+module.exports = function (input, opts) {
   if (typeof input !== 'string') {
     throw 'first argument needs to be an HTML string';
   }
-
   // Escape potential ol triggers
   input = input.replace(/(\d+)\. /g, '$1\\. ');
+  opts = opts || {};
+  var customConverters = opts.converters || [];
+  // custom converters come first, because the replacement is executed on
+  // a first come first serve basis
+  converters = customConverters.concat(converters);
 
   var doc = htmlToDom(input);
   var clone = doc.body;
@@ -71,11 +73,11 @@ function bfsOrder(root) {
 }
 
 function canConvertNode(node, filter) {
-  if (isRegExp(filter)) {
-    return filter.test(node.tagName);
+  if (isArray(filter)) {
+    return filter.indexOf(node.tagName.toLowerCase()) !== -1;
   }
   else if (typeof filter === 'string') {
-    return new RegExp('^' + filter + '$', 'i').test(node.tagName);
+    return filter === node.tagName.toLowerCase();
   }
   else if (typeof filter === 'function') {
     return filter(node);
@@ -214,7 +216,7 @@ module.exports = [
   },
 
   {
-    filter: 'h[1-6]',
+    filter: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
     replacement: function(innerHTML, node) {
       var hLevel = node.tagName.charAt(1);
       var hPrefix = '';
@@ -233,14 +235,14 @@ module.exports = [
   },
 
   {
-    filter: /^em$|^i$/i,
+    filter: ['em', 'i'],
     replacement: function (innerHTML) {
       return '_' + innerHTML + '_';
     }
   },
 
   {
-    filter: /^strong$|^b$/i,
+    filter: ['strong', 'b'],
     replacement: function (innerHTML) {
       return '**' + innerHTML + '**';
     }
@@ -318,7 +320,7 @@ module.exports = [
   },
 
   {
-    filter: /^ul$|^ol$/i,
+    filter: ['ul', 'ol'],
     replacement: function (innerHTML, node) {
       var strings = [];
       for (var i = 0; i < node.childNodes.length; i++) {
@@ -340,6 +342,10 @@ exports.isRegExp = function (obj) {
 exports.trim = function (string) {
   return string.replace(/^\s+|\s+$/g, '');
 };
+
+exports.isArray = function (obj) {
+  return Array.isArray(obj);
+}
 
 },{}],6:[function(require,module,exports){
 (function (global){
