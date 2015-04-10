@@ -14,6 +14,7 @@ var htmlToDom = require('./lib/html-to-dom');
 var converters = require('./lib/md-converters');
 
 var isRegExp = require('./lib/utilities').isRegExp;
+var isBlockLevel = require('./lib/utilities').isBlockLevel;
 
 var VOID_ELEMENTS = [
   'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
