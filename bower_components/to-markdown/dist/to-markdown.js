@@ -15,6 +15,7 @@ var htmlToDom = require('./lib/html-to-dom');
 var converters = require('./lib/md-converters');
 
 var isRegExp = require('./lib/utilities').isRegExp;
+var isBlockLevel = require('./lib/utilities').isBlockLevel;
 
 var VOID_ELEMENTS = [
   'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
@@ -117,16 +118,23 @@ function removeBlankNodes(node) {
   var child, next;
   switch (node.nodeType) {
     case 3: // Text node
-      var parentTagName = node.parentNode.tagName;
-      if (parentTagName !== 'PRE' && parentTagName !== 'CODE') {
+      var parent = node.parentNode;
+      if (parent.tagName !== 'PRE' && parent.tagName !== 'CODE') {
+        var prevSibling = node.previousSibling;
+        var nextSibling = node.nextSibling;
+        var hasAdjacentBlockSibling = (prevSibling && isBlockLevel(prevSibling)) ||
+                                      (nextSibling && isBlockLevel(nextSibling));
         var value = node.nodeValue;
+
         if (/\S/.test(value)) {
-          node.nodeValue = value.replace(/^[\n\r\t\f]+\s*/gm, '')
-                                .replace(/[\n\r\t\f]+/gm, ' ')
-                                .replace(/ {2,}/gm, ' ');
+          node.nodeValue = value.replace(/\s+/gm, ' ');
+        }
+        else if (hasAdjacentBlockSibling) {
+          // Remove any empty text nodes that are adjacent to block-level nodes
+          parent.removeChild(node);
         }
         else {
-          node.parentNode.removeChild(node);
+          node.nodeValue = ' ';
         }
       }
       break;
@@ -135,6 +143,11 @@ function removeBlankNodes(node) {
       break;
     case 1: // Element node
     case 9: // Document node
+      // Trim block-level
+      if (node.tagName !== 'PRE' && isBlockLevel(node)) {
+        node.innerHTML = node.innerHTML.replace(/^\s+|\s+$/, '');
+      }
+
       child = node.firstChild;
       while (child) {
         next = child.nextSibling;
@@ -145,7 +158,7 @@ function removeBlankNodes(node) {
   }
 }
 
-},{"./lib/html-to-dom":3,"./lib/md-converters":4,"./lib/utilities":5,"he":6}],2:[function(require,module,exports){
+},{"./lib/html-to-dom":3,"./lib/md-converters":4,"./lib/utilities":5,"he":7}],2:[function(require,module,exports){
 var _document;
 
 if (typeof document === 'undefined') {
@@ -157,7 +170,7 @@ else {
 
 module.exports = _document;
 
-},{"jsdom":7}],3:[function(require,module,exports){
+},{"jsdom":6}],3:[function(require,module,exports){
 'use strict';
 
 var doc = require('./document');
@@ -195,8 +208,6 @@ module.exports = function (input) {
 
 },{"./document":2}],4:[function(require,module,exports){
 'use strict';
-
-var trim = require('./utilities').trim;
 
 module.exports = [
   {
@@ -297,7 +308,8 @@ module.exports = [
   {
     filter: 'blockquote',
     replacement: function (innerHTML) {
-      innerHTML = trim(innerHTML);
+      // Trim
+      innerHTML = innerHTML.replace(/^\s+|\s+$/g, '');
       innerHTML = innerHTML.replace(/\n{3,}/g, '\n\n');
       innerHTML = innerHTML.replace(/^/gm, '> ');
       return '\n' + innerHTML + '\n\n';
@@ -332,16 +344,21 @@ module.exports = [
     }
   }
 ];
-},{"./utilities":5}],5:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
+'use strict';
+
 exports.isRegExp = function (obj) {
   return Object.prototype.toString.call(obj) === '[object RegExp]';
 };
 
-exports.trim = function (string) {
-  return string.replace(/^\s+|\s+$/g, '');
+var blockRegex = /^(address|article|aside|audio|blockquote|body|canvas|center|dd|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frameset|h[1-6]|header|hgroup|hr|html|isindex|li|main|menu||nav|noframes|noscript|ol|output|p|pre|section|table|tbody|td|tfoot|th|thead|tr|ul)$/i;
+exports.isBlockLevel = function (node) {
+  return blockRegex.test(node.nodeName);
 };
 
 },{}],6:[function(require,module,exports){
+
+},{}],7:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.4.1 by @mathias | MIT license */
 ;(function(root) {
@@ -670,7 +687,5 @@ exports.trim = function (string) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],7:[function(require,module,exports){
-
 },{}]},{},[1])(1)
 });
