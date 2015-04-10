@@ -117,16 +117,23 @@ function removeBlankNodes(node) {
   var child, next;
   switch (node.nodeType) {
     case 3: // Text node
-      var parentTagName = node.parentNode.tagName;
-      if (parentTagName !== 'PRE' && parentTagName !== 'CODE') {
+      var parent = node.parentNode;
+      if (parent.tagName !== 'PRE' && parent.tagName !== 'CODE') {
+        var prevSibling = node.previousSibling;
+        var nextSibling = node.nextSibling;
+        var hasAdjacentBlockSibling = (prevSibling && isBlockLevel(prevSibling)) ||
+                                      (nextSibling && isBlockLevel(nextSibling));
         var value = node.nodeValue;
+
         if (/\S/.test(value)) {
-          node.nodeValue = value.replace(/^[\n\r\t\f]+\s*/gm, '')
-                                .replace(/[\n\r\t\f]+/gm, ' ')
-                                .replace(/ {2,}/gm, ' ');
+          node.nodeValue = value.replace(/\s+/gm, ' ');
+        }
+        else if (hasAdjacentBlockSibling) {
+          // Remove any empty text nodes that are adjacent to block-level nodes
+          parent.removeChild(node);
         }
         else {
-          node.parentNode.removeChild(node);
+          node.nodeValue = ' ';
         }
       }
       break;
