@@ -293,8 +293,8 @@ test('comments', function () {
 test('leading/trailing whitespace', function() {
   var html, md;
 
-  html = '<p>I <a href="http://example.com">need</a> a space</p>';
-  md = 'I [need](http://example.com) a space';
+  html = '<p>I <a href="http://example.com">need</a> <a href="http://www.example.com">more</a> spaces!</p>';
+  md = 'I [need](http://example.com) [more](http://www.example.com) spaces!';
   equal(toMarkdown(html), md, 'Inline elements');
 
   html = [
