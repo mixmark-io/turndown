@@ -142,6 +142,11 @@ function removeBlankNodes(node) {
       break;
     case 1: // Element node
     case 9: // Document node
+      // Trim block-level
+      if (node.tagName !== 'PRE' && isBlockLevel(node)) {
+        node.innerHTML = node.innerHTML.replace(/^\s+|\s+$/, '');
+      }
+
       child = node.firstChild;
       while (child) {
         next = child.nextSibling;
