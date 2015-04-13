@@ -361,6 +361,15 @@ test('leading/trailing whitespace', function() {
   equal(toMarkdown(lisWithTrailingWhitespaceHtml), lisWithTrailingWhitespaceMd, 'We expect list items with trailing whitespace to be converted');
 });
 
+test('invalid input', function () {
+  throws(function () { toMarkdown(null) }, /null is not a string/, 'null input');
+  throws(function () { toMarkdown(void(0)) }, /undefined is not a string/, 'undefined input');
+
+  throws(function () { toMarkdown(null) }, function (e) {
+    return e.name === 'TypeError';
+  }, 'error type');
+});
+
 asyncTest('img[onerror]', 1, function () {
   start();
   equal(toMarkdown('>\'>"><img src=x onerror="(function () { ok(true); })()">'), '>\'>">![](x)', 'We expect img[onerror] functions not to run');

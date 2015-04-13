@@ -24,7 +24,7 @@ var VOID_ELEMENTS = [
 module.exports = function (input) {
 
   if (typeof input !== 'string') {
-    throw 'first argument needs to be an HTML string';
+    throw new TypeError(input + ' is not a string');
   }
 
   // Escape potential ol triggers
