@@ -6,6 +6,10 @@
   "author": "Dom Christie",
   "main": "index.js",
   "version": "1.0.0-rc.4",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/domchristie/to-markdown.git"
+  },
   "scripts": {
     "start": "watchify -s toMarkdown -o dist/to-markdown.js index.js -v",
     "test": "qunit -c ./index.js -t ./test/to-markdown-test.js"
