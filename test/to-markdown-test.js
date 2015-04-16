@@ -286,6 +286,12 @@ test('blockquotes', function() {
   strictEqual(toMarkdown(html), md, 'We expect html in blockquotes to be converted');
 });
 
+test('block-level', function () {
+  var html = '<div>Hello</div><div>world</div>';
+  var md = '<div>Hello</div>\n\n<div>world</div>';
+  equal(toMarkdown(html), md, 'divs are separated by newlines');
+});
+
 test('comments', function () {
   equal(toMarkdown('<!-- comment -->'), '', 'We expect comment nodes to be removed.');
 });
