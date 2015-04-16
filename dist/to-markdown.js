@@ -25,7 +25,7 @@ var VOID_ELEMENTS = [
 module.exports = function (input) {
 
   if (typeof input !== 'string') {
-    throw 'first argument needs to be an HTML string';
+    throw new TypeError(input + ' is not a string');
   }
 
   // Escape potential ol triggers
@@ -158,7 +158,7 @@ function removeBlankNodes(node) {
   }
 }
 
-},{"./lib/html-to-dom":3,"./lib/md-converters":4,"./lib/utilities":5,"he":7}],2:[function(require,module,exports){
+},{"./lib/html-to-dom":3,"./lib/md-converters":4,"./lib/utilities":5,"he":6}],2:[function(require,module,exports){
 var _document;
 
 if (typeof document === 'undefined') {
@@ -170,7 +170,7 @@ else {
 
 module.exports = _document;
 
-},{"jsdom":6}],3:[function(require,module,exports){
+},{"jsdom":7}],3:[function(require,module,exports){
 'use strict';
 
 var doc = require('./document');
@@ -208,6 +208,7 @@ module.exports = function (input) {
 
 },{"./document":2}],4:[function(require,module,exports){
 'use strict';
+var isBlockLevel = require('./utilities').isBlockLevel;
 
 module.exports = [
   {
@@ -342,9 +343,18 @@ module.exports = [
       }
       return '\n' + strings.join('\n') + '\n\n';
     }
+  },
+
+  {
+    filter: function (node) {
+      return isBlockLevel(node);
+    },
+    replacement: function (innerHTML, node) {
+      return '\n' + node.outerHTML + '\n\n';
+    }
   }
 ];
-},{}],5:[function(require,module,exports){
+},{"./utilities":5}],5:[function(require,module,exports){
 'use strict';
 
 exports.isRegExp = function (obj) {
@@ -357,8 +367,6 @@ exports.isBlockLevel = function (node) {
 };
 
 },{}],6:[function(require,module,exports){
-
-},{}],7:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.4.1 by @mathias | MIT license */
 ;(function(root) {
@@ -687,5 +695,7 @@ exports.isBlockLevel = function (node) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],7:[function(require,module,exports){
+
 },{}]},{},[1])(1)
 });
