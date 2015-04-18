@@ -8,20 +8,23 @@
 
 'use strict';
 
-var he = require('he');
-
 var htmlToDom = require('./lib/html-to-dom');
 var converters = require('./lib/md-converters');
+var utilities = require('./lib/utilities');
 
-var isRegExp = require('./lib/utilities').isRegExp;
-var isBlockLevel = require('./lib/utilities').isBlockLevel;
+var isRegExp = utilities.isRegExp;
+var isBlockLevel = utilities.isBlockLevel;
+var trim = utilities.trim;
+var decodeHTMLEntities = require('he').decode;
 
 var VOID_ELEMENTS = [
   'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
   'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
 ];
 
-module.exports = function (input) {
+var toMarkdown;
+
+module.exports = toMarkdown = function (input) {
 
   if (typeof input !== 'string') {
     throw new TypeError(input + ' is not a string');
@@ -46,12 +49,16 @@ module.exports = function (input) {
     if (replacement) { node.parentNode.replaceChild(replacement, node); }
   }
 
-  var output = he.decode(clone.innerHTML);
+  var output = decodeHTMLEntities(clone.innerHTML);
 
   return output.replace(/^[\t\r\n]+|[\t\r\n\s]+$/g, '')
                .replace(/\n\s+\n/g, '\n\n')
                .replace(/\n{3,}/g, '\n\n');
 };
+
+toMarkdown.decodeHTMLEntities = decodeHTMLEntities;
+toMarkdown.isBlockLevel = isBlockLevel;
+toMarkdown.trim = trim;
 
 function bfsOrder(root) {
   var inqueue = [root];
@@ -78,7 +85,7 @@ function canConvertNode(node, filter) {
     return new RegExp('^' + filter + '$', 'i').test(node.tagName);
   }
   else if (typeof filter === 'function') {
-    return filter(node);
+    return filter.call(toMarkdown, node);
   }
   else {
     throw '`filter` needs to be a RegExp, string, or function';
@@ -105,7 +112,7 @@ function replacementForNode(node, doc) {
         throw '`replacement` needs to be a function that returns a string';
       }
 
-      text = replacement(he.decode(node.innerHTML), node);
+      text = replacement.call(toMarkdown, decodeHTMLEntities(node.innerHTML), node);
 
       return doc.createTextNode(text);
     }
@@ -144,7 +151,7 @@ function removeBlankNodes(node) {
     case 9: // Document node
       // Trim block-level
       if (node.tagName !== 'PRE' && isBlockLevel(node)) {
-        node.innerHTML = node.innerHTML.replace(/^\s+|\s+$/, '');
+        node.innerHTML = trim(node.innerHTML);
       }
 
       child = node.firstChild;
