@@ -9,20 +9,23 @@
 
 'use strict';
 
-var he = require('he');
-
 var htmlToDom = require('./lib/html-to-dom');
 var converters = require('./lib/md-converters');
+var utilities = require('./lib/utilities');
 
-var isRegExp = require('./lib/utilities').isRegExp;
-var isBlockLevel = require('./lib/utilities').isBlockLevel;
+var isRegExp = utilities.isRegExp;
+var isBlockLevel = utilities.isBlockLevel;
+var trim = utilities.trim;
+var decodeHTMLEntities = require('he').decode;
 
 var VOID_ELEMENTS = [
   'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
   'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
 ];
 
-module.exports = function (input) {
+var toMarkdown;
+
+module.exports = toMarkdown = function (input) {
 
   if (typeof input !== 'string') {
     throw new TypeError(input + ' is not a string');
@@ -33,8 +36,6 @@ module.exports = function (input) {
 
   var doc = htmlToDom(input);
   var clone = doc.body;
-
-  removeBlankNodes(clone);
 
   // Flattens node tree into a single array
   var nodes = bfsOrder(clone);
@@ -47,12 +48,16 @@ module.exports = function (input) {
     if (replacement) { node.parentNode.replaceChild(replacement, node); }
   }
 
-  var output = he.decode(clone.innerHTML);
+  var output = decodeHTMLEntities(clone.innerHTML);
 
   return output.replace(/^[\t\r\n]+|[\t\r\n\s]+$/g, '')
                .replace(/\n\s+\n/g, '\n\n')
                .replace(/\n{3,}/g, '\n\n');
 };
+
+toMarkdown.decodeHTMLEntities = decodeHTMLEntities;
+toMarkdown.isBlockLevel = isBlockLevel;
+toMarkdown.trim = trim;
 
 function bfsOrder(root) {
   var inqueue = [root];
@@ -79,11 +84,37 @@ function canConvertNode(node, filter) {
     return new RegExp('^' + filter + '$', 'i').test(node.tagName);
   }
   else if (typeof filter === 'function') {
-    return filter(node);
+    return filter.call(toMarkdown, node);
   }
   else {
     throw '`filter` needs to be a RegExp, string, or function';
   }
+}
+
+function isFlankedByExternalSpace(direction, node) {
+  var sibling,
+      regExp,
+      flankedBySpace,
+      flankedBySpaceInInlineElement;
+
+  if (direction === 'left') {
+    sibling = node.previousSibling;
+    regExp = / $/;
+  }
+  else {
+    sibling = node.nextSibling;
+    regExp = /^ /;
+  }
+
+  if (sibling) {
+    if (sibling.nodeType === 3) {
+      flankedBySpace = regExp.test(sibling.nodeValue);
+    }
+    else if(sibling.nodeType === 1 && !isBlockLevel(sibling)) {
+      flankedBySpaceInInlineElement = regExp.test(node.textContent || node.innertext);
+    }
+  }
+  return flankedBySpace || flankedBySpaceInInlineElement;
 }
 
 // Loops through all md converters, checking to see if the node tagName matches.
@@ -101,64 +132,36 @@ function replacementForNode(node, doc) {
     if (canConvertNode(node, converter.filter)) {
       var replacement = converter.replacement;
       var text;
+      var leadingSpace = '';
+      var trailingSpace = '';
 
       if (typeof replacement !== 'function') {
         throw '`replacement` needs to be a function that returns a string';
       }
 
-      text = replacement(he.decode(node.innerHTML), node);
+      if (!isBlockLevel(node)) {
+        var hasLeadingWhitespace = /^[ \r\n\t]/.test(node.innerHTML);
+        var hasTrailingWhitespace = /[ \r\n\t]$/.test(node.innerHTML);
 
-      return doc.createTextNode(text);
+        node.innerHTML = trim(node.innerHTML);
+
+        if (hasLeadingWhitespace && !isFlankedByExternalSpace('left', node)) {
+          leadingSpace = ' ';
+        }
+        if (hasTrailingWhitespace && !isFlankedByExternalSpace('right', node)) {
+          trailingSpace = ' ';
+        }
+      }
+
+      text = replacement.call(toMarkdown, decodeHTMLEntities(node.innerHTML), node);
+
+      return doc.createTextNode(leadingSpace + text + trailingSpace);
     }
   }
   return null;
 }
 
-function removeBlankNodes(node) {
-  var child, next;
-  switch (node.nodeType) {
-    case 3: // Text node
-      var parent = node.parentNode;
-      if (parent.tagName !== 'PRE' && parent.tagName !== 'CODE') {
-        var prevSibling = node.previousSibling;
-        var nextSibling = node.nextSibling;
-        var hasAdjacentBlockSibling = (prevSibling && isBlockLevel(prevSibling)) ||
-                                      (nextSibling && isBlockLevel(nextSibling));
-        var value = node.nodeValue;
-
-        if (/\S/.test(value)) {
-          node.nodeValue = value.replace(/\s+/gm, ' ');
-        }
-        else if (hasAdjacentBlockSibling) {
-          // Remove any empty text nodes that are adjacent to block-level nodes
-          parent.removeChild(node);
-        }
-        else {
-          node.nodeValue = ' ';
-        }
-      }
-      break;
-    case 8: // Comment node
-      node.parentNode.removeChild(node);
-      break;
-    case 1: // Element node
-    case 9: // Document node
-      // Trim block-level
-      if (node.tagName !== 'PRE' && isBlockLevel(node)) {
-        node.innerHTML = node.innerHTML.replace(/^\s+|\s+$/, '');
-      }
-
-      child = node.firstChild;
-      while (child) {
-        next = child.nextSibling;
-        removeBlankNodes(child);
-        child = next;
-      }
-      break;
-  }
-}
-
-},{"./lib/html-to-dom":3,"./lib/md-converters":4,"./lib/utilities":5,"he":6}],2:[function(require,module,exports){
+},{"./lib/html-to-dom":3,"./lib/md-converters":4,"./lib/utilities":5,"he":9}],2:[function(require,module,exports){
 var _document;
 
 if (typeof document === 'undefined') {
@@ -170,9 +173,11 @@ else {
 
 module.exports = _document;
 
-},{"jsdom":7}],3:[function(require,module,exports){
+},{"jsdom":6}],3:[function(require,module,exports){
 'use strict';
 
+var collapse = require('collapse-whitespace');
+var isBlockLevel = require('./utilities').isBlockLevel;
 var doc = require('./document');
 var root = (typeof window !== 'undefined' ? window : this);
 
@@ -203,12 +208,13 @@ if (!canParseHtml) {
 }
 
 module.exports = function (input) {
-  return new Parser().parseFromString(input, 'text/html');
+  var tree = new Parser().parseFromString(input, 'text/html');
+  collapse(tree, isBlockLevel);
+  return tree;
 };
 
-},{"./document":2}],4:[function(require,module,exports){
+},{"./document":2,"./utilities":5,"collapse-whitespace":8}],4:[function(require,module,exports){
 'use strict';
-var isBlockLevel = require('./utilities').isBlockLevel;
 
 module.exports = [
   {
@@ -258,8 +264,14 @@ module.exports = [
     }
   },
 
+  // Inline code
   {
-    filter: 'code',
+    filter: function (node) {
+      var hasSiblings = node.previousSibling || node.nextSibling;
+      var isCodeBlock = node.parentNode.nodeName === 'PRE' && !hasSiblings;
+
+      return node.nodeName === 'CODE' && !isCodeBlock;
+    },
     replacement: function(innerHTML) {
       return '`' + innerHTML + '`';
     }
@@ -293,24 +305,21 @@ module.exports = [
     }
   },
 
+  // Code blocks
   {
-    filter: 'pre',
+    filter: function (node) {
+      return node.nodeName === 'PRE' && node.firstChild.nodeName === 'CODE';
+    },
     replacement: function(innerHTML, node) {
-      if(/^\s*\`/.test(innerHTML)) {
-        innerHTML = innerHTML.replace(/\`/g, '');
-        return '\n' + '    ' + innerHTML.replace(/\n/g, '\n    ') + '\n\n';
-      }
-      else {
-        return node.outerHTML;
-      }
+      innerHTML = this.decodeHTMLEntities(node.firstChild.innerHTML);
+      return '\n    ' + innerHTML.replace(/\n/g, '\n    ') + '\n\n';
     }
   },
 
   {
     filter: 'blockquote',
     replacement: function (innerHTML) {
-      // Trim
-      innerHTML = innerHTML.replace(/^\s+|\s+$/g, '');
+      innerHTML = this.trim(innerHTML);
       innerHTML = innerHTML.replace(/\n{3,}/g, '\n\n');
       innerHTML = innerHTML.replace(/^/gm, '> ');
       return '\n' + innerHTML + '\n\n';
@@ -323,7 +332,7 @@ module.exports = [
       innerHTML = innerHTML.replace(/^\s+/, '').replace(/\n/gm, '\n    ');
       var prefix = '*   ';
       var parent = node.parentNode;
-      var index = Array.prototype.indexOf.call(parent.childNodes, node) + 1;
+      var index = Array.prototype.indexOf.call(parent.children, node) + 1;
 
       prefix = /ol/i.test(parent.tagName) ? index + '.  ' : '*   ';
       return prefix + innerHTML;
@@ -347,15 +356,19 @@ module.exports = [
 
   {
     filter: function (node) {
-      return isBlockLevel(node);
+      return this.isBlockLevel(node);
     },
     replacement: function (innerHTML, node) {
       return '\n' + node.outerHTML + '\n\n';
     }
   }
 ];
-},{"./utilities":5}],5:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
+
+exports.trim = function (string) {
+  return string.replace(/^[ \r\n\t]+|[ \r\n\t]+$/g, '');
+};
 
 exports.isRegExp = function (obj) {
   return Object.prototype.toString.call(obj) === '[object RegExp]';
@@ -367,6 +380,170 @@ exports.isBlockLevel = function (node) {
 };
 
 },{}],6:[function(require,module,exports){
+
+},{}],7:[function(require,module,exports){
+/**
+ * This file automatically generated from `build.js`.
+ * Do not manually edit.
+ */
+
+module.exports = [
+  "address",
+  "article",
+  "aside",
+  "audio",
+  "blockquote",
+  "canvas",
+  "dd",
+  "div",
+  "dl",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "footer",
+  "form",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "header",
+  "hgroup",
+  "hr",
+  "noscript",
+  "ol",
+  "output",
+  "p",
+  "pre",
+  "section",
+  "table",
+  "tfoot",
+  "ul",
+  "video"
+];
+
+},{}],8:[function(require,module,exports){
+'use strict';
+
+var blocks = require('block-elements').map(function (name) {
+  return name.toUpperCase()
+})
+
+function defaultBlockTest (node) {
+  return isElem(node) && blocks.indexOf(node.nodeName) >= 0
+}
+
+function isText (node) {
+  return node && node.nodeType === 3
+}
+
+function isElem (node) {
+  return node && node.nodeType === 1
+}
+
+/**
+ * whitespace(elem [, isBlock]) removes extraneous whitespace from an
+ * the given element. The function isBlock may optionally be passed in
+ * to determine whether or not an element is a block element; if none
+ * is provided, defaults to using the list of block elements provided
+ * by the `block-elements` module.
+ *
+ * @param {Element} root
+ * @param {Function} isBlock
+ */
+function whitespace (root, isBlock) {
+  var startSpace = /^ /,
+      endSpace = / $/,
+      nextNode,
+      prevNode,
+      prevText,
+      node,
+      text
+
+  if (typeof isBlock !== 'function')
+    isBlock = defaultBlockTest
+
+  function next (node) {
+    while (node && node !== root) {
+      if (node.nextSibling)
+        return node.nextSibling
+
+      node = node.parentNode
+      if (prevText && isBlock(node)) {
+        prevText.data = prevText.data.replace(/[ \r\n\t]$/, '')
+        prevText = null
+      }
+    }
+
+    return null
+  }
+
+  function first (node) {
+    return node.firstChild ? node.firstChild : next(node)
+  }
+
+  function remove (node) {
+    var nextNode = next(node)
+
+    node.parentNode.removeChild(node)
+    return nextNode
+  }
+
+  if (root.nodeName === 'PRE') return
+
+  // Join adjacent text nodes and whatnot.
+  root.normalize()
+
+  node = first(root)
+  while (node) {
+    prevNode = node.previousSibling
+    nextNode = node.nextSibling
+
+    if (isText(node)) {
+      text = node.data.replace(/[ \r\n\t]+/g, ' ')
+
+      if (!prevText || prevNode && isBlock(prevNode))
+        text = text.replace(startSpace, '')
+      if (nextNode && isBlock(nextNode))
+        text = text.replace(endSpace, '')
+
+      if (prevText && endSpace.test(prevText.data) &&
+          startSpace.test(text))
+        text = text.substr(1)
+
+      if (text) {
+        node.data = text
+        prevText = node
+        node = next(node)
+      } else {
+        node = remove(node)
+      }
+    } else if (isElem(node)) {
+      if (node.nodeName === 'PRE') {
+        node = next(node)
+        continue
+      }
+
+      if (prevText && isBlock(node)) {
+        prevText.data = prevText.data.replace(endSpace, '')
+        prevText = null
+      }
+
+      node = first(node)
+    } else {
+      node = remove(node)
+    }
+  }
+
+  // Trim trailing space from last text node
+  if (prevText)
+    prevText.data = prevText.data.replace(endSpace, '')
+}
+
+module.exports = whitespace
+
+},{"block-elements":7}],9:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.4.1 by @mathias | MIT license */
 ;(function(root) {
@@ -695,7 +872,5 @@ exports.isBlockLevel = function (node) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],7:[function(require,module,exports){
-
 },{}]},{},[1])(1)
 });

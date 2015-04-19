@@ -1,7 +1,7 @@
 {
   "name": "to-markdown-demo",
   "dependencies": {
-    "to-markdown": "1.0.0-rc.5",
+    "to-markdown": "1.0.0-rc.6",
     "jquery": "^1.11.1",
     "normalize.css": "~3.0.1"
   }
