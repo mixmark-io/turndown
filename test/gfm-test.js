@@ -97,3 +97,38 @@ test('tables', function() {
     ]
   ]);
 });
+
+test('fenced code blocks', function () {
+  runGfmTestCases([
+    [
+      ['<pre><code>def say_hello',
+      ' puts "Hello world"',
+      'end',
+      '</code></pre>'].join('\n'),
+
+      ['```',
+      'def say_hello',
+      ' puts "Hello world"',
+      'end',
+      '```'].join('\n')
+    ]
+  ]);
+});
+
+test('syntax highlighting', function () {
+  runGfmTestCases([
+    [
+      ['<div class="highlight highlight-ruby"><pre><span class="pl-k">def</span> <span class="pl-en">say_hello</span>',
+      ' puts <span class="pl-s"><span class="pl-pds">"</span>Hello world<span class="pl-pds">"</span></span>',
+      '<span class="pl-k">end</span></pre></div>'].join('\n'),
+
+      ['```ruby',
+      'def say_hello',
+      ' puts "Hello world"',
+      'end',
+      '```'].join('\n'),
+
+      'Ruby'
+    ]
+  ]);
+});
