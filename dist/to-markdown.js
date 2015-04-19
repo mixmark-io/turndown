@@ -192,6 +192,8 @@ function cell(content, node) {
   return prefix + content + ' |';
 }
 
+var highlightRegEx = /highlight highlight-(\S+)/;
+
 module.exports = [
   {
     filter: /^del$|^s$|^strike$/i,
@@ -248,6 +250,43 @@ module.exports = [
     filter: /^thead$|^tbody$|^tfoot$/i,
     replacement: function (innerHTML) {
       return innerHTML;
+    }
+  },
+
+  // Fenced code blocks
+  {
+    filter: function (node) {
+      return node.nodeName === 'PRE' &&
+             node.firstElementChild &&
+             node.firstElementChild.nodeName === 'CODE';
+    },
+    replacement: function(innerHTML, node) {
+      innerHTML = this.decodeHTMLEntities(node.firstElementChild.innerHTML);
+      return '\n```\n' + innerHTML + '```\n\n';
+    }
+  },
+
+  // Syntax-highlighted code blocks
+  {
+    filter: function (node) {
+      return node.nodeName === 'PRE' &&
+             node.parentNode.nodeName === 'DIV' &&
+             highlightRegEx.test(node.parentNode.className);
+    },
+    replacement: function (innerHTML, node) {
+      var language = node.parentNode.className.match(highlightRegEx)[1];
+      innerHTML = this.decodeHTMLEntities(node.textContent);
+      return '\n```' + language + '\n' + innerHTML + '\n' + '```\n\n';
+    }
+  },
+
+  {
+    filter: function (node) {
+      return node.nodeName === 'DIV' &&
+             highlightRegEx.test(node.className);
+    },
+    replacement: function (innerHTML, node) {
+      return '\n' + innerHTML + '\n\n';
     }
   }
 ];
