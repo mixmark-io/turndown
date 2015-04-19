@@ -36,8 +36,6 @@ module.exports = toMarkdown = function (input) {
   var doc = htmlToDom(input);
   var clone = doc.body;
 
-  removeBlankNodes(clone);
-
   // Flattens node tree into a single array
   var nodes = bfsOrder(clone);
 
@@ -118,48 +116,4 @@ function replacementForNode(node, doc) {
     }
   }
   return null;
-}
-
-function removeBlankNodes(node) {
-  var child, next;
-  switch (node.nodeType) {
-    case 3: // Text node
-      var parent = node.parentNode;
-      if (parent.tagName !== 'PRE' && parent.tagName !== 'CODE') {
-        var prevSibling = node.previousSibling;
-        var nextSibling = node.nextSibling;
-        var hasAdjacentBlockSibling = (prevSibling && isBlockLevel(prevSibling)) ||
-                                      (nextSibling && isBlockLevel(nextSibling));
-        var value = node.nodeValue;
-
-        if (/\S/.test(value)) {
-          node.nodeValue = value.replace(/\s+/gm, ' ');
-        }
-        else if (hasAdjacentBlockSibling) {
-          // Remove any empty text nodes that are adjacent to block-level nodes
-          parent.removeChild(node);
-        }
-        else {
-          node.nodeValue = ' ';
-        }
-      }
-      break;
-    case 8: // Comment node
-      node.parentNode.removeChild(node);
-      break;
-    case 1: // Element node
-    case 9: // Document node
-      // Trim block-level
-      if (node.tagName !== 'PRE' && isBlockLevel(node)) {
-        node.innerHTML = trim(node.innerHTML);
-      }
-
-      child = node.firstChild;
-      while (child) {
-        next = child.nextSibling;
-        removeBlankNodes(child);
-        child = next;
-      }
-      break;
-  }
 }
