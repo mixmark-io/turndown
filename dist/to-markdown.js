@@ -359,7 +359,7 @@ module.exports = [
       return this.isBlockLevel(node);
     },
     replacement: function (innerHTML, node) {
-      return '\n' + node.outerHTML + '\n\n';
+      return '\n' + this.decodeHTMLEntities(node.outerHTML) + '\n\n';
     }
   }
 ];
