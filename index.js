@@ -36,8 +36,6 @@ module.exports = toMarkdown = function (input) {
   var doc = htmlToDom(input);
   var clone = doc.body;
 
-  removeBlankNodes(clone);
-
   // Flattens node tree into a single array
   var nodes = bfsOrder(clone);
 
@@ -92,6 +90,32 @@ function canConvertNode(node, filter) {
   }
 }
 
+function isFlankedByExternalSpace(direction, node) {
+  var sibling,
+      regExp,
+      flankedBySpace,
+      flankedBySpaceInInlineElement;
+
+  if (direction === 'left') {
+    sibling = node.previousSibling;
+    regExp = / $/;
+  }
+  else {
+    sibling = node.nextSibling;
+    regExp = /^ /;
+  }
+
+  if (sibling) {
+    if (sibling.nodeType === 3) {
+      flankedBySpace = regExp.test(sibling.nodeValue);
+    }
+    else if(sibling.nodeType === 1 && !isBlockLevel(sibling)) {
+      flankedBySpaceInInlineElement = regExp.test(node.textContent || node.innertext);
+    }
+  }
+  return flankedBySpace || flankedBySpaceInInlineElement;
+}
+
 // Loops through all md converters, checking to see if the node tagName matches.
 // Returns the replacement text node or null.
 function replacementForNode(node, doc) {
@@ -107,59 +131,31 @@ function replacementForNode(node, doc) {
     if (canConvertNode(node, converter.filter)) {
       var replacement = converter.replacement;
       var text;
+      var leadingSpace = '';
+      var trailingSpace = '';
 
       if (typeof replacement !== 'function') {
         throw '`replacement` needs to be a function that returns a string';
       }
 
+      if (!isBlockLevel(node)) {
+        var hasLeadingWhitespace = /^[ \r\n\t]/.test(node.innerHTML);
+        var hasTrailingWhitespace = /[ \r\n\t]$/.test(node.innerHTML);
+
+        node.innerHTML = trim(node.innerHTML);
+
+        if (hasLeadingWhitespace && !isFlankedByExternalSpace('left', node)) {
+          leadingSpace = ' ';
+        }
+        if (hasTrailingWhitespace && !isFlankedByExternalSpace('right', node)) {
+          trailingSpace = ' ';
+        }
+      }
+
       text = replacement.call(toMarkdown, decodeHTMLEntities(node.innerHTML), node);
 
-      return doc.createTextNode(text);
+      return doc.createTextNode(leadingSpace + text + trailingSpace);
     }
   }
   return null;
-}
-
-function removeBlankNodes(node) {
-  var child, next;
-  switch (node.nodeType) {
-    case 3: // Text node
-      var parent = node.parentNode;
-      if (parent.tagName !== 'PRE' && parent.tagName !== 'CODE') {
-        var prevSibling = node.previousSibling;
-        var nextSibling = node.nextSibling;
-        var hasAdjacentBlockSibling = (prevSibling && isBlockLevel(prevSibling)) ||
-                                      (nextSibling && isBlockLevel(nextSibling));
-        var value = node.nodeValue;
-
-        if (/\S/.test(value)) {
-          node.nodeValue = value.replace(/\s+/gm, ' ');
-        }
-        else if (hasAdjacentBlockSibling) {
-          // Remove any empty text nodes that are adjacent to block-level nodes
-          parent.removeChild(node);
-        }
-        else {
-          node.nodeValue = ' ';
-        }
-      }
-      break;
-    case 8: // Comment node
-      node.parentNode.removeChild(node);
-      break;
-    case 1: // Element node
-    case 9: // Document node
-      // Trim block-level
-      if (node.tagName !== 'PRE' && isBlockLevel(node)) {
-        node.innerHTML = trim(node.innerHTML);
-      }
-
-      child = node.firstChild;
-      while (child) {
-        next = child.nextSibling;
-        removeBlankNodes(child);
-        child = next;
-      }
-      break;
-  }
 }
