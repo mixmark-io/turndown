@@ -24,7 +24,8 @@ var VOID_ELEMENTS = [
 
 var toMarkdown;
 
-module.exports = toMarkdown = function (input) {
+module.exports = toMarkdown = function (input, options) {
+  options = options || {};
 
   if (typeof input !== 'string') {
     throw new TypeError(input + ' is not a string');
@@ -39,7 +40,9 @@ module.exports = toMarkdown = function (input) {
   // Flattens node tree into a single array
   var nodes = bfsOrder(clone);
 
-  converters = converters.concat(gfmConverters);
+  if (options.gfm) {
+    converters = gfmConverters.concat(converters);
+  }
 
   // Loop through nodes in reverse (so deepest child elements are first).
   // Replace nodes as necessary.
