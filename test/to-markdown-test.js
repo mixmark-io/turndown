@@ -368,6 +368,11 @@ test('leading/trailing whitespace', function() {
       '*   Baz',
       '',
       '1.  Hello world'].join('\n')
+    ],
+    [
+      'Hello world.<em> Foo </em><strong>bar </strong>',
+      'Hello world. _Foo_ **bar**',
+      'Whitespace in inline elements'
     ]
   ]);
 });

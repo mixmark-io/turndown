@@ -90,6 +90,32 @@ function canConvertNode(node, filter) {
   }
 }
 
+function isFlankedByExternalSpace(direction, node) {
+  var sibling,
+      regExp,
+      flankedBySpace,
+      flankedBySpaceInInlineElement;
+
+  if (direction === 'left') {
+    sibling = node.previousSibling;
+    regExp = / $/;
+  }
+  else {
+    sibling = node.nextSibling;
+    regExp = /^ /;
+  }
+
+  if (sibling) {
+    if (sibling.nodeType === 3) {
+      flankedBySpace = regExp.test(sibling.nodeValue);
+    }
+    else if(sibling.nodeType === 1 && !isBlockLevel(sibling)) {
+      flankedBySpaceInInlineElement = regExp.test(node.textContent || node.innertext);
+    }
+  }
+  return flankedBySpace || flankedBySpaceInInlineElement;
+}
+
 // Loops through all md converters, checking to see if the node tagName matches.
 // Returns the replacement text node or null.
 function replacementForNode(node, doc) {
@@ -105,14 +131,30 @@ function replacementForNode(node, doc) {
     if (canConvertNode(node, converter.filter)) {
       var replacement = converter.replacement;
       var text;
+      var leadingSpace = '';
+      var trailingSpace = '';
 
       if (typeof replacement !== 'function') {
         throw '`replacement` needs to be a function that returns a string';
       }
 
+      if (!isBlockLevel(node)) {
+        var hasLeadingWhitespace = /^[ \r\n\t]/.test(node.innerHTML);
+        var hasTrailingWhitespace = /[ \r\n\t]$/.test(node.innerHTML);
+
+        node.innerHTML = trim(node.innerHTML);
+
+        if (hasLeadingWhitespace && !isFlankedByExternalSpace('left', node)) {
+          leadingSpace = ' ';
+        }
+        if (hasTrailingWhitespace && !isFlankedByExternalSpace('right', node)) {
+          trailingSpace = ' ';
+        }
+      }
+
       text = replacement.call(toMarkdown, decodeHTMLEntities(node.innerHTML), node);
 
-      return doc.createTextNode(text);
+      return doc.createTextNode(leadingSpace + text + trailingSpace);
     }
   }
   return null;
