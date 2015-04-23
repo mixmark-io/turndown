@@ -12,7 +12,6 @@ var htmlToDom = require('./lib/html-to-dom');
 var converters = require('./lib/md-converters');
 var utilities = require('./lib/utilities');
 
-var isRegExp = utilities.isRegExp;
 var isBlockLevel = utilities.isBlockLevel;
 var trim = utilities.trim;
 var decodeHTMLEntities = require('he').decode;
@@ -76,17 +75,17 @@ function bfsOrder(root) {
 }
 
 function canConvertNode(node, filter) {
-  if (isRegExp(filter)) {
-    return filter.test(node.tagName);
+  if (typeof filter === 'string') {
+    return filter === node.nodeName.toLowerCase();
   }
-  else if (typeof filter === 'string') {
-    return new RegExp('^' + filter + '$', 'i').test(node.tagName);
+  if (Array.isArray(filter)) {
+    return filter.indexOf(node.nodeName.toLowerCase()) !== -1;
   }
   else if (typeof filter === 'function') {
     return filter.call(toMarkdown, node);
   }
   else {
-    throw '`filter` needs to be a RegExp, string, or function';
+    throw '`filter` needs to be a string, array, or function';
   }
 }
 
@@ -116,12 +115,12 @@ function isFlankedByExternalSpace(direction, node) {
   return flankedBySpace || flankedBySpaceInInlineElement;
 }
 
-// Loops through all md converters, checking to see if the node tagName matches.
+// Loops through all md converters, checking to see if the node nodeName matches.
 // Returns the replacement text node or null.
 function replacementForNode(node, doc) {
 
   // Remove blank nodes
-  if (VOID_ELEMENTS.indexOf(node.tagName.toLowerCase()) === -1 && /^\s*$/i.test(node.innerHTML)) {
+  if (VOID_ELEMENTS.indexOf(node.nodeName.toLowerCase()) === -1 && /^\s*$/i.test(node.innerHTML)) {
     return doc.createTextNode('');
   }
 
