@@ -12,7 +12,7 @@ var htmlToDom = require('./lib/html-to-dom');
 var converters = require('./lib/md-converters');
 var utilities = require('./lib/utilities');
 
-var isBlockLevel = utilities.isBlockLevel;
+var isBlock = utilities.isBlock;
 var trim = utilities.trim;
 var decodeHTMLEntities = require('he').decode;
 
@@ -54,7 +54,7 @@ module.exports = toMarkdown = function (input) {
 };
 
 toMarkdown.decodeHTMLEntities = decodeHTMLEntities;
-toMarkdown.isBlockLevel = isBlockLevel;
+toMarkdown.isBlock = isBlock;
 toMarkdown.trim = trim;
 
 function bfsOrder(root) {
@@ -108,7 +108,7 @@ function isFlankedByExternalSpace(direction, node) {
     if (sibling.nodeType === 3) {
       flankedBySpace = regExp.test(sibling.nodeValue);
     }
-    else if(sibling.nodeType === 1 && !isBlockLevel(sibling)) {
+    else if(sibling.nodeType === 1 && !isBlock(sibling)) {
       flankedBySpaceInInlineElement = regExp.test(node.textContent || node.innertext);
     }
   }
@@ -137,7 +137,7 @@ function replacementForNode(node, doc) {
         throw '`replacement` needs to be a function that returns a string';
       }
 
-      if (!isBlockLevel(node)) {
+      if (!isBlock(node)) {
         var hasLeadingWhitespace = /^[ \r\n\t]/.test(node.innerHTML);
         var hasTrailingWhitespace = /[ \r\n\t]$/.test(node.innerHTML);
 
