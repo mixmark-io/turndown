@@ -12,8 +12,7 @@ var htmlToDom = require('./lib/html-to-dom');
 var converters = require('./lib/md-converters');
 var utilities = require('./lib/utilities');
 
-var isRegExp = utilities.isRegExp;
-var isBlockLevel = utilities.isBlockLevel;
+var isBlock = utilities.isBlock;
 var trim = utilities.trim;
 var decodeHTMLEntities = require('he').decode;
 
@@ -55,7 +54,7 @@ module.exports = toMarkdown = function (input) {
 };
 
 toMarkdown.decodeHTMLEntities = decodeHTMLEntities;
-toMarkdown.isBlockLevel = isBlockLevel;
+toMarkdown.isBlock = isBlock;
 toMarkdown.trim = trim;
 
 function bfsOrder(root) {
@@ -76,17 +75,17 @@ function bfsOrder(root) {
 }
 
 function canConvertNode(node, filter) {
-  if (isRegExp(filter)) {
-    return filter.test(node.tagName);
+  if (typeof filter === 'string') {
+    return filter === node.nodeName.toLowerCase();
   }
-  else if (typeof filter === 'string') {
-    return new RegExp('^' + filter + '$', 'i').test(node.tagName);
+  if (Array.isArray(filter)) {
+    return filter.indexOf(node.nodeName.toLowerCase()) !== -1;
   }
   else if (typeof filter === 'function') {
     return filter.call(toMarkdown, node);
   }
   else {
-    throw '`filter` needs to be a RegExp, string, or function';
+    throw '`filter` needs to be a string, array, or function';
   }
 }
 
@@ -109,19 +108,19 @@ function isFlankedByExternalSpace(direction, node) {
     if (sibling.nodeType === 3) {
       flankedBySpace = regExp.test(sibling.nodeValue);
     }
-    else if(sibling.nodeType === 1 && !isBlockLevel(sibling)) {
+    else if(sibling.nodeType === 1 && !isBlock(sibling)) {
       flankedBySpaceInInlineElement = regExp.test(node.textContent || node.innertext);
     }
   }
   return flankedBySpace || flankedBySpaceInInlineElement;
 }
 
-// Loops through all md converters, checking to see if the node tagName matches.
+// Loops through all md converters, checking to see if the node nodeName matches.
 // Returns the replacement text node or null.
 function replacementForNode(node, doc) {
 
   // Remove blank nodes
-  if (VOID_ELEMENTS.indexOf(node.tagName.toLowerCase()) === -1 && /^\s*$/i.test(node.innerHTML)) {
+  if (VOID_ELEMENTS.indexOf(node.nodeName.toLowerCase()) === -1 && /^\s*$/i.test(node.innerHTML)) {
     return doc.createTextNode('');
   }
 
@@ -138,7 +137,7 @@ function replacementForNode(node, doc) {
         throw '`replacement` needs to be a function that returns a string';
       }
 
-      if (!isBlockLevel(node)) {
+      if (!isBlock(node)) {
         var hasLeadingWhitespace = /^[ \r\n\t]/.test(node.innerHTML);
         var hasTrailingWhitespace = /[ \r\n\t]$/.test(node.innerHTML);
 
