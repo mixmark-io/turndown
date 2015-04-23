@@ -196,6 +196,12 @@ var highlightRegEx = /highlight highlight-(\S+)/;
 
 module.exports = [
   {
+    filter: 'br',
+    replacement: function () {
+      return '\n';
+    }
+  },
+  {
     filter: /^del$|^s$|^strike$/i,
     replacement: function (innerHTML) {
       return '~~' + innerHTML + '~~';
@@ -257,11 +263,11 @@ module.exports = [
   {
     filter: function (node) {
       return node.nodeName === 'PRE' &&
-             node.firstElementChild &&
-             node.firstElementChild.nodeName === 'CODE';
+             node.firstChild &&
+             node.firstChild.nodeName === 'CODE';
     },
     replacement: function(innerHTML, node) {
-      innerHTML = this.decodeHTMLEntities(node.firstElementChild.innerHTML);
+      innerHTML = this.decodeHTMLEntities(node.firstChild.innerHTML);
       return '\n```\n' + innerHTML + '```\n\n';
     }
   },
@@ -285,7 +291,7 @@ module.exports = [
       return node.nodeName === 'DIV' &&
              highlightRegEx.test(node.className);
     },
-    replacement: function (innerHTML, node) {
+    replacement: function (innerHTML) {
       return '\n' + innerHTML + '\n\n';
     }
   }
