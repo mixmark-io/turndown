@@ -16,6 +16,12 @@ function runGfmTestCases(testCases) {
   }
 }
 
+test('line breaks', function () {
+  runGfmTestCases([
+    ['<p>Hello<br>world</p>', 'Hello\nworld']
+  ]);
+});
+
 test('strikethroughs', function() {
   runGfmTestCases([
     ['<del>Lorem ipsum</del>', '~~Lorem ipsum~~', 'del'],
