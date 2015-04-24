@@ -109,7 +109,7 @@
   $(function(){
     var $input = $('.input');
     function updateOutput(el) {
-      $('.output').text(toMarkdown($input.val()));
+      $('.output').val(toMarkdown($input.val()));
     }
     updateOutput();
     $(document).on('input keydown', '.input', updateOutput);
