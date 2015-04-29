@@ -266,7 +266,7 @@ module.exports = [
     },
     replacement: function(innerHTML, node) {
       innerHTML = this.decodeHTMLEntities(node.firstChild.innerHTML);
-      return '\n```\n' + innerHTML + '```\n\n';
+      return '\n```\n' + innerHTML + '\n```\n\n';
     }
   },
 
@@ -280,7 +280,7 @@ module.exports = [
     replacement: function (innerHTML, node) {
       var language = node.parentNode.className.match(highlightRegEx)[1];
       innerHTML = this.decodeHTMLEntities(node.textContent);
-      return '\n```' + language + '\n' + innerHTML + '\n' + '```\n\n';
+      return '\n```' + language + '\n' + innerHTML + '\n```\n\n';
     }
   },
 

@@ -109,8 +109,7 @@ test('fenced code blocks', function () {
     [
       ['<pre><code>def say_hello',
       ' puts "Hello world"',
-      'end',
-      '</code></pre>'].join('\n'),
+      'end</code></pre>'].join('\n'),
 
       ['```',
       'def say_hello',
