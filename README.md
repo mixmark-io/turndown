@@ -54,7 +54,7 @@ To run in node.js:
 
 ## Credits
 
-Thanks to all [contributors](https://github.com/domchristie/to-markdown/graphs/contributors). Also, thanks to [https://github.com/acornejo](Alex Cornejo) for advice and inspiration for the breadth-first search algorithm.
+Thanks to all [contributors](https://github.com/domchristie/to-markdown/graphs/contributors). Also, thanks to [Alex Cornejo](https://github.com/acornejo) for advice and inspiration for the breadth-first search algorithm.
 
 ## Licence
 
