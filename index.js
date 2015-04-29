@@ -9,9 +9,10 @@
 'use strict';
 
 var htmlToDom = require('./lib/html-to-dom');
-var converters = require('./lib/md-converters');
-var utilities = require('./lib/utilities');
+var converters;
+var mdConverters = require('./lib/md-converters');
 var gfmConverters = require('./lib/gfm-converters');
+var utilities = require('./lib/utilities');
 
 var isBlock = utilities.isBlock;
 var trim = utilities.trim;
@@ -40,9 +41,7 @@ module.exports = toMarkdown = function (input, options) {
   // Flattens node tree into a single array
   var nodes = bfsOrder(clone);
 
-  if (options.gfm) {
-    converters = gfmConverters.concat(converters);
-  }
+  converters = options.gfm ? gfmConverters.concat(mdConverters) : mdConverters;
 
   // Loop through nodes in reverse (so deepest child elements are first).
   // Replace nodes as necessary.
