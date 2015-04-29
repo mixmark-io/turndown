@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "watchify -s toMarkdown -o dist/to-markdown.js index.js -v",
-    "test": "qunit -c ./index.js -t ./test/to-markdown-test.js"
+    "test": "qunit -c ./index.js -t ./test/to-markdown-test.js ./test/gfm-test.js"
   },
   "devDependencies": {
     "browserify": "^9.0.3",

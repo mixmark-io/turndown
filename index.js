@@ -11,6 +11,7 @@
 var htmlToDom = require('./lib/html-to-dom');
 var converters = require('./lib/md-converters');
 var utilities = require('./lib/utilities');
+var gfmConverters = require('./lib/gfm-converters');
 
 var isBlock = utilities.isBlock;
 var trim = utilities.trim;
@@ -23,7 +24,8 @@ var VOID_ELEMENTS = [
 
 var toMarkdown;
 
-module.exports = toMarkdown = function (input) {
+module.exports = toMarkdown = function (input, options) {
+  options = options || {};
 
   if (typeof input !== 'string') {
     throw new TypeError(input + ' is not a string');
@@ -37,6 +39,10 @@ module.exports = toMarkdown = function (input) {
 
   // Flattens node tree into a single array
   var nodes = bfsOrder(clone);
+
+  if (options.gfm) {
+    converters = gfmConverters.concat(converters);
+  }
 
   // Loop through nodes in reverse (so deepest child elements are first).
   // Replace nodes as necessary.
@@ -130,6 +136,7 @@ function replacementForNode(node, doc) {
     if (canConvertNode(node, converter.filter)) {
       var replacement = converter.replacement;
       var text;
+      var textNode;
       var leadingSpace = '';
       var trailingSpace = '';
 
@@ -152,8 +159,10 @@ function replacementForNode(node, doc) {
       }
 
       text = replacement.call(toMarkdown, decodeHTMLEntities(node.innerHTML), node);
+      textNode = doc.createTextNode(leadingSpace + text + trailingSpace);
+      textNode._attributes = node.attributes;
 
-      return doc.createTextNode(leadingSpace + text + trailingSpace);
+      return textNode;
     }
   }
   return null;
