@@ -33,6 +33,14 @@ test('emphasis', function() {
   ]);
 });
 
+test('strikethrough', function() {
+  runTestCases([
+    ['<del>Hello world</del>', '~~Hello world~~', 'del'],
+    ['<strike>Hello world</strike>', '~~Hello world~~', 'strike'],
+    ['<del><b>Hello world</b></del>', '~~**Hello world**~~', 'del with child']
+  ]);
+});
+
 test('code', function() {
   runTestCases([
     ['<code>print()</code>', '`print()`']
