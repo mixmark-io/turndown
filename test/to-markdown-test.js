@@ -37,6 +37,7 @@ test('strikethrough', function() {
   runTestCases([
     ['<del>Hello world</del>', '~~Hello world~~', 'del'],
     ['<strike>Hello world</strike>', '~~Hello world~~', 'strike'],
+    ['<s>Hello world</s>', '~~Hello world~~', 's'],
     ['<del><b>Hello world</b></del>', '~~**Hello world**~~', 'del with child']
   ]);
 });
