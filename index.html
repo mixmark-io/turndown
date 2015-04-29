@@ -87,6 +87,12 @@
     color: #fff;
   }
 
+  .toolbar {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #e6e6e6;
+  }
+
   @media (min-width: 768px) {
     body {
       font-size: 16px;
@@ -99,7 +105,8 @@
     }
 
     .row {
-      padding: 0 15px;
+      padding-right: 15px;
+      padding-left: 15px;
     }
   }
 </style>
@@ -109,10 +116,10 @@
   $(function(){
     var $input = $('.input');
     function updateOutput(el) {
-      $('.output').val(toMarkdown($input.val()));
+      $('.output').val(toMarkdown($input.val(), {gfm: $('#gfm').is(':checked')}));
     }
     updateOutput();
-    $(document).on('input keydown', '.input', updateOutput);
+    $(document).on('input keydown change', '.input, #gfm', updateOutput);
   });
 </script>
 <script type="text/javascript">
@@ -134,6 +141,11 @@
     <h1>to-markdown</h1>
     <a style="float: right" href="https://github.com/domchristie/to-markdown">Source on GitHub</a>
   </header>
+  <div class="row cf toolbar">
+    <div class="col">
+      <label><input type="checkbox" id="gfm"> GitHub Flavored Markdown</label>
+    </div>
+  </div>
   <div class="row cf">
     <div class="col">
       <h2>HTML</h2>

@@ -10,11 +10,12 @@
 'use strict';
 
 var htmlToDom = require('./lib/html-to-dom');
-var converters = require('./lib/md-converters');
+var converters;
+var mdConverters = require('./lib/md-converters');
+var gfmConverters = require('./lib/gfm-converters');
 var utilities = require('./lib/utilities');
 
-var isRegExp = utilities.isRegExp;
-var isBlockLevel = utilities.isBlockLevel;
+var isBlock = utilities.isBlock;
 var trim = utilities.trim;
 var decodeHTMLEntities = require('he').decode;
 
@@ -25,7 +26,8 @@ var VOID_ELEMENTS = [
 
 var toMarkdown;
 
-module.exports = toMarkdown = function (input) {
+module.exports = toMarkdown = function (input, options) {
+  options = options || {};
 
   if (typeof input !== 'string') {
     throw new TypeError(input + ' is not a string');
@@ -39,6 +41,8 @@ module.exports = toMarkdown = function (input) {
 
   // Flattens node tree into a single array
   var nodes = bfsOrder(clone);
+
+  converters = options.gfm ? gfmConverters.concat(mdConverters) : mdConverters;
 
   // Loop through nodes in reverse (so deepest child elements are first).
   // Replace nodes as necessary.
@@ -56,7 +60,7 @@ module.exports = toMarkdown = function (input) {
 };
 
 toMarkdown.decodeHTMLEntities = decodeHTMLEntities;
-toMarkdown.isBlockLevel = isBlockLevel;
+toMarkdown.isBlock = isBlock;
 toMarkdown.trim = trim;
 
 function bfsOrder(root) {
@@ -77,17 +81,17 @@ function bfsOrder(root) {
 }
 
 function canConvertNode(node, filter) {
-  if (isRegExp(filter)) {
-    return filter.test(node.tagName);
+  if (typeof filter === 'string') {
+    return filter === node.nodeName.toLowerCase();
   }
-  else if (typeof filter === 'string') {
-    return new RegExp('^' + filter + '$', 'i').test(node.tagName);
+  if (Array.isArray(filter)) {
+    return filter.indexOf(node.nodeName.toLowerCase()) !== -1;
   }
   else if (typeof filter === 'function') {
     return filter.call(toMarkdown, node);
   }
   else {
-    throw '`filter` needs to be a RegExp, string, or function';
+    throw '`filter` needs to be a string, array, or function';
   }
 }
 
@@ -110,19 +114,19 @@ function isFlankedByExternalSpace(direction, node) {
     if (sibling.nodeType === 3) {
       flankedBySpace = regExp.test(sibling.nodeValue);
     }
-    else if(sibling.nodeType === 1 && !isBlockLevel(sibling)) {
+    else if(sibling.nodeType === 1 && !isBlock(sibling)) {
       flankedBySpaceInInlineElement = regExp.test(node.textContent || node.innertext);
     }
   }
   return flankedBySpace || flankedBySpaceInInlineElement;
 }
 
-// Loops through all md converters, checking to see if the node tagName matches.
+// Loops through all md converters, checking to see if the node nodeName matches.
 // Returns the replacement text node or null.
 function replacementForNode(node, doc) {
 
   // Remove blank nodes
-  if (VOID_ELEMENTS.indexOf(node.tagName.toLowerCase()) === -1 && /^\s*$/i.test(node.innerHTML)) {
+  if (VOID_ELEMENTS.indexOf(node.nodeName.toLowerCase()) === -1 && /^\s*$/i.test(node.innerHTML)) {
     return doc.createTextNode('');
   }
 
@@ -132,6 +136,7 @@ function replacementForNode(node, doc) {
     if (canConvertNode(node, converter.filter)) {
       var replacement = converter.replacement;
       var text;
+      var textNode;
       var leadingSpace = '';
       var trailingSpace = '';
 
@@ -139,7 +144,7 @@ function replacementForNode(node, doc) {
         throw '`replacement` needs to be a function that returns a string';
       }
 
-      if (!isBlockLevel(node)) {
+      if (!isBlock(node)) {
         var hasLeadingWhitespace = /^[ \r\n\t]/.test(node.innerHTML);
         var hasTrailingWhitespace = /[ \r\n\t]$/.test(node.innerHTML);
 
@@ -154,14 +159,16 @@ function replacementForNode(node, doc) {
       }
 
       text = replacement.call(toMarkdown, decodeHTMLEntities(node.innerHTML), node);
+      textNode = doc.createTextNode(leadingSpace + text + trailingSpace);
+      textNode._attributes = node.attributes;
 
-      return doc.createTextNode(leadingSpace + text + trailingSpace);
+      return textNode;
     }
   }
   return null;
 }
 
-},{"./lib/html-to-dom":3,"./lib/md-converters":4,"./lib/utilities":5,"he":9}],2:[function(require,module,exports){
+},{"./lib/gfm-converters":3,"./lib/html-to-dom":4,"./lib/md-converters":5,"./lib/utilities":6,"he":10}],2:[function(require,module,exports){
 var _document;
 
 if (typeof document === 'undefined') {
@@ -173,11 +180,126 @@ else {
 
 module.exports = _document;
 
-},{"jsdom":6}],3:[function(require,module,exports){
+},{"jsdom":7}],3:[function(require,module,exports){
+'use strict';
+
+function cell(content, node) {
+  var index = Array.prototype.indexOf.call(node.parentNode.childNodes, node);
+  var prefix = ' ';
+  if (index === 0) { prefix = '| '; }
+  return prefix + content + ' |';
+}
+
+var highlightRegEx = /highlight highlight-(\S+)/;
+
+module.exports = [
+  {
+    filter: 'br',
+    replacement: function () {
+      return '\n';
+    }
+  },
+  {
+    filter: ['del', 's', 'strike'],
+    replacement: function (innerHTML) {
+      return '~~' + innerHTML + '~~';
+    }
+  },
+
+  {
+    filter: function (node) {
+      return node.type === 'checkbox' && node.parentNode.tagName === 'LI';
+    },
+    replacement: function (innerHTML, node) {
+      return (node.checked ? '[x]' : '[ ]') + ' ';
+    }
+  },
+
+  {
+    filter: ['th', 'td'],
+    replacement: function (innerHTML, node) {
+      return cell(innerHTML, node);
+    }
+  },
+
+  {
+    filter: 'tr',
+    replacement: function (innerHTML, node) {
+      var borderCells = '';
+      var alignMap = { left: ':--', right: '--:' };
+
+      if (node.parentNode.tagName === 'THEAD') {
+        for (var i = 0; i < node.childNodes.length; i++) {
+          var childNode = node.childNodes[i];
+          var align = childNode._attributes.align;
+          var border = '---';
+
+          if (align) { border = alignMap[align.value]; }
+
+          borderCells += cell(border, node.childNodes[i]);
+        }
+      }
+      return '\n' + innerHTML + (borderCells ? '\n' + borderCells : '');
+    }
+  },
+
+  {
+    filter: 'table',
+    replacement: function (innerHTML) {
+      return '\n' + innerHTML + '\n\n';
+    }
+  },
+
+  {
+    filter: ['thead', 'tbody', 'tfoot'],
+    replacement: function (innerHTML) {
+      return innerHTML;
+    }
+  },
+
+  // Fenced code blocks
+  {
+    filter: function (node) {
+      return node.nodeName === 'PRE' &&
+             node.firstChild &&
+             node.firstChild.nodeName === 'CODE';
+    },
+    replacement: function(innerHTML, node) {
+      innerHTML = this.decodeHTMLEntities(node.firstChild.innerHTML);
+      return '\n```\n' + innerHTML + '```\n\n';
+    }
+  },
+
+  // Syntax-highlighted code blocks
+  {
+    filter: function (node) {
+      return node.nodeName === 'PRE' &&
+             node.parentNode.nodeName === 'DIV' &&
+             highlightRegEx.test(node.parentNode.className);
+    },
+    replacement: function (innerHTML, node) {
+      var language = node.parentNode.className.match(highlightRegEx)[1];
+      innerHTML = this.decodeHTMLEntities(node.textContent);
+      return '\n```' + language + '\n' + innerHTML + '\n' + '```\n\n';
+    }
+  },
+
+  {
+    filter: function (node) {
+      return node.nodeName === 'DIV' &&
+             highlightRegEx.test(node.className);
+    },
+    replacement: function (innerHTML) {
+      return '\n' + innerHTML + '\n\n';
+    }
+  }
+];
+
+},{}],4:[function(require,module,exports){
 'use strict';
 
 var collapse = require('collapse-whitespace');
-var isBlockLevel = require('./utilities').isBlockLevel;
+var isBlock = require('./utilities').isBlock;
 var doc = require('./document');
 var root = (typeof window !== 'undefined' ? window : this);
 
@@ -209,11 +331,11 @@ if (!canParseHtml) {
 
 module.exports = function (input) {
   var tree = new Parser().parseFromString(input, 'text/html');
-  collapse(tree, isBlockLevel);
+  collapse(tree, isBlock);
   return tree;
 };
 
-},{"./document":2,"./utilities":5,"collapse-whitespace":8}],4:[function(require,module,exports){
+},{"./document":2,"./utilities":6,"collapse-whitespace":9}],5:[function(require,module,exports){
 'use strict';
 
 module.exports = [
@@ -232,9 +354,9 @@ module.exports = [
   },
 
   {
-    filter: 'h[1-6]',
+    filter: ['h1', 'h2', 'h3', 'h4','h5', 'h6'],
     replacement: function(innerHTML, node) {
-      var hLevel = node.tagName.charAt(1);
+      var hLevel = node.nodeName.charAt(1);
       var hPrefix = '';
       for(var i = 0; i < hLevel; i++) {
         hPrefix += '#';
@@ -251,14 +373,14 @@ module.exports = [
   },
 
   {
-    filter: /^em$|^i$/i,
+    filter: ['em', 'i'],
     replacement: function (innerHTML) {
       return '_' + innerHTML + '_';
     }
   },
 
   {
-    filter: /^strong$|^b$/i,
+    filter: ['strong', 'b'],
     replacement: function (innerHTML) {
       return '**' + innerHTML + '**';
     }
@@ -334,20 +456,20 @@ module.exports = [
       var parent = node.parentNode;
       var index = Array.prototype.indexOf.call(parent.children, node) + 1;
 
-      prefix = /ol/i.test(parent.tagName) ? index + '.  ' : '*   ';
+      prefix = /ol/i.test(parent.nodeName) ? index + '.  ' : '*   ';
       return prefix + innerHTML;
     }
   },
 
   {
-    filter: /^ul$|^ol$/i,
+    filter: ['ul', 'ol'],
     replacement: function (innerHTML, node) {
       var strings = [];
       for (var i = 0; i < node.childNodes.length; i++) {
         strings.push(node.childNodes[i].nodeValue);
       }
 
-      if (/li/i.test(node.parentNode.tagName)) {
+      if (/li/i.test(node.parentNode.nodeName)) {
         return '\n' + strings.join('\n');
       }
       return '\n' + strings.join('\n') + '\n\n';
@@ -356,32 +478,35 @@ module.exports = [
 
   {
     filter: function (node) {
-      return this.isBlockLevel(node);
+      return this.isBlock(node);
     },
     replacement: function (innerHTML, node) {
       return '\n' + this.decodeHTMLEntities(node.outerHTML) + '\n\n';
     }
   }
 ];
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 exports.trim = function (string) {
   return string.replace(/^[ \r\n\t]+|[ \r\n\t]+$/g, '');
 };
 
-exports.isRegExp = function (obj) {
-  return Object.prototype.toString.call(obj) === '[object RegExp]';
-};
+var blocks = ['address', 'article', 'aside', 'audio', 'blockquote', 'body',
+              'canvas', 'center', 'dd', 'dir', 'div', 'dl', 'dt', 'fieldset',
+              'figcaption', 'figure', 'footer', 'form', 'frameset', 'h1', 'h2',
+              'h3', 'h4','h5', 'h6', 'header', 'hgroup', 'hr', 'html',
+              'isindex', 'li', 'main', 'menu', 'nav', 'noframes', 'noscript',
+              'ol', 'output', 'p', 'pre', 'section', 'table', 'tbody', 'td',
+              'tfoot', 'th', 'thead', 'tr', 'ul'];
 
-var blockRegex = /^(address|article|aside|audio|blockquote|body|canvas|center|dd|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frameset|h[1-6]|header|hgroup|hr|html|isindex|li|main|menu||nav|noframes|noscript|ol|output|p|pre|section|table|tbody|td|tfoot|th|thead|tr|ul)$/i;
-exports.isBlockLevel = function (node) {
-  return blockRegex.test(node.nodeName);
+exports.isBlock = function (node) {
+  return blocks.indexOf(node.nodeName.toLowerCase()) !== -1;
 };
-
-},{}],6:[function(require,module,exports){
 
 },{}],7:[function(require,module,exports){
+
+},{}],8:[function(require,module,exports){
 /**
  * This file automatically generated from `build.js`.
  * Do not manually edit.
@@ -423,7 +548,7 @@ module.exports = [
   "video"
 ];
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 var blocks = require('block-elements').map(function (name) {
@@ -543,7 +668,7 @@ function whitespace (root, isBlock) {
 
 module.exports = whitespace
 
-},{"block-elements":7}],9:[function(require,module,exports){
+},{"block-elements":8}],10:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.4.1 by @mathias | MIT license */
 ;(function(root) {
