@@ -4,7 +4,7 @@ An HTML to Markdown converter written in JavaScript.
 
 The API is as follows:
 
-    toMarkdown(stringOfHTML);
+    toMarkdown(stringOfHTML, options);
 
 ## Installation
 
@@ -32,6 +32,14 @@ Or with **Bower**:
     toMarkdown('<h1>Hello world!</h1>');
 
 (Note it is no longer necessary to call `.toMarkdown` on the required module as of v1.)
+
+## Options
+
+### `gfm` (boolean)
+
+to-markdown has beta support for GitHub flavored markdown (GFM). Set the `gfm` option to true:
+
+    toMarkdown('<del>Hello world!</del>', { gfm: true });
 
 ## Tests
 
