@@ -33,19 +33,28 @@ Or with **Bower**:
 
 (Note it is no longer necessary to call `.toMarkdown` on the required module as of v1.)
 
-## Tests
+## Development & Contributing
 
-to-markdown uses QUnit for testing. To run the tests in the browser, first make sure you have node.js/npm installed, then:
+First make sure you have node.js/npm installed, then:
 
     $ npm install --dev
     $ bower install --dev
 
-Then open `test/test-runner.html`.
+Automatically browserify the module when source files change by running:
+
+    $ npm start
+
+### Tests
+
+To run the tests in the browser, open `test/index.html`.
 
 To run in node.js:
 
-    $ npm install --dev
     $ npm test
+
+## Credits
+
+Thanks to all [contributors](https://github.com/domchristie/to-markdown/graphs/contributors). Also, thanks to [https://github.com/acornejo](Alex Cornejo) for advice and inspiration for the breadth-first search algorithm.
 
 ## Licence
 
