@@ -41,19 +41,28 @@ to-markdown has beta support for GitHub flavored markdown (GFM). Set the `gfm` o
 
     toMarkdown('<del>Hello world!</del>', { gfm: true });
 
-## Tests
+## Development & Contributing
 
-to-markdown uses QUnit for testing. To run the tests in the browser, first make sure you have node.js/npm installed, then:
+First make sure you have node.js/npm installed, then:
 
     $ npm install --dev
     $ bower install --dev
 
-Then open `test/test-runner.html`.
+Automatically browserify the module when source files change by running:
+
+    $ npm start
+
+### Tests
+
+To run the tests in the browser, open `test/index.html`.
 
 To run in node.js:
 
-    $ npm install --dev
     $ npm test
+
+## Credits
+
+Thanks to all [contributors](https://github.com/domchristie/to-markdown/graphs/contributors). Also, thanks to [Alex Cornejo](https://github.com/acornejo) for advice and inspiration for the breadth-first search algorithm.
 
 ## Licence
 
