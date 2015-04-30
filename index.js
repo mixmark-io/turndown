@@ -257,6 +257,10 @@ toMarkdown = function (input, options) {
     converters = gfmConverters.concat(converters);
   }
 
+  if (options.converters) {
+    converters = options.converters.concat(converters);
+  }
+
   // Process through nodes in reverse (so deepest child elements are first).
   for (var i = nodes.length - 1; i >= 0; i--) {
     process(nodes[i]);
