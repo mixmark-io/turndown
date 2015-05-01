@@ -107,14 +107,28 @@ test('tables', function() {
 test('fenced code blocks', function () {
   runGfmTestCases([
     [
-      ['<pre><code>def say_hello',
-      ' puts "Hello world"',
-      'end</code></pre>'].join('\n'),
+      ['<pre><code>This is a regular paragraph.',
+      '',
+      '&lt;table&gt;',
+      '    &lt;tr&gt;',
+      '        &lt;td&gt;Foo&lt;/td&gt;',
+      '    &lt;/tr&gt;',
+      '&lt;/table&gt;',
+      '',
+      'This is another regular paragraph.',
+      '</code></pre>'].join('\n'),
 
       ['```',
-      'def say_hello',
-      ' puts "Hello world"',
-      'end',
+      'This is a regular paragraph.',
+      '',
+      '<table>',
+      '    <tr>',
+      '        <td>Foo</td>',
+      '    </tr>',
+      '</table>',
+      '',
+      'This is another regular paragraph.',
+      '',
       '```'].join('\n')
     ]
   ]);
@@ -123,17 +137,21 @@ test('fenced code blocks', function () {
 test('syntax highlighting', function () {
   runGfmTestCases([
     [
-      ['<div class="highlight highlight-ruby"><pre><span class="pl-k">def</span> <span class="pl-en">say_hello</span>',
-      ' puts <span class="pl-s"><span class="pl-pds">"</span>Hello world<span class="pl-pds">"</span></span>',
-      '<span class="pl-k">end</span></pre></div>'].join('\n'),
+      ['<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">table</span>&gt;',
+      '    &lt;<span class="pl-ent">tr</span>&gt;',
+      '        &lt;<span class="pl-ent">td</span>&gt;Foo&lt;/<span class="pl-ent">td</span>&gt;',
+      '    &lt;/<span class="pl-ent">tr</span>&gt;',
+      '&lt;/<span class="pl-ent">table</span>&gt;</pre></div>'].join('\n'),
 
-      ['```ruby',
-      'def say_hello',
-      ' puts "Hello world"',
-      'end',
+      ['```html',
+      '<table>',
+      '    <tr>',
+      '        <td>Foo</td>',
+      '    </tr>',
+      '</table>',
       '```'].join('\n'),
 
-      'Ruby'
+      'HTML'
     ]
   ]);
 });
