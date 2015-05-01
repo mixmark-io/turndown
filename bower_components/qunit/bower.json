@@ -1,0 +1,16 @@
+{
+  "name": "qunit",
+  "version": "1.14.0",
+  "main": [
+    "qunit/qunit.js",
+    "qunit/qunit.css"
+  ],
+  "ignore": [
+    "**/.*",
+    "package.json",
+    "bower.json",
+    "Gruntfile.js",
+    "node_modules",
+    "test"
+  ]
+}

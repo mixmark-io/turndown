@@ -1,11 +1,12 @@
 {
   "name": "jquery",
-  "version": "1.11.2",
+  "version": "2.1.4",
   "main": "dist/jquery.js",
   "license": "MIT",
   "ignore": [
     "**/.*",
     "build",
+    "dist/cdn",
     "speed",
     "test",
     "*.md",

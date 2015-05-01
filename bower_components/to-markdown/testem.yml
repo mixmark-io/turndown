@@ -1,0 +1,39 @@
+framework: qunit
+
+src_files: [dist/to-markdown.js, test/to-markdown-test.js]
+
+launchers:
+  sl_ff_mac:
+    command: saucie --browserNameSL="firefox" --platformSL="OS X 10.10"
+    protocol: tap
+
+  sl_chrome_mac:
+    command: saucie --browserNameSL="chrome" --platformSL="OS X 10.10"
+    protocol: tap
+
+  sl_safari_mac:
+    command: saucie --browserNameSL="safari" --platformSL="OS X 10.10"
+    protocol: tap
+
+  sl_ff_win:
+    command: saucie --browserNameSL="firefox" --platformSL="Windows 8.1"
+    protocol: tap
+
+  sl_chrome_win:
+    command: saucie --browserNameSL="chrome" --platformSL="Windows 8.1"
+    protocol: tap
+
+  sl_ie_11:
+    command: saucie --browserNameSL="internet explorer" --versionSL="11" --platformSL="Windows 8.1"
+    protocol: tap
+
+  sl_ie_10:
+    command: saucie --browserNameSL="internet explorer" --versionSL="10" --platformSL="Windows 8"
+    protocol: tap
+
+  sl_ie_9:
+    command: saucie --browserNameSL="internet explorer" --versionSL="9" --platformSL="Windows 7"
+    protocol: tap
+
+launch_in_ci: [sl_ff_mac, sl_chrome_mac, sl_safari_mac, sl_ff_win, sl_chrome_win, sl_ie_9, sl_ie_10, sl_ie_11]
+launch_in_dev: [Chrome, Firefox, Safari, Opera]
