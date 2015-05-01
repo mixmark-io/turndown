@@ -157,6 +157,12 @@ function process(node) {
       break;
     }
   }
+
+  // Remove blank, non-anchor nodes
+  if (!isVoid(node) && !/A/.test(node.nodeName) && /^\s*$/i.test(node.innerHTML)) {
+    replacement = '';
+  }
+
   node._replacement = replacement;
 }
 
@@ -170,12 +176,10 @@ toMarkdown = function (input, options) {
   // Escape potential ol triggers
   input = input.replace(/(\d+)\. /g, '$1\\. ');
 
-  var clone = htmlToDom(input).body;
+  var clone = htmlToDom(input).body,
+      nodes = bfsOrder(clone),
+      output;
 
-  // Flattens node tree into a single array
-  var nodes = bfsOrder(clone);
-
-  // Set up converters
   converters = mdConverters.slice(0);
   if (options.gfm) {
     converters = gfmConverters.concat(converters);
@@ -186,7 +190,7 @@ toMarkdown = function (input, options) {
     process(nodes[i]);
   }
 
-  var output = getContent(clone);
+  output = getContent(clone);
 
   return output.replace(/^[\t\r\n]+|[\t\r\n\s]+$/g, '')
                .replace(/\n\s+\n/g, '\n\n')
