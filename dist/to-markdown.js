@@ -281,34 +281,34 @@ module.exports = [
   },
   {
     filter: ['del', 's', 'strike'],
-    replacement: function (innerHTML) {
-      return '~~' + innerHTML + '~~';
+    replacement: function (content) {
+      return '~~' + content + '~~';
     }
   },
 
   {
     filter: function (node) {
-      return node.type === 'checkbox' && node.parentNode.tagName === 'LI';
+      return node.type === 'checkbox' && node.parentNode.nodeName === 'LI';
     },
-    replacement: function (innerHTML, node) {
+    replacement: function (content, node) {
       return (node.checked ? '[x]' : '[ ]') + ' ';
     }
   },
 
   {
     filter: ['th', 'td'],
-    replacement: function (innerHTML, node) {
-      return cell(innerHTML, node);
+    replacement: function (content, node) {
+      return cell(content, node);
     }
   },
 
   {
     filter: 'tr',
-    replacement: function (innerHTML, node) {
+    replacement: function (content, node) {
       var borderCells = '';
       var alignMap = { left: ':--', right: '--:' };
 
-      if (node.parentNode.tagName === 'THEAD') {
+      if (node.parentNode.nodeName === 'THEAD') {
         for (var i = 0; i < node.childNodes.length; i++) {
           var align = node.childNodes[i].attributes.align;
           var border = '---';
@@ -318,21 +318,21 @@ module.exports = [
           borderCells += cell(border, node.childNodes[i]);
         }
       }
-      return '\n' + innerHTML + (borderCells ? '\n' + borderCells : '');
+      return '\n' + content + (borderCells ? '\n' + borderCells : '');
     }
   },
 
   {
     filter: 'table',
-    replacement: function (innerHTML) {
-      return '\n\n' + innerHTML + '\n\n';
+    replacement: function (content) {
+      return '\n\n' + content + '\n\n';
     }
   },
 
   {
     filter: ['thead', 'tbody', 'tfoot'],
-    replacement: function (innerHTML) {
-      return innerHTML;
+    replacement: function (content) {
+      return content;
     }
   },
 
@@ -343,9 +343,8 @@ module.exports = [
              node.firstChild &&
              node.firstChild.nodeName === 'CODE';
     },
-    replacement: function(innerHTML, node) {
-      innerHTML = node.firstChild.innerHTML;
-      return '\n\n```\n' + innerHTML + '\n```\n\n';
+    replacement: function(content, node) {
+      return '\n\n```\n' + node.firstChild.textContent + '\n```\n\n';
     }
   },
 
@@ -356,10 +355,9 @@ module.exports = [
              node.parentNode.nodeName === 'DIV' &&
              highlightRegEx.test(node.parentNode.className);
     },
-    replacement: function (innerHTML, node) {
+    replacement: function (content, node) {
       var language = node.parentNode.className.match(highlightRegEx)[1];
-      innerHTML = node.textContent;
-      return '\n\n```' + language + '\n' + innerHTML + '\n```\n\n';
+      return '\n\n```' + language + '\n' + node.textContent + '\n```\n\n';
     }
   },
 
@@ -368,8 +366,8 @@ module.exports = [
       return node.nodeName === 'DIV' &&
              highlightRegEx.test(node.className);
     },
-    replacement: function (innerHTML) {
-      return '\n\n' + innerHTML + '\n\n';
+    replacement: function (content) {
+      return '\n\n' + content + '\n\n';
     }
   }
 ];
@@ -380,8 +378,8 @@ module.exports = [
 module.exports = [
   {
     filter: 'p',
-    replacement: function (innerHTML) {
-      return '\n\n' + innerHTML + '\n\n';
+    replacement: function (content) {
+      return '\n\n' + content + '\n\n';
     }
   },
 
@@ -394,13 +392,13 @@ module.exports = [
 
   {
     filter: ['h1', 'h2', 'h3', 'h4','h5', 'h6'],
-    replacement: function(innerHTML, node) {
+    replacement: function(content, node) {
       var hLevel = node.nodeName.charAt(1);
       var hPrefix = '';
       for(var i = 0; i < hLevel; i++) {
         hPrefix += '#';
       }
-      return '\n\n' + hPrefix + ' ' + innerHTML + '\n\n';
+      return '\n\n' + hPrefix + ' ' + content + '\n\n';
     }
   },
 
@@ -413,15 +411,15 @@ module.exports = [
 
   {
     filter: ['em', 'i'],
-    replacement: function (innerHTML) {
-      return '_' + innerHTML + '_';
+    replacement: function (content) {
+      return '_' + content + '_';
     }
   },
 
   {
     filter: ['strong', 'b'],
-    replacement: function (innerHTML) {
-      return '**' + innerHTML + '**';
+    replacement: function (content) {
+      return '**' + content + '**';
     }
   },
 
@@ -433,17 +431,17 @@ module.exports = [
 
       return node.nodeName === 'CODE' && !isCodeBlock;
     },
-    replacement: function(innerHTML) {
-      return '`' + innerHTML + '`';
+    replacement: function(content) {
+      return '`' + content + '`';
     }
   },
 
   {
     filter: 'a',
-    replacement: function(innerHTML, node) {
+    replacement: function(content, node) {
       var href = node.getAttribute('href');
       var title = node.title;
-      var textPart = href ? '[' + innerHTML + ']' : '';
+      var textPart = href ? '[' + content + ']' : '';
       var titlePart = title ? ' "'+ title +'"' : '';
 
       if (href) {
@@ -457,7 +455,7 @@ module.exports = [
 
   {
     filter: 'img',
-    replacement: function(innerHTML, node) {
+    replacement: function(content, node) {
       var alt = node.alt || '';
       var src = node.getAttribute('src') || '';
       var title = node.title || '';
@@ -471,37 +469,37 @@ module.exports = [
     filter: function (node) {
       return node.nodeName === 'PRE' && node.firstChild.nodeName === 'CODE';
     },
-    replacement: function(innerHTML, node) {
+    replacement: function(content, node) {
       return '\n\n    ' + node.firstChild.textContent.replace(/\n/g, '\n    ') + '\n\n';
     }
   },
 
   {
     filter: 'blockquote',
-    replacement: function (innerHTML) {
-      innerHTML = this.trim(innerHTML);
-      innerHTML = innerHTML.replace(/\n{3,}/g, '\n\n');
-      innerHTML = innerHTML.replace(/^/gm, '> ');
-      return '\n\n' + innerHTML + '\n\n';
+    replacement: function (content) {
+      content = this.trim(content);
+      content = content.replace(/\n{3,}/g, '\n\n');
+      content = content.replace(/^/gm, '> ');
+      return '\n\n' + content + '\n\n';
     }
   },
 
   {
     filter: 'li',
-    replacement: function (innerHTML, node) {
-      innerHTML = innerHTML.replace(/^\s+/, '').replace(/\n/gm, '\n    ');
+    replacement: function (content, node) {
+      content = content.replace(/^\s+/, '').replace(/\n/gm, '\n    ');
       var prefix = '*   ';
       var parent = node.parentNode;
       var index = Array.prototype.indexOf.call(parent.children, node) + 1;
 
       prefix = /ol/i.test(parent.nodeName) ? index + '.  ' : '*   ';
-      return prefix + innerHTML;
+      return prefix + content;
     }
   },
 
   {
     filter: ['ul', 'ol'],
-    replacement: function (innerHTML, node) {
+    replacement: function (content, node) {
       var strings = [];
       for (var i = 0; i < node.childNodes.length; i++) {
         strings.push(node.childNodes[i]._replacement);
@@ -518,7 +516,7 @@ module.exports = [
     filter: function (node) {
       return this.isBlock(node);
     },
-    replacement: function (innerHTML, node) {
+    replacement: function (content, node) {
       return '\n\n' + node.outerHTML + '\n\n';
     }
   }
