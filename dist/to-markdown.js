@@ -139,6 +139,15 @@ function getContent(node) {
   return text;
 }
 
+/*
+ * Returns the HTML string of an element with its contents converted
+ */
+
+function outer(node, content) {
+  content = content || getContent(node);
+  return node.cloneNode(false).outerHTML.replace('><', '>'+ content +'<');
+}
+
 function canConvert(node, filter) {
   if (typeof filter === 'string') {
     return filter === node.nodeName.toLowerCase();
@@ -182,7 +191,7 @@ function isFlankedByWhitespace(side, node) {
  */
 
 function process(node) {
-  var replacement = node.outerHTML;
+  var replacement;
 
   for (var i = 0; i < converters.length; i++) {
     var converter = converters[i];
@@ -221,7 +230,7 @@ function process(node) {
     replacement = '';
   }
 
-  node._replacement = replacement;
+  node._replacement = (typeof replacement === 'string') ? replacement : outer(node);
 }
 
 toMarkdown = function (input, options) {
@@ -247,7 +256,6 @@ toMarkdown = function (input, options) {
   for (var i = nodes.length - 1; i >= 0; i--) {
     process(nodes[i]);
   }
-
   output = getContent(clone);
 
   return output.replace(/^[\t\r\n]+|[\t\r\n\s]+$/g, '')
@@ -257,10 +265,11 @@ toMarkdown = function (input, options) {
 
 toMarkdown.isBlock = isBlock;
 toMarkdown.trim = trim;
+toMarkdown.outer = outer;
 
 module.exports = toMarkdown;
 
-},{"./lib/gfm-converters":2,"./lib/md-converters":3,"collapse-whitespace":6,"jsdom":4}],2:[function(require,module,exports){
+},{"./lib/gfm-converters":2,"./lib/md-converters":3,"collapse-whitespace":5,"jsdom":6}],2:[function(require,module,exports){
 'use strict';
 
 function cell(content, node) {
@@ -437,19 +446,12 @@ module.exports = [
   },
 
   {
-    filter: 'a',
+    filter: function (node) {
+      return node.nodeName === 'A' && node.getAttribute('href');
+    },
     replacement: function(content, node) {
-      var href = node.getAttribute('href');
-      var title = node.title;
-      var textPart = href ? '[' + content + ']' : '';
-      var titlePart = title ? ' "'+ title +'"' : '';
-
-      if (href) {
-        return textPart + '(' + href + titlePart + ')';
-      }
-      else {
-        return node.outerHTML;
-      }
+      var titlePart = node.title ? ' "'+ node.title +'"' : '';
+      return '[' + content + '](' + node.getAttribute('href') + titlePart + ')';
     }
   },
 
@@ -517,13 +519,11 @@ module.exports = [
       return this.isBlock(node);
     },
     replacement: function (content, node) {
-      return '\n\n' + node.outerHTML + '\n\n';
+      return '\n\n' + this.outer(node, content) + '\n\n';
     }
   }
 ];
 },{}],4:[function(require,module,exports){
-
-},{}],5:[function(require,module,exports){
 /**
  * This file automatically generated from `build.js`.
  * Do not manually edit.
@@ -565,7 +565,7 @@ module.exports = [
   "video"
 ];
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
 var blocks = require('block-elements').map(function (name) {
@@ -685,5 +685,7 @@ function whitespace (root, isBlock) {
 
 module.exports = whitespace
 
-},{"block-elements":5}]},{},[1])(1)
+},{"block-elements":4}],6:[function(require,module,exports){
+
+},{}]},{},[1])(1)
 });
