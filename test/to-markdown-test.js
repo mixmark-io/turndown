@@ -377,6 +377,14 @@ test('leading/trailing whitespace', function() {
   ]);
 });
 
+test('blank', function () {
+  runTestCases([
+    ['<div></div>', '', 'Blank div'],
+    ['<em></em>', '', 'Blank em'],
+    ['<a href="#foo"></a>', '[](#foo)', 'Blank a'],
+  ]);
+});
+
 test('invalid input', function () {
   throws(function () { toMarkdown(null); }, /null is not a string/, 'null input');
   throws(function () { toMarkdown(void(0)); }, /undefined is not a string/, 'undefined input');
