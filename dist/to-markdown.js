@@ -247,7 +247,6 @@ toMarkdown = function (input, options) {
   for (var i = nodes.length - 1; i >= 0; i--) {
     process(nodes[i]);
   }
-
   output = getContent(clone);
 
   return output.replace(/^[\t\r\n]+|[\t\r\n\s]+$/g, '')
@@ -260,7 +259,7 @@ toMarkdown.trim = trim;
 
 module.exports = toMarkdown;
 
-},{"./lib/gfm-converters":2,"./lib/md-converters":3,"collapse-whitespace":6,"jsdom":4}],2:[function(require,module,exports){
+},{"./lib/gfm-converters":2,"./lib/md-converters":3,"collapse-whitespace":5,"jsdom":6}],2:[function(require,module,exports){
 'use strict';
 
 function cell(content, node) {
@@ -448,6 +447,7 @@ module.exports = [
         return textPart + '(' + href + titlePart + ')';
       }
       else {
+        node.innerHTML = content;
         return node.outerHTML;
       }
     }
@@ -517,13 +517,12 @@ module.exports = [
       return this.isBlock(node);
     },
     replacement: function (content, node) {
+      node.innerHTML = content;
       return '\n\n' + node.outerHTML + '\n\n';
     }
   }
 ];
 },{}],4:[function(require,module,exports){
-
-},{}],5:[function(require,module,exports){
 /**
  * This file automatically generated from `build.js`.
  * Do not manually edit.
@@ -565,7 +564,7 @@ module.exports = [
   "video"
 ];
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
 var blocks = require('block-elements').map(function (name) {
@@ -685,5 +684,7 @@ function whitespace (root, isBlock) {
 
 module.exports = whitespace
 
-},{"block-elements":5}]},{},[1])(1)
+},{"block-elements":4}],6:[function(require,module,exports){
+
+},{}]},{},[1])(1)
 });

@@ -310,7 +310,8 @@ test('blockquotes', function() {
 
 test('block-level', function () {
   runTestCases([
-    ['<div>Hello</div><div>world</div>', '<div>Hello</div>\n\n<div>world</div>', 'divs separated by \\n\\n']
+    ['<div>Hello</div><div>world</div>', '<div>Hello</div>\n\n<div>world</div>', 'divs separated by \\n\\n'],
+    ['<div><em>hello</em></div>', '<div>_hello_</div>']
   ]);
 });
 
