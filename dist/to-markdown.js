@@ -139,6 +139,15 @@ function getContent(node) {
   return text;
 }
 
+/*
+ * Returns the HTML string of an element with its contents converted
+ */
+
+function outer(node, content) {
+  content = content || getContent(node);
+  return node.cloneNode(false).outerHTML.replace('><', '>'+ content +'<');
+}
+
 function canConvert(node, filter) {
   if (typeof filter === 'string') {
     return filter === node.nodeName.toLowerCase();
@@ -182,7 +191,7 @@ function isFlankedByWhitespace(side, node) {
  */
 
 function process(node) {
-  var replacement = node.outerHTML;
+  var replacement;
 
   for (var i = 0; i < converters.length; i++) {
     var converter = converters[i];
@@ -221,7 +230,7 @@ function process(node) {
     replacement = '';
   }
 
-  node._replacement = replacement;
+  node._replacement = (typeof replacement === 'string') ? replacement : outer(node);
 }
 
 toMarkdown = function (input, options) {
@@ -256,6 +265,7 @@ toMarkdown = function (input, options) {
 
 toMarkdown.isBlock = isBlock;
 toMarkdown.trim = trim;
+toMarkdown.outer = outer;
 
 module.exports = toMarkdown;
 
@@ -436,20 +446,12 @@ module.exports = [
   },
 
   {
-    filter: 'a',
+    filter: function (node) {
+      return node.nodeName === 'A' && node.getAttribute('href');
+    },
     replacement: function(content, node) {
-      var href = node.getAttribute('href');
-      var title = node.title;
-      var textPart = href ? '[' + content + ']' : '';
-      var titlePart = title ? ' "'+ title +'"' : '';
-
-      if (href) {
-        return textPart + '(' + href + titlePart + ')';
-      }
-      else {
-        node.innerHTML = content;
-        return node.outerHTML;
-      }
+      var titlePart = node.title ? ' "'+ node.title +'"' : '';
+      return '[' + content + '](' + node.getAttribute('href') + titlePart + ')';
     }
   },
 
@@ -517,8 +519,7 @@ module.exports = [
       return this.isBlock(node);
     },
     replacement: function (content, node) {
-      node.innerHTML = content;
-      return '\n\n' + node.outerHTML + '\n\n';
+      return '\n\n' + this.outer(node, content) + '\n\n';
     }
   }
 ];

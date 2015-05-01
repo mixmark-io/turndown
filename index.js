@@ -138,6 +138,15 @@ function getContent(node) {
   return text;
 }
 
+/*
+ * Returns the HTML string of an element with its contents converted
+ */
+
+function outer(node, content) {
+  content = content || getContent(node);
+  return node.cloneNode(false).outerHTML.replace('><', '>'+ content +'<');
+}
+
 function canConvert(node, filter) {
   if (typeof filter === 'string') {
     return filter === node.nodeName.toLowerCase();
@@ -181,7 +190,7 @@ function isFlankedByWhitespace(side, node) {
  */
 
 function process(node) {
-  var replacement = node.outerHTML;
+  var replacement;
 
   for (var i = 0; i < converters.length; i++) {
     var converter = converters[i];
@@ -220,7 +229,7 @@ function process(node) {
     replacement = '';
   }
 
-  node._replacement = replacement;
+  node._replacement = (typeof replacement === 'string') ? replacement : outer(node);
 }
 
 toMarkdown = function (input, options) {
@@ -255,5 +264,6 @@ toMarkdown = function (input, options) {
 
 toMarkdown.isBlock = isBlock;
 toMarkdown.trim = trim;
+toMarkdown.outer = outer;
 
 module.exports = toMarkdown;
