@@ -8,78 +8,82 @@
 
 'use strict';
 
+var toMarkdown;
 var htmlToDom = require('./lib/html-to-dom');
 var converters;
 var mdConverters = require('./lib/md-converters');
 var gfmConverters = require('./lib/gfm-converters');
-var utilities = require('./lib/utilities');
 
-var isBlock = utilities.isBlock;
-var trim = utilities.trim;
-var decodeHTMLEntities = require('he').decode;
+/*
+ * Utilities
+ */
 
-var VOID_ELEMENTS = [
+function trim(string) {
+  return string.replace(/^[ \r\n\t]+|[ \r\n\t]+$/g, '');
+}
+
+var blocks = ['address', 'article', 'aside', 'audio', 'blockquote', 'body',
+  'canvas', 'center', 'dd', 'dir', 'div', 'dl', 'dt', 'fieldset', 'figcaption',
+  'figure', 'footer', 'form', 'frameset', 'h1', 'h2', 'h3', 'h4','h5', 'h6',
+  'header', 'hgroup', 'hr', 'html', 'isindex', 'li', 'main', 'menu', 'nav',
+  'noframes', 'noscript', 'ol', 'output', 'p', 'pre', 'section', 'table',
+  'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'ul'
+];
+
+function isBlock(node) {
+  return blocks.indexOf(node.nodeName.toLowerCase()) !== -1;
+}
+
+var voids = [
   'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
   'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
 ];
 
-var toMarkdown;
+function isVoid(node) {
+  return voids.indexOf(node.nodeName.toLowerCase()) !== -1;
+}
 
-module.exports = toMarkdown = function (input, options) {
-  options = options || {};
+/*
+ * Flattens DOM tree into single array
+ */
 
-  if (typeof input !== 'string') {
-    throw new TypeError(input + ' is not a string');
-  }
+function bfsOrder(node) {
+  var inqueue = [node],
+      outqueue = [],
+      elem, children, i;
 
-  // Escape potential ol triggers
-  input = input.replace(/(\d+)\. /g, '$1\\. ');
-
-  var doc = htmlToDom(input);
-  var clone = doc.body;
-
-  // Flattens node tree into a single array
-  var nodes = bfsOrder(clone);
-
-  converters = options.gfm ? gfmConverters.concat(mdConverters) : mdConverters;
-
-  // Loop through nodes in reverse (so deepest child elements are first).
-  // Replace nodes as necessary.
-  for (var i = nodes.length - 1; i >= 0; i--) {
-    var node = nodes[i];
-    var replacement = replacementForNode(node, doc);
-    if (replacement) { node.parentNode.replaceChild(replacement, node); }
-  }
-
-  var output = decodeHTMLEntities(clone.innerHTML);
-
-  return output.replace(/^[\t\r\n]+|[\t\r\n\s]+$/g, '')
-               .replace(/\n\s+\n/g, '\n\n')
-               .replace(/\n{3,}/g, '\n\n');
-};
-
-toMarkdown.decodeHTMLEntities = decodeHTMLEntities;
-toMarkdown.isBlock = isBlock;
-toMarkdown.trim = trim;
-
-function bfsOrder(root) {
-  var inqueue = [root];
-  var outqueue = [];
   while (inqueue.length > 0) {
-    var elem = inqueue.shift();
+    elem = inqueue.shift();
     outqueue.push(elem);
-    var children = elem.childNodes;
-    for (var i = 0 ; i < children.length; i++) {
-      if (children[i].nodeType === 1) {
-        inqueue.push(children[i]);
-      }
+    children = elem.childNodes;
+    for (i = 0 ; i < children.length; i++) {
+      if (children[i].nodeType === 1) { inqueue.push(children[i]); }
     }
   }
   outqueue.shift();
   return outqueue;
 }
 
-function canConvertNode(node, filter) {
+/*
+ * Contructs a Markdown string of replacement text for a given node
+ */
+
+function getContent(node) {
+  var text = '';
+
+  for (var i = 0; i < node.childNodes.length; i++) {
+    if (node.childNodes[i].nodeType === 1) {
+      text += node.childNodes[i]._replacement;
+    }
+    else if (node.childNodes[i].nodeType === 3) {
+      text += node.childNodes[i].data;
+    }
+    else { continue; }
+  }
+  return text;
+}
+
+function canConvert(node, filter) {
   if (typeof filter === 'string') {
     return filter === node.nodeName.toLowerCase();
   }
@@ -90,17 +94,14 @@ function canConvertNode(node, filter) {
     return filter.call(toMarkdown, node);
   }
   else {
-    throw '`filter` needs to be a string, array, or function';
+    throw new TypeError('`filter` needs to be a string, array, or function');
   }
 }
 
-function isFlankedByExternalSpace(direction, node) {
-  var sibling,
-      regExp,
-      flankedBySpace,
-      flankedBySpaceInInlineElement;
+function isFlankedByWhitespace(side, node) {
+  var sibling, regExp, isFlanked;
 
-  if (direction === 'left') {
+  if (side === 'left') {
     sibling = node.previousSibling;
     regExp = / $/;
   }
@@ -111,58 +112,88 @@ function isFlankedByExternalSpace(direction, node) {
 
   if (sibling) {
     if (sibling.nodeType === 3) {
-      flankedBySpace = regExp.test(sibling.nodeValue);
+      isFlanked = regExp.test(sibling.nodeValue);
     }
     else if(sibling.nodeType === 1 && !isBlock(sibling)) {
-      flankedBySpaceInInlineElement = regExp.test(node.textContent || node.innertext);
+      isFlanked = regExp.test(node.textContent);
     }
   }
-  return flankedBySpace || flankedBySpaceInInlineElement;
+  return isFlanked;
 }
 
-// Loops through all md converters, checking to see if the node nodeName matches.
-// Returns the replacement text node or null.
-function replacementForNode(node, doc) {
+/*
+ * Finds a Markdown replacement if one exists, and sets it on `_replacement`
+ */
 
-  // Remove blank nodes
-  if (VOID_ELEMENTS.indexOf(node.nodeName.toLowerCase()) === -1 && /^\s*$/i.test(node.innerHTML)) {
-    return doc.createTextNode('');
-  }
+function process(node) {
+  var replacement = node.outerHTML;
 
   for (var i = 0; i < converters.length; i++) {
     var converter = converters[i];
 
-    if (canConvertNode(node, converter.filter)) {
-      var replacement = converter.replacement;
-      var text;
-      var textNode;
-      var leadingSpace = '';
-      var trailingSpace = '';
-
-      if (typeof replacement !== 'function') {
-        throw '`replacement` needs to be a function that returns a string';
+    if (canConvert(node, converter.filter)) {
+      if (typeof converter.replacement !== 'function') {
+        throw new TypeError('`replacement` needs to be a function that returns a string');
       }
 
+      var leadingSpace = '', trailingSpace = '';
+
       if (!isBlock(node)) {
-        var hasLeadingWhitespace = /^[ \r\n\t]/.test(node.innerHTML);
-        var hasTrailingWhitespace = /[ \r\n\t]$/.test(node.innerHTML);
+        var hasLeadingWhitespace = /^[ \r\n\t]/.test(node.innerHTML),
+            hasTrailingWhitespace = /[ \r\n\t]$/.test(node.innerHTML);
 
         node.innerHTML = trim(node.innerHTML);
 
-        if (hasLeadingWhitespace && !isFlankedByExternalSpace('left', node)) {
+        if (hasLeadingWhitespace && !isFlankedByWhitespace('left', node)) {
           leadingSpace = ' ';
         }
-        if (hasTrailingWhitespace && !isFlankedByExternalSpace('right', node)) {
+        if (hasTrailingWhitespace && !isFlankedByWhitespace('right', node)) {
           trailingSpace = ' ';
         }
       }
 
-      text = replacement.call(toMarkdown, decodeHTMLEntities(node.innerHTML), node);
-      textNode = doc.createTextNode(leadingSpace + text + trailingSpace);
-      textNode._attributes = node.attributes;
-
-      return textNode;
+      replacement = converter.replacement.call(toMarkdown, getContent(node), node);
+      replacement = leadingSpace + replacement + trailingSpace;
+      break;
     }
   }
-  return null;
+  node._replacement = replacement;
 }
+
+toMarkdown = function (input, options) {
+  options = options || {};
+
+  if (typeof input !== 'string') {
+    throw new TypeError(input + ' is not a string');
+  }
+
+  // Escape potential ol triggers
+  input = input.replace(/(\d+)\. /g, '$1\\. ');
+
+  var clone = htmlToDom(input).body;
+
+  // Flattens node tree into a single array
+  var nodes = bfsOrder(clone);
+
+  // Set up converters
+  converters = mdConverters.slice(0);
+  if (options.gfm) {
+    converters = gfmConverters.concat(converters);
+  }
+
+  // Process through nodes in reverse (so deepest child elements are first).
+  for (var i = nodes.length - 1; i >= 0; i--) {
+    process(nodes[i]);
+  }
+
+  var output = getContent(clone);
+
+  return output.replace(/^[\t\r\n]+|[\t\r\n\s]+$/g, '')
+               .replace(/\n\s+\n/g, '\n\n')
+               .replace(/\n{3,}/g, '\n\n');
+};
+
+toMarkdown.isBlock = isBlock;
+toMarkdown.trim = trim;
+
+module.exports = toMarkdown;
