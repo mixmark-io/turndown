@@ -9,10 +9,22 @@
 'use strict';
 
 var toMarkdown;
-var htmlToDom = require('./lib/html-to-dom');
 var converters;
 var mdConverters = require('./lib/md-converters');
 var gfmConverters = require('./lib/gfm-converters');
+var collapse = require('collapse-whitespace');
+
+/*
+ * Set up window and document for Node.js
+ */
+
+var _window = (typeof window !== 'undefined' ? window : this), _document;
+if (typeof document === 'undefined') {
+  _document = require('jsdom').jsdom();
+}
+else {
+  _document = document;
+}
 
 /*
  * Utilities
@@ -41,6 +53,49 @@ var voids = [
 
 function isVoid(node) {
   return voids.indexOf(node.nodeName.toLowerCase()) !== -1;
+}
+
+/*
+ * Parsing HTML strings
+ */
+
+function canParseHtml() {
+  var Parser = _window.DOMParser, canParse = false;
+
+  // Adapted from https://gist.github.com/1129031
+  // Firefox/Opera/IE throw errors on unsupported types
+  try {
+    // WebKit returns null on unsupported types
+    if (new Parser().parseFromString('', 'text/html')) {
+      canParse = true;
+    }
+  } catch (e) {}
+  return canParse;
+}
+
+function createHtmlParser() {
+  var Parser = function () {};
+
+  Parser.prototype.parseFromString = function (string) {
+    var newDoc = _document.implementation.createHTMLDocument('');
+
+    if (string.toLowerCase().indexOf('<!doctype') > -1) {
+      newDoc.documentElement.innerHTML = string;
+    }
+    else {
+      newDoc.body.innerHTML = string;
+    }
+    return newDoc;
+  };
+  return Parser;
+}
+
+var HtmlParser = canParseHtml() ? _window.DOMParser : createHtmlParser();
+
+function htmlToDom(string) {
+  var tree = new HtmlParser().parseFromString(string, 'text/html');
+  collapse(tree, isBlock);
+  return tree;
 }
 
 /*
@@ -133,7 +188,9 @@ function process(node) {
 
     if (canConvert(node, converter.filter)) {
       if (typeof converter.replacement !== 'function') {
-        throw new TypeError('`replacement` needs to be a function that returns a string');
+        throw new TypeError(
+          '`replacement` needs to be a function that returns a string'
+        );
       }
 
       var leadingSpace = '', trailingSpace = '';
