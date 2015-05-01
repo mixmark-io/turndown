@@ -306,14 +306,14 @@ module.exports = [
     filter: 'tr',
     replacement: function (content, node) {
       var borderCells = '';
-      var alignMap = { left: ':--', right: '--:' };
+      var alignMap = { left: ':--', right: '--:', center: ':-:' };
 
       if (node.parentNode.nodeName === 'THEAD') {
         for (var i = 0; i < node.childNodes.length; i++) {
           var align = node.childNodes[i].attributes.align;
           var border = '---';
 
-          if (align) { border = alignMap[align.value]; }
+          if (align) { border = alignMap[align.value] || border; }
 
           borderCells += cell(border, node.childNodes[i]);
         }
