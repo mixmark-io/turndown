@@ -82,7 +82,7 @@
     color: inherit;
   }
 
-  .input {
+  #input {
     background: #333;
     color: #fff;
   }
@@ -110,17 +110,28 @@
     }
   }
 </style>
-<script src="bower_components/jquery/dist/jquery.min.js"></script>
 <script src="bower_components/to-markdown/dist/to-markdown.js"></script>
 <script>
-  $(function(){
-    var $input = $('.input');
-    function updateOutput(el) {
-      $('.output').val(toMarkdown($input.val(), {gfm: $('#gfm').is(':checked')}));
-    }
+(function () {
+  var input, output, gfm;
+
+  function updateOutput() {
+    output.value = toMarkdown(input.value, { gfm: gfm.checked });
+  }
+
+  document.addEventListener("DOMContentLoaded", function(event) {
+    input = document.getElementById('input');
+    output = document.getElementById('output');
+    gfm = document.getElementById('gfm');
+
+    input.addEventListener('input', updateOutput, false);
+    input.addEventListener('keydown', updateOutput, false);
+
+    gfm.addEventListener('change', updateOutput, false);
+
     updateOutput();
-    $(document).on('input keydown change', '.input, #gfm', updateOutput);
   });
+})();
 </script>
 <script type="text/javascript">
 
@@ -149,7 +160,7 @@
   <div class="row cf">
     <div class="col">
       <h2>HTML</h2>
-      <textarea class="input" cols="100" rows="10"><h3>Some HTML</h3>
+      <textarea id="input" cols="100" rows="10"><h3>Some HTML</h3>
 
 <p>Hello world! This demonstrates <a href="https://github.com/domchristie/to-markdown">to-markdown</a> – an HTML to Markdown converter.</p>
 
@@ -163,7 +174,7 @@
 
     <div class="col">
       <h2>Markdown</h2>
-      <textarea readonly class="output" class="output"></textarea>
+      <textarea readonly id="output"></textarea>
     </div>
   </div>
   <footer>
