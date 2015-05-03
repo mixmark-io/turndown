@@ -180,10 +180,30 @@ function isFlankedByWhitespace(side, node) {
       isFlanked = regExp.test(sibling.nodeValue);
     }
     else if(sibling.nodeType === 1 && !isBlock(sibling)) {
-      isFlanked = regExp.test(node.textContent);
+      isFlanked = regExp.test(sibling.textContent);
     }
   }
   return isFlanked;
+}
+
+function flankingWhitespace(node) {
+  var leading = '', trailing = '';
+
+  if (!isBlock(node)) {
+    var hasLeading = /^[ \r\n\t]/.test(node.innerHTML),
+        hasTrailing = /[ \r\n\t]$/.test(node.innerHTML);
+
+    node.innerHTML = trim(node.innerHTML);
+
+    if (hasLeading && !isFlankedByWhitespace('left', node)) {
+      leading = ' ';
+    }
+    if (hasTrailing && !isFlankedByWhitespace('right', node)) {
+      trailing = ' ';
+    }
+  }
+
+  return { leading: leading, trailing: trailing };
 }
 
 /*
@@ -193,41 +213,28 @@ function isFlankedByWhitespace(side, node) {
 function process(node) {
   var replacement;
 
-  for (var i = 0; i < converters.length; i++) {
-    var converter = converters[i];
-
-    if (canConvert(node, converter.filter)) {
-      if (typeof converter.replacement !== 'function') {
-        throw new TypeError(
-          '`replacement` needs to be a function that returns a string'
-        );
-      }
-
-      var leadingSpace = '', trailingSpace = '';
-
-      if (!isBlock(node)) {
-        var hasLeadingWhitespace = /^[ \r\n\t]/.test(node.innerHTML),
-            hasTrailingWhitespace = /[ \r\n\t]$/.test(node.innerHTML);
-
-        node.innerHTML = trim(node.innerHTML);
-
-        if (hasLeadingWhitespace && !isFlankedByWhitespace('left', node)) {
-          leadingSpace = ' ';
-        }
-        if (hasTrailingWhitespace && !isFlankedByWhitespace('right', node)) {
-          trailingSpace = ' ';
-        }
-      }
-
-      replacement = converter.replacement.call(toMarkdown, getContent(node), node);
-      replacement = leadingSpace + replacement + trailingSpace;
-      break;
-    }
-  }
-
   // Remove blank, non-anchor nodes
-  if (!isVoid(node) && !/A/.test(node.nodeName) && /^\s*$/i.test(node.innerHTML)) {
+  if (!isVoid(node) && !/A/.test(node.nodeName) && /^\s*$/i.test(getContent(node))) {
     replacement = '';
+  }
+  else {
+    for (var i = 0; i < converters.length; i++) {
+      var converter = converters[i];
+
+      if (canConvert(node, converter.filter)) {
+        if (typeof converter.replacement !== 'function') {
+          throw new TypeError(
+            '`replacement` needs to be a function that returns a string'
+          );
+        }
+
+        var whitespace = flankingWhitespace(node);
+
+        replacement = converter.replacement.call(toMarkdown, getContent(node), node);
+        replacement = whitespace.leading + replacement + whitespace.trailing;
+        break;
+      }
+    }
   }
 
   node._replacement = (typeof replacement === 'string') ? replacement : outer(node);
