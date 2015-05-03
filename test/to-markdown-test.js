@@ -382,6 +382,7 @@ test('blank', function () {
   runTestCases([
     ['<div></div>', '', 'Blank div'],
     ['<em></em>', '', 'Blank em'],
+    ['<strong><br></strong>', '', 'Blank strong with br'],
     ['<a href="#foo"></a>', '[](#foo)', 'Blank a'],
   ]);
 });
