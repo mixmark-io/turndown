@@ -75,7 +75,8 @@ test('anchors', function() {
   runTestCases([
     ['<a href="http://example.com/about">About us</a>', '[About us](http://example.com/about)', 'a'],
     ['<a href="http://example.com/about" title="About this company">About us</a>', '[About us](http://example.com/about "About this company")', 'a with title'],
-    ['<a id="donuts3">About us</a>', '<a id="donuts3">About us</a>', 'a with no src']
+    ['<a id="donuts3">About us</a>', '<a id="donuts3">About us</a>', 'a with no src'],
+    ['<a href="http://example.com/about"><span>About us</span></a>', '[<span>About us</span>](http://example.com/about)', 'with a span']
   ]);
 });
 
