@@ -192,8 +192,6 @@ function flankingWhitespace(node) {
     var hasLeading = /^[ \r\n\t]/.test(node.innerHTML),
         hasTrailing = /[ \r\n\t]$/.test(node.innerHTML);
 
-    node.innerHTML = trim(node.innerHTML);
-
     if (hasLeading && !isFlankedByWhitespace('left', node)) {
       leading = ' ';
     }
