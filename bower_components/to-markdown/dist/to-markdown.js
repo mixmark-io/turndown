@@ -126,7 +126,6 @@ function bfsOrder(node) {
 
 function getContent(node) {
   var text = '';
-
   for (var i = 0; i < node.childNodes.length; i++) {
     if (node.childNodes[i].nodeType === 1) {
       text += node.childNodes[i]._replacement;
@@ -144,7 +143,6 @@ function getContent(node) {
  */
 
 function outer(node, content) {
-  content = content || getContent(node);
   return node.cloneNode(false).outerHTML.replace('><', '>'+ content +'<');
 }
 
@@ -193,8 +191,6 @@ function flankingWhitespace(node) {
     var hasLeading = /^[ \r\n\t]/.test(node.innerHTML),
         hasTrailing = /[ \r\n\t]$/.test(node.innerHTML);
 
-    node.innerHTML = trim(node.innerHTML);
-
     if (hasLeading && !isFlankedByWhitespace('left', node)) {
       leading = ' ';
     }
@@ -207,37 +203,40 @@ function flankingWhitespace(node) {
 }
 
 /*
- * Finds a Markdown replacement if one exists, and sets it on `_replacement`
+ * Finds a Markdown converter, gets its replacement, and sets it on
+ * `_replacement`
  */
 
 function process(node) {
-  var replacement;
+  var replacement, content = getContent(node);
 
-  // Remove blank, non-anchor nodes
-  if (!isVoid(node) && !/A/.test(node.nodeName) && /^\s*$/i.test(getContent(node))) {
-    replacement = '';
-  }
-  else {
-    for (var i = 0; i < converters.length; i++) {
-      var converter = converters[i];
+  for (var i = 0; i < converters.length; i++) {
+    var converter = converters[i];
 
-      if (canConvert(node, converter.filter)) {
-        if (typeof converter.replacement !== 'function') {
-          throw new TypeError(
-            '`replacement` needs to be a function that returns a string'
-          );
-        }
-
-        var whitespace = flankingWhitespace(node);
-
-        replacement = converter.replacement.call(toMarkdown, getContent(node), node);
-        replacement = whitespace.leading + replacement + whitespace.trailing;
-        break;
+    if (canConvert(node, converter.filter)) {
+      if (typeof converter.replacement !== 'function') {
+        throw new TypeError(
+          '`replacement` needs to be a function that returns a string'
+        );
       }
+
+      var whitespace = flankingWhitespace(node);
+
+      if (whitespace.leading || whitespace.trailing) {
+        content = trim(content);
+      }
+      replacement = converter.replacement.call(toMarkdown, content, node);
+      replacement = whitespace.leading + replacement + whitespace.trailing;
+      break;
     }
   }
 
-  node._replacement = (typeof replacement === 'string') ? replacement : outer(node);
+  // Remove blank nodes
+  if (!isVoid(node) && !/A/.test(node.nodeName) && /^\s*$/i.test(content)) {
+    replacement = '';
+  }
+
+  node._replacement = replacement;
 }
 
 toMarkdown = function (input, options) {
@@ -527,6 +526,16 @@ module.exports = [
     },
     replacement: function (content, node) {
       return '\n\n' + this.outer(node, content) + '\n\n';
+    }
+  },
+
+  // Anything else!
+  {
+    filter: function () {
+      return true;
+    },
+    replacement: function (content, node) {
+      return this.outer(node, content);
     }
   }
 ];
