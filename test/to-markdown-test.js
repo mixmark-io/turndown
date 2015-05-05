@@ -388,6 +388,36 @@ test('blank', function () {
   ]);
 });
 
+test('custom converters', function() {
+  var html, converter, md = '*Hello world*';
+  var replacement = function (innerHTML) {
+    return '*' + innerHTML + '*';
+  };
+
+  html = '<span>Hello world</span>';
+  converter = {
+    filter: 'span',
+    replacement: replacement
+  };
+  equal(toMarkdown(html, {converters: [converter]}), md, 'Custom filter string');
+
+  html = '<span>Hello world</span>';
+  converter = {
+    filter: ['span'],
+    replacement: replacement
+  };
+  equal(toMarkdown(html, {converters: [converter]}), md, 'Custom filter array');
+
+  html = '<span style="font-style: italic">Hello world</span>';
+  converter = {
+    filter: function (node) {
+      return node.tagName === 'SPAN' && /italic/i.test(node.style.fontStyle);
+    },
+    replacement: replacement
+  };
+  equal(toMarkdown(html, {converters: [converter]}), md, 'Custom filter function');
+});
+
 test('invalid input', function () {
   throws(function () { toMarkdown(null); }, /null is not a string/, 'null input');
   throws(function () { toMarkdown(void(0)); }, /undefined is not a string/, 'undefined input');
