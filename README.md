@@ -96,6 +96,10 @@ The following methods can be called on the `toMarkdown` object.
 
 Returns `true`/`false` depending on whether the element is block level.
 
+### `isVoid(node)`
+
+Returns `true`/`false` depending on whether the element is [void](http://www.w3.org/TR/html-markup/syntax.html#syntax-elements).
+
 ### `trim(string)`
 
 Returns the string with leading and trailing whitespace removed.

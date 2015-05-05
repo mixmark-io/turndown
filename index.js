@@ -274,6 +274,7 @@ toMarkdown = function (input, options) {
 };
 
 toMarkdown.isBlock = isBlock;
+toMarkdown.isVoid = isVoid;
 toMarkdown.trim = trim;
 toMarkdown.outer = outer;
 
