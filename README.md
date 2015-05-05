@@ -45,8 +45,8 @@ A converter object consists of a **filter**, and a **replacement**. This example
 
     {
       filter: 'code',
-      replacement: function(innerHTML) {
-        return '`' + innerHTML + '`';
+      replacement: function(content) {
+        return '`' + content + '`';
       }
     }
 
@@ -65,7 +65,7 @@ Alternatively, the filter can be a function that returns a boolean depending on 
 
 #### `replacement` (function)
 
-The replacement function determines how an element should be converted. It should return the markdown string for a given node. The function is passed the node’s trimmed innerHTML, as well as the node itself (used in more complex conversions). It is called in the context of `toMarkdown`, and therefore has access to the methods detailed below (e.g. `this.decodeHTMLEntities(node)`).
+The replacement function determines how an element should be converted. It should return the markdown string for a given node. The function is passed the node’s content, as well as the node itself (used in more complex conversions). It is called in the context of `toMarkdown`, and therefore has access to the methods detailed below.
 
 The following converter replaces heading elements (`h1`-`h6`):
 
@@ -92,10 +92,6 @@ to-markdown has beta support for GitHub flavored markdown (GFM). Set the `gfm` o
 
 The following methods can be called on the `toMarkdown` object.
 
-### `decodeHTMLEntities(string)`
-
-Returns a string with HTML entities decoded (using [he.js](https://github.com/mathiasbynens/he)). This is useful when performing complex replacements. A node’s innerHTML property should always have it’s HTML entities decoded.
-
 ### `isBlock(node)`
 
 Returns `true`/`false` depending on whether the element is block level.
@@ -103,6 +99,10 @@ Returns `true`/`false` depending on whether the element is block level.
 ### `trim(string)`
 
 Returns the string with leading and trailing whitespace removed.
+
+### `outer(node)`
+
+Returns the content of the node along with the element itself.
 
 ## Development
 

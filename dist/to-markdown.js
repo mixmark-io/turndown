@@ -203,7 +203,7 @@ function flankingWhitespace(node) {
 }
 
 /*
- * Finds a Markdown converter, gets its replacement, and sets it on
+ * Finds a Markdown converter, gets the replacement, and sets it on
  * `_replacement`
  */
 
@@ -225,8 +225,9 @@ function process(node) {
       if (whitespace.leading || whitespace.trailing) {
         content = trim(content);
       }
-      replacement = converter.replacement.call(toMarkdown, content, node);
-      replacement = whitespace.leading + replacement + whitespace.trailing;
+      replacement = whitespace.leading +
+                    converter.replacement.call(toMarkdown, content, node) +
+                    whitespace.trailing;
       break;
     }
   }
@@ -256,6 +257,10 @@ toMarkdown = function (input, options) {
   converters = mdConverters.slice(0);
   if (options.gfm) {
     converters = gfmConverters.concat(converters);
+  }
+
+  if (options.converters) {
+    converters = options.converters.concat(converters);
   }
 
   // Process through nodes in reverse (so deepest child elements are first).
