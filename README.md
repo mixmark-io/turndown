@@ -32,9 +32,15 @@ $ bower install to-markdown
 
 ### Node.js
 
-```js
-$ npm install to-markdown
+Install the `to-markdown` module:
 
+```sh
+$ npm install to-markdown
+```
+
+Then you can use it like below:
+
+```js
 var toMarkdown = require('to-markdown');
 toMarkdown('<h1>Hello world!</h1>');
 ```
