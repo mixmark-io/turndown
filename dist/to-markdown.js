@@ -281,7 +281,7 @@ toMarkdown.outer = outer;
 
 module.exports = toMarkdown;
 
-},{"./lib/gfm-converters":2,"./lib/md-converters":3,"collapse-whitespace":5,"jsdom":6}],2:[function(require,module,exports){
+},{"./lib/gfm-converters":2,"./lib/md-converters":3,"collapse-whitespace":4,"jsdom":7}],2:[function(require,module,exports){
 'use strict';
 
 function cell(content, node) {
@@ -546,6 +546,144 @@ module.exports = [
   }
 ];
 },{}],4:[function(require,module,exports){
+'use strict';
+
+var voidElements = require('void-elements');
+Object.keys(voidElements).forEach(function (name) {
+  voidElements[name.toUpperCase()] = 1;
+});
+
+var blockElements = {};
+require('block-elements').forEach(function (name) {
+  blockElements[name.toUpperCase()] = 1;
+});
+
+/**
+ * isBlockElem(node) determines if the given node is a block element.
+ *
+ * @param {Node} node
+ * @return {Boolean}
+ */
+function isBlockElem(node) {
+  return !!(node && blockElements[node.nodeName]);
+}
+
+/**
+ * isVoid(node) determines if the given node is a void element.
+ *
+ * @param {Node} node
+ * @return {Boolean}
+ */
+function isVoid(node) {
+  return !!(node && voidElements[node.nodeName]);
+}
+
+/**
+ * whitespace(elem [, isBlock]) removes extraneous whitespace from an
+ * the given element. The function isBlock may optionally be passed in
+ * to determine whether or not an element is a block element; if none
+ * is provided, defaults to using the list of block elements provided
+ * by the `block-elements` module.
+ *
+ * @param {Node} elem
+ * @param {Function} blockTest
+ */
+function collapseWhitespace(elem, isBlock) {
+  if (!elem.firstChild || elem.nodeName === 'PRE') return;
+
+  if (typeof isBlock !== 'function') {
+    isBlock = isBlockElem;
+  }
+
+  var prevText = null;
+  var prevVoid = false;
+
+  var prev = null;
+  var node = next(prev, elem);
+
+  while (node !== elem) {
+    if (node.nodeType === 3) {
+      // Node.TEXT_NODE
+      var text = node.data.replace(/[ \r\n\t]+/g, ' ');
+
+      if ((!prevText || / $/.test(prevText.data)) && !prevVoid && text[0] === ' ') {
+        text = text.substr(1);
+      }
+
+      // `text` might be empty at this point.
+      if (!text) {
+        node = remove(node);
+        continue;
+      }
+
+      node.data = text;
+      prevText = node;
+    } else if (node.nodeType === 1) {
+      // Node.ELEMENT_NODE
+      if (isBlock(node) || node.nodeName === 'BR') {
+        if (prevText) {
+          prevText.data = prevText.data.replace(/ $/, '');
+        }
+
+        prevText = null;
+        prevVoid = false;
+      } else if (isVoid(node)) {
+        // Avoid trimming space around non-block, non-BR void elements.
+        prevText = null;
+        prevVoid = true;
+      }
+    } else {
+      node = remove(node);
+      continue;
+    }
+
+    var nextNode = next(prev, node);
+    prev = node;
+    node = nextNode;
+  }
+
+  if (prevText) {
+    prevText.data = prevText.data.replace(/ $/, '');
+    if (!prevText.data) {
+      remove(prevText);
+    }
+  }
+}
+
+/**
+ * remove(node) removes the given node from the DOM and returns the
+ * next node in the sequence.
+ *
+ * @param {Node} node
+ * @return {Node} node
+ */
+function remove(node) {
+  var next = node.nextSibling || node.parentNode;
+
+  node.parentNode.removeChild(node);
+
+  return next;
+}
+
+/**
+ * next(prev, current) returns the next node in the sequence, given the
+ * current and previous nodes.
+ *
+ * @param {Node} prev
+ * @param {Node} current
+ * @return {Node}
+ */
+function next(prev, current) {
+  if (prev && prev.parentNode === current || current.nodeName === 'PRE') {
+    return current.nextSibling || current.parentNode;
+  }
+
+  return current.firstChild || current.nextSibling || current.parentNode;
+}
+
+module.exports = collapseWhitespace;
+
+},{"block-elements":5,"void-elements":6}],5:[function(require,module,exports){
 /**
  * This file automatically generated from `build.js`.
  * Do not manually edit.
@@ -575,6 +713,8 @@ module.exports = [
   "header",
   "hgroup",
   "hr",
+  "main",
+  "nav",
   "noscript",
   "ol",
   "output",
@@ -587,127 +727,32 @@ module.exports = [
   "video"
 ];
 
-},{}],5:[function(require,module,exports){
-'use strict';
-
-var blocks = require('block-elements').map(function (name) {
-  return name.toUpperCase()
-})
-
-function defaultBlockTest (node) {
-  return isElem(node) && blocks.indexOf(node.nodeName) >= 0
-}
-
-function isText (node) {
-  return node && node.nodeType === 3 // Node.TEXT_NODE
-}
-
-function isElem (node) {
-  return node && node.nodeType === 1 // Node.ELEMENT_NODE
-}
-
+},{}],6:[function(require,module,exports){
 /**
- * whitespace(elem [, isBlock]) removes extraneous whitespace from an
- * the given element. The function isBlock may optionally be passed in
- * to determine whether or not an element is a block element; if none
- * is provided, defaults to using the list of block elements provided
- * by the `block-elements` module.
- *
- * @param {Element} root
- * @param {Function} isBlock
+ * This file automatically generated from `pre-publish.js`.
+ * Do not manually edit.
  */
-function whitespace (root, isBlock) {
-  var startSpace = /^ /,
-      endSpace = / $/,
-      nextNode,
-      prevNode,
-      prevText,
-      node,
-      text
 
-  if (typeof isBlock !== 'function')
-    isBlock = defaultBlockTest
+module.exports = {
+  "area": true,
+  "base": true,
+  "br": true,
+  "col": true,
+  "embed": true,
+  "hr": true,
+  "img": true,
+  "input": true,
+  "keygen": true,
+  "link": true,
+  "menuitem": true,
+  "meta": true,
+  "param": true,
+  "source": true,
+  "track": true,
+  "wbr": true
+};
 
-  function next (node) {
-    while (node && node !== root) {
-      if (node.nextSibling)
-        return node.nextSibling
-
-      node = node.parentNode
-      if (prevText && isBlock(node)) {
-        prevText.data = prevText.data.replace(/[ \r\n\t]$/, '')
-        prevText = null
-      }
-    }
-
-    return null
-  }
-
-  function first (node) {
-    return node.firstChild ? node.firstChild : next(node)
-  }
-
-  function remove (node) {
-    var nextNode = next(node)
-
-    node.parentNode.removeChild(node)
-    return nextNode
-  }
-
-  if (root.nodeName === 'PRE') return
-
-  // Join adjacent text nodes and whatnot.
-  root.normalize()
-
-  node = first(root)
-  while (node) {
-    prevNode = node.previousSibling
-    nextNode = node.nextSibling
-
-    if (isText(node)) {
-      text = node.data.replace(/[ \r\n\t]+/g, ' ')
-
-      if (!prevText || prevNode && isBlock(prevNode))
-        text = text.replace(startSpace, '')
-      if (nextNode && isBlock(nextNode))
-        text = text.replace(endSpace, '')
-
-      if (prevText && endSpace.test(prevText.data) &&
-          startSpace.test(text))
-        text = text.substr(1)
-
-      if (text) {
-        node.data = text
-        prevText = node
-        node = next(node)
-      } else {
-        node = remove(node)
-      }
-    } else if (isElem(node)) {
-      if (node.nodeName === 'PRE') {
-        node = next(node)
-        continue
-      }
-
-      if (prevText && isBlock(node)) {
-        prevText.data = prevText.data.replace(endSpace, '')
-        prevText = null
-      }
-
-      node = first(node)
-    } else {
-      node = remove(node)
-    }
-  }
-
-  // Trim trailing space from last text node
-  if (prevText)
-    prevText.data = prevText.data.replace(endSpace, '')
-}
-
-module.exports = whitespace
-
-},{"block-elements":4}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 
 },{}]},{},[1])(1)
 });
