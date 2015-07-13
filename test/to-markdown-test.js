@@ -375,6 +375,11 @@ test('leading/trailing whitespace', function() {
       'Hello world.<em> Foo </em><strong>bar </strong>',
       'Hello world. _Foo_ **bar**',
       'Whitespace in inline elements'
+    ],
+    [
+      '<h1><img src="image.png"> Hello world.</h1>',
+      '# ![](image.png) Hello world.',
+      'Whitespace and void elements'
     ]
   ]);
 });
