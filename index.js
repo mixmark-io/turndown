@@ -253,7 +253,10 @@ toMarkdown = function (input, options) {
       nodes = bfsOrder(clone),
       output;
 
-  converters = mdConverters.slice(0);
+  converters = [];
+  if (!options.noDefaultConverters) {
+    converters = mdConverters.slice(0);
+  }
   if (options.gfm) {
     converters = gfmConverters.concat(converters);
   }
