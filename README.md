@@ -30,6 +30,8 @@ $ bower install to-markdown
 <script>toMarkdown('<h1>Hello world!</h1>')</script>
 ```
 
+to-markdown works with most modern browsers (Chrome, firefox, IE, Opera). It should also work in IE8, and possibly earlier, with the inclusion of an ES5 shim (for example es5-shim 3.0.2 or later).
+
 ### Node.js
 
 Install the `to-markdown` module:

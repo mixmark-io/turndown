@@ -78,10 +78,31 @@ function createHtmlParser() {
   var Parser = function () {};
 
   Parser.prototype.parseFromString = function (string) {
-    var newDoc = _document.implementation.createHTMLDocument('');
+    var newDoc;
+    if (_document.implementation.createHTMLDocument) {
+      newDoc = _document.implementation.createHTMLDocument('');
+    }
+    else {
+      // IE8 Workaround originally courtesy of https://github.com/Reffyy
+      newDoc = _document.createElement('body');
+      newDoc.documentElement = newDoc;
+      newDoc.body = newDoc;
+    }
 
     if (string.toLowerCase().indexOf('<!doctype') > -1) {
-      newDoc.documentElement.innerHTML = string;
+      try {
+        newDoc.documentElement.innerHTML = string;
+      }
+      catch (e) {
+        // IE9 doesn't allow setting innerHTML on the document, and because IE9 strips <body>
+        // tags going into another body/div we will attempt to extract the body manually
+        var matches = string.match(/<body([^>]*)?>[\s\S]*<\/body>/im);
+        if (matches) {
+          string = matches[0];
+        }
+        
+        newDoc.body.innerHTML = string;
+      }
     }
     else {
       newDoc.body.innerHTML = string;
