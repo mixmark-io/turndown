@@ -209,6 +209,12 @@ function flankingWhitespace(node) {
 function process(node) {
   var replacement, content = getContent(node);
 
+  // Remove blank nodes
+  if (!isVoid(node) && !/A/.test(node.nodeName) && /^\s*$/i.test(content)) {
+    node._replacement = '';
+    return;
+  }
+
   for (var i = 0; i < converters.length; i++) {
     var converter = converters[i];
 
@@ -229,11 +235,6 @@ function process(node) {
                     whitespace.trailing;
       break;
     }
-  }
-
-  // Remove blank nodes
-  if (!isVoid(node) && !/A/.test(node.nodeName) && /^\s*$/i.test(content)) {
-    replacement = '';
   }
 
   node._replacement = replacement;
