@@ -5,7 +5,7 @@
   "keywords": "markdown",
   "author": "Dom Christie",
   "main": "index.js",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/domchristie/to-markdown.git"
