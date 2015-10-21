@@ -27,7 +27,8 @@
     "collapse-whitespace": "1.1.2",
     "jsdom": "^6.5.1"
   },
-  "engines" : {
-    "node" : "^4"
-  }
+  "engines": {
+    "node": "^4"
+  },
+  "license": "MIT"
 }
