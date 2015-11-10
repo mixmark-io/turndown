@@ -29,7 +29,9 @@ test('emphasis', function() {
     ['<strong>Hello world</strong>', '**Hello world**', 'strong'],
     ['<i>Hello world</i>', '_Hello world_', 'i'],
     ['<em>Hello world</em>', '_Hello world_', 'em'],
-    ['<em>Hello</em> <em>world</em>', '_Hello_ _world_', 'Multiple ems']
+    ['<em>Hello</em> <em>world</em>', '_Hello_ _world_', 'Multiple ems'],
+    ['<em>Hello <br><br> world</em>', '_Hello_\n\n_world_', 'em with two newlines'],
+    ['<strong>Hello <br><br> world<strong>', '**Hello**\n\n**world**', 'strong with two newlines'],
   ]);
 });
 
