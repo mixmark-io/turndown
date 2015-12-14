@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "collapse-whitespace": "1.1.2",
-    "jsdom": "^6.5.1"
+    "jsdom": "^8.1.0"
   },
   "engines": {
     "node": "^4"
