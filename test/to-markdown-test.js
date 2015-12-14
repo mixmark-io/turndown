@@ -436,3 +436,9 @@ asyncTest('img[onerror]', 1, function () {
   start();
   equal(toMarkdown('>\'>"><img src=x onerror="(function () { ok(true); })()">'), '>\'>">![](x)', 'We expect img[onerror] functions not to run');
 });
+
+test('malformed documents', function() {
+  expect(0); // just make sure to-markdown doesn't crash
+  var html = '<HTML><head></head><BODY><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><body onload=alert(document.cookie);></body></html>';
+  toMarkdown(html);
+});

@@ -18,13 +18,7 @@ var collapse = require('collapse-whitespace');
  * Set up window and document for Node.js
  */
 
-var _window = (typeof window !== 'undefined' ? window : this), _document;
-if (typeof document === 'undefined') {
-  _document = require('jsdom').jsdom();
-}
-else {
-  _document = document;
-}
+var _window = (typeof window !== 'undefined' ? window : this);
 
 /*
  * Utilities
@@ -76,17 +70,49 @@ function canParseHtml() {
 function createHtmlParser() {
   var Parser = function () {};
 
-  Parser.prototype.parseFromString = function (string) {
-    var newDoc = _document.implementation.createHTMLDocument('');
+  if (typeof document === 'undefined') {
+    var jsdom = require('jsdom');
+    Parser.prototype.parseFromString = function (string) {
+      return jsdom.jsdom(string, {
+        features: {
+          FetchExternalResources: [],
+          ProcessExternalResources: false
+        }
+      });
+    };
+  } else {
+    var useActiveX = false;
+    try {
+      var testDoc = document.implementation.createHTMLDocument('');
+      testDoc.open();
+    } catch (e) {
+      if (window.ActiveXObject) {
+        // IE9
+        useActiveX = true;
+      } // otherwise this will fail - badly (shouldn't happen in any browser though)
+    }
 
-    if (string.toLowerCase().indexOf('<!doctype') > -1) {
-      newDoc.documentElement.innerHTML = string;
+    if (!useActiveX) {
+      Parser.prototype.parseFromString = function (string) {
+        // this is the most correct parsing method
+        var newDoc = document.implementation.createHTMLDocument('');
+        newDoc.open();
+        newDoc.write(string);
+        newDoc.close();
+        return newDoc;
+      };
+    } else {
+      Parser.prototype.parseFromString = function (string) {
+        // correct fallback for IE9
+        var newDoc = new ActiveXObject('htmlfile');
+        newDoc.designMode = "on"; // this disables on-page scripts... yes - I know
+        newDoc.open();
+        newDoc.write(string);
+        newDoc.close();
+        return newDoc;
+      };
     }
-    else {
-      newDoc.body.innerHTML = string;
-    }
-    return newDoc;
-  };
+  }
   return Parser;
 }
 
@@ -94,7 +120,7 @@ var HtmlParser = canParseHtml() ? _window.DOMParser : createHtmlParser();
 
 function htmlToDom(string) {
   var tree = new HtmlParser().parseFromString(string, 'text/html');
-  collapse(tree, isBlock);
+  collapse(tree.documentElement, isBlock);
   return tree;
 }
 
