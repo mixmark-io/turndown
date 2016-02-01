@@ -338,10 +338,10 @@ module.exports = [
       if (node.parentNode.nodeName === 'THEAD'
         || node.parentNode.nodeName === 'TABLE' && index === 0 //first tr of table
         || (node.parentNode.nodeName === 'TBODY' && index === 0 //first tr of tbody wicth dosen't have thead or have empty one
-          && !(node.parentNode.previousSbiling
-            && node.parentNode.previousSbiling.nodeName === 'THEAD'
-            && node.parentNode.previousSbiling.childNodes
-            && node.parentNode.previousSbiling.childNodes.length)
+          && !(node.parentNode.previousSibling
+            && node.parentNode.previousSibling.nodeName === 'THEAD'
+            && node.parentNode.previousSibling.childNodes
+            && node.parentNode.previousSibling.childNodes.length)
         )
       ) {
         for (var i = 0; i < node.childNodes.length; i++) {
