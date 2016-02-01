@@ -317,9 +317,11 @@ module.exports = [
     }
   },
 
+  // clear the \n(br) in TH and TD
   {
     filter: ['th', 'td'],
     replacement: function (content, node) {
+       content = content.replace(/\n/g, ' ');
       return cell(content, node);
     }
   },
@@ -330,7 +332,18 @@ module.exports = [
       var borderCells = '';
       var alignMap = { left: ':--', right: '--:', center: ':-:' };
 
-      if (node.parentNode.nodeName === 'THEAD') {
+      //index of this tr
+      var index = Array.prototype.indexOf.call(node.parentNode.childNodes, node);
+
+      if (node.parentNode.nodeName === 'THEAD'
+        || node.parentNode.nodeName === 'TABLE' && index === 0 //first tr of table
+        || (node.parentNode.nodeName === 'TBODY' && index === 0 //first tr of tbody wicth dosen't have thead or have empty one
+          && !(node.parentNode.previousSibling
+            && node.parentNode.previousSibling.nodeName === 'THEAD'
+            && node.parentNode.previousSibling.childNodes
+            && node.parentNode.previousSibling.childNodes.length)
+        )
+      ) {
         for (var i = 0; i < node.childNodes.length; i++) {
           var align = node.childNodes[i].attributes.align;
           var border = '---';
