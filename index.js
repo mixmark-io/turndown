@@ -19,10 +19,6 @@ var collapse = require('collapse-whitespace');
  * Utilities
  */
 
-function trim(string) {
-  return string.replace(/^[ \r\n\t]+|[ \r\n\t]+$/g, '');
-}
-
 var blocks = ['address', 'article', 'aside', 'audio', 'blockquote', 'body',
   'canvas', 'center', 'dd', 'dir', 'div', 'dl', 'dt', 'fieldset', 'figcaption',
   'figure', 'footer', 'form', 'frameset', 'h1', 'h2', 'h3', 'h4','h5', 'h6',
@@ -180,7 +176,7 @@ function process(node) {
       var whitespace = flankingWhitespace(node);
 
       if (whitespace.leading || whitespace.trailing) {
-        content = trim(content);
+        content = content.trim();
       }
       replacement = whitespace.leading +
                     converter.replacement.call(toMarkdown, content, node) +
@@ -228,7 +224,6 @@ toMarkdown = function (input, options) {
 
 toMarkdown.isBlock = isBlock;
 toMarkdown.isVoid = isVoid;
-toMarkdown.trim = trim;
 toMarkdown.outer = outer;
 
 module.exports = toMarkdown;
