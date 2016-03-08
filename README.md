@@ -8,6 +8,8 @@ The API is as follows:
 toMarkdown(stringOfHTML, options);
 ```
 
+**Note** to-markdown v2 runs on Node 4+. For a version compatible with Node 0.10 - 0.12, please use [to-markdown v1.x](https://github.com/domchristie/to-markdown/tree/1.x).
+
 ## Installation
 
 ### Browser
