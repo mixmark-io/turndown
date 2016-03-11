@@ -158,6 +158,7 @@ test('tables', function() {
       '| Row 4, Column 1 | Row 4, Column 2 | Row 4, Column 3 |  |',
       '|  |  |  | Row 5, Column 4 |'
       ].join('\n'),
+      'Empty cells'
   ]
   ]);
 });
