@@ -12,13 +12,8 @@ var toMarkdown;
 var converters;
 var mdConverters = require('./lib/md-converters');
 var gfmConverters = require('./lib/gfm-converters');
+var HtmlParser = require('./lib/html-parser');
 var collapse = require('collapse-whitespace');
-
-/*
- * Set up window and document for Node.js
- */
-
-var _window = (typeof window !== 'undefined' ? window : this);
 
 /*
  * Utilities
@@ -48,75 +43,6 @@ var voids = [
 function isVoid(node) {
   return voids.indexOf(node.nodeName.toLowerCase()) !== -1;
 }
-
-/*
- * Parsing HTML strings
- */
-
-function canParseHtml() {
-  var Parser = _window.DOMParser, canParse = false;
-
-  // Adapted from https://gist.github.com/1129031
-  // Firefox/Opera/IE throw errors on unsupported types
-  try {
-    // WebKit returns null on unsupported types
-    if (new Parser().parseFromString('', 'text/html')) {
-      canParse = true;
-    }
-  } catch (e) {}
-  return canParse;
-}
-
-function createHtmlParser() {
-  var Parser = function () {};
-
-  if (typeof document === 'undefined') {
-    var jsdom = require('jsdom');
-    Parser.prototype.parseFromString = function (string) {
-      return jsdom.jsdom(string, {
-        features: {
-          FetchExternalResources: [],
-          ProcessExternalResources: false
-        }
-      });
-    };
-  } else {
-    var useActiveX = false;
-    try {
-      var testDoc = document.implementation.createHTMLDocument('');
-      testDoc.open();
-    } catch (e) {
-      if (window.ActiveXObject) {
-        // IE9
-        useActiveX = true;
-      } // otherwise this will fail - badly (shouldn't happen in any browser though)
-    }
-
-    if (!useActiveX) {
-      Parser.prototype.parseFromString = function (string) {
-        // this is the most correct parsing method
-        var newDoc = document.implementation.createHTMLDocument('');
-        newDoc.open();
-        newDoc.write(string);
-        newDoc.close();
-        return newDoc;
-      };
-    } else {
-      Parser.prototype.parseFromString = function (string) {
-        // correct fallback for IE9
-        var newDoc = new ActiveXObject('htmlfile');
-        newDoc.designMode = "on"; // this disables on-page scripts... yes - I know
-        newDoc.open();
-        newDoc.write(string);
-        newDoc.close();
-        return newDoc;
-      };
-    }
-  }
-  return Parser;
-}
-
-var HtmlParser = canParseHtml() ? _window.DOMParser : createHtmlParser();
 
 function htmlToDom(string) {
   var tree = new HtmlParser().parseFromString(string, 'text/html');
