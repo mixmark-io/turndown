@@ -13,19 +13,8 @@ var toMarkdown;
 var converters;
 var mdConverters = require('./lib/md-converters');
 var gfmConverters = require('./lib/gfm-converters');
+var HtmlParser = require('./lib/html-parser');
 var collapse = require('collapse-whitespace');
-
-/*
- * Set up window and document for Node.js
- */
-
-var _window = (typeof window !== 'undefined' ? window : this), _document;
-if (typeof document === 'undefined') {
-  _document = require('jsdom').jsdom();
-}
-else {
-  _document = document;
-}
 
 /*
  * Utilities
@@ -56,46 +45,9 @@ function isVoid(node) {
   return voids.indexOf(node.nodeName.toLowerCase()) !== -1;
 }
 
-/*
- * Parsing HTML strings
- */
-
-function canParseHtml() {
-  var Parser = _window.DOMParser, canParse = false;
-
-  // Adapted from https://gist.github.com/1129031
-  // Firefox/Opera/IE throw errors on unsupported types
-  try {
-    // WebKit returns null on unsupported types
-    if (new Parser().parseFromString('', 'text/html')) {
-      canParse = true;
-    }
-  } catch (e) {}
-  return canParse;
-}
-
-function createHtmlParser() {
-  var Parser = function () {};
-
-  Parser.prototype.parseFromString = function (string) {
-    var newDoc = _document.implementation.createHTMLDocument('');
-
-    if (string.toLowerCase().indexOf('<!doctype') > -1) {
-      newDoc.documentElement.innerHTML = string;
-    }
-    else {
-      newDoc.body.innerHTML = string;
-    }
-    return newDoc;
-  };
-  return Parser;
-}
-
-var HtmlParser = canParseHtml() ? _window.DOMParser : createHtmlParser();
-
 function htmlToDom(string) {
   var tree = new HtmlParser().parseFromString(string, 'text/html');
-  collapse(tree, isBlock);
+  collapse(tree.documentElement, isBlock);
   return tree;
 }
 
@@ -282,7 +234,7 @@ toMarkdown.outer = outer;
 
 module.exports = toMarkdown;
 
-},{"./lib/gfm-converters":2,"./lib/md-converters":3,"collapse-whitespace":4,"jsdom":7}],2:[function(require,module,exports){
+},{"./lib/gfm-converters":2,"./lib/html-parser":3,"./lib/md-converters":4,"collapse-whitespace":7}],2:[function(require,module,exports){
 'use strict';
 
 function cell(content, node) {
@@ -395,6 +347,84 @@ module.exports = [
 ];
 
 },{}],3:[function(require,module,exports){
+/*
+ * Set up window for Node.js
+ */
+
+var _window = (typeof window !== 'undefined' ? window : this);
+
+/*
+ * Parsing HTML strings
+ */
+
+function canParseHtmlNatively () {
+  var Parser = _window.DOMParser
+  var canParse = false;
+
+  // Adapted from https://gist.github.com/1129031
+  // Firefox/Opera/IE throw errors on unsupported types
+  try {
+    // WebKit returns null on unsupported types
+    if (new Parser().parseFromString('', 'text/html')) {
+      canParse = true;
+    }
+  } catch (e) {}
+
+  return canParse;
+}
+
+function createHtmlParser () {
+  var Parser = function () {};
+  
+  // For Node.js environments
+  if (typeof document === 'undefined') {
+    var jsdom = require('jsdom');
+    Parser.prototype.parseFromString = function (string) {
+      return jsdom.jsdom(string, {
+        features: {
+          FetchExternalResources: [],
+          ProcessExternalResources: false
+        }
+      });
+    };
+  } else {
+    if (!shouldUseActiveX()) {
+      Parser.prototype.parseFromString = function (string) {
+        var doc = document.implementation.createHTMLDocument('');
+        doc.open();
+        doc.write(string);
+        doc.close();
+        return doc;
+      };
+    } else {
+      Parser.prototype.parseFromString = function (string) {
+        var doc = new ActiveXObject('htmlfile');
+        doc.designMode = 'on'; // disable on-page scripts
+        doc.open();
+        doc.write(string);
+        doc.close();
+        return doc;
+      };
+    }
+  }
+  return Parser;
+}
+
+function shouldUseActiveX () {
+  var useActiveX = false;
+
+  try {
+    document.implementation.createHTMLDocument('').open();
+  } catch (e) {
+    if (window.ActiveXObject) useActiveX = true;
+  }
+
+  return useActiveX;
+}
+
+module.exports = canParseHtmlNatively() ? _window.DOMParser : createHtmlParser()
+
+},{"jsdom":6}],4:[function(require,module,exports){
 'use strict';
 
 module.exports = [
@@ -546,7 +576,53 @@ module.exports = [
     }
   }
 ];
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
+/**
+ * This file automatically generated from `build.js`.
+ * Do not manually edit.
+ */
+
+module.exports = [
+  "address",
+  "article",
+  "aside",
+  "audio",
+  "blockquote",
+  "canvas",
+  "dd",
+  "div",
+  "dl",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "footer",
+  "form",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "header",
+  "hgroup",
+  "hr",
+  "main",
+  "nav",
+  "noscript",
+  "ol",
+  "output",
+  "p",
+  "pre",
+  "section",
+  "table",
+  "tfoot",
+  "ul",
+  "video"
+];
+
+},{}],6:[function(require,module,exports){
+
+},{}],7:[function(require,module,exports){
 'use strict';
 
 var voidElements = require('void-elements');
@@ -684,51 +760,7 @@ function next(prev, current) {
 
 module.exports = collapseWhitespace;
 
-},{"block-elements":5,"void-elements":6}],5:[function(require,module,exports){
-/**
- * This file automatically generated from `build.js`.
- * Do not manually edit.
- */
-
-module.exports = [
-  "address",
-  "article",
-  "aside",
-  "audio",
-  "blockquote",
-  "canvas",
-  "dd",
-  "div",
-  "dl",
-  "fieldset",
-  "figcaption",
-  "figure",
-  "footer",
-  "form",
-  "h1",
-  "h2",
-  "h3",
-  "h4",
-  "h5",
-  "h6",
-  "header",
-  "hgroup",
-  "hr",
-  "main",
-  "nav",
-  "noscript",
-  "ol",
-  "output",
-  "p",
-  "pre",
-  "section",
-  "table",
-  "tfoot",
-  "ul",
-  "video"
-];
-
-},{}],6:[function(require,module,exports){
+},{"block-elements":5,"void-elements":8}],8:[function(require,module,exports){
 /**
  * This file automatically generated from `pre-publish.js`.
  * Do not manually edit.
@@ -752,8 +784,6 @@ module.exports = {
   "track": true,
   "wbr": true
 };
-
-},{}],7:[function(require,module,exports){
 
 },{}]},{},[1])(1)
 });
