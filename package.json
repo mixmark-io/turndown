@@ -13,6 +13,7 @@
   "devDependencies": {
     "qunit": "^0.7.6",
     "saucie": "0.1.3",
+    "standard": "^6.0.8",
     "testem": "^0.8.2",
     "watchify": "^2.5.0"
   },
@@ -30,7 +31,7 @@
   },
   "scripts": {
     "start": "watchify -s toMarkdown -o dist/to-markdown.js index.js -v",
-    "test": "qunit -c ./index.js -t ./test/to-markdown-test.js ./test/gfm-test.js"
+    "test": "standard index.js lib/**/*.js test/**/*.js && qunit -c ./index.js -t ./test/to-markdown-test.js ./test/gfm-test.js"
   },
   "url": "http://domchristie.github.com/to-markdown/"
 }
