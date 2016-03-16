@@ -1,7 +1,7 @@
 /*
  * to-markdown - an HTML to Markdown converter
  *
- * Copyright 2011-15, Dom Christie
+ * Copyright 2011+, Dom Christie
  * Licenced under the MIT licence
  *
  */

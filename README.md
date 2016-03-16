@@ -8,7 +8,7 @@ The API is as follows:
 toMarkdown(stringOfHTML, options);
 ```
 
-**Note** to-markdown v2 runs on Node 4+. For a version compatible with Node 0.10 - 0.12, please use [to-markdown v1.x](https://github.com/domchristie/to-markdown/tree/1.x).
+**Note** to-markdown v2+ runs on Node 4+. For a version compatible with Node 0.10 - 0.12, please use [to-markdown v1.x](https://github.com/domchristie/to-markdown/tree/1.x).
 
 ## Installation
 
@@ -161,4 +161,4 @@ Thanks to all [contributors](https://github.com/domchristie/to-markdown/graphs/c
 
 ## Licence
 
-to-markdown is copyright &copy; 2011-15 [Dom Christie](http://domchristie.co.uk) and released under the MIT license.
+to-markdown is copyright &copy; 2011+ [Dom Christie](http://domchristie.co.uk) and released under the MIT license.
