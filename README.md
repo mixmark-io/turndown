@@ -126,10 +126,6 @@ Returns `true`/`false` depending on whether the element is block level.
 
 Returns `true`/`false` depending on whether the element is [void](http://www.w3.org/TR/html-markup/syntax.html#syntax-elements).
 
-### `trim(string)`
-
-Returns the string with leading and trailing whitespace removed.
-
 ### `outer(node)`
 
 Returns the content of the node along with the element itself.

@@ -20,10 +20,6 @@ var collapse = require('collapse-whitespace');
  * Utilities
  */
 
-function trim(string) {
-  return string.replace(/^[ \r\n\t]+|[ \r\n\t]+$/g, '');
-}
-
 var blocks = ['address', 'article', 'aside', 'audio', 'blockquote', 'body',
   'canvas', 'center', 'dd', 'dir', 'div', 'dl', 'dt', 'fieldset', 'figcaption',
   'figure', 'footer', 'form', 'frameset', 'h1', 'h2', 'h3', 'h4','h5', 'h6',
@@ -163,7 +159,7 @@ function process(node) {
   var replacement, content = getContent(node);
 
   // Remove blank nodes
-  if (!isVoid(node) && !/A/.test(node.nodeName) && /^\s*$/i.test(content)) {
+  if (!isVoid(node) && !/A|TH|TD/.test(node.nodeName) && /^\s*$/i.test(content)) {
     node._replacement = '';
     return;
   }
@@ -181,7 +177,7 @@ function process(node) {
       var whitespace = flankingWhitespace(node);
 
       if (whitespace.leading || whitespace.trailing) {
-        content = trim(content);
+        content = content.trim();
       }
       replacement = whitespace.leading +
                     converter.replacement.call(toMarkdown, content, node) +
@@ -229,7 +225,6 @@ toMarkdown = function (input, options) {
 
 toMarkdown.isBlock = isBlock;
 toMarkdown.isVoid = isVoid;
-toMarkdown.trim = trim;
 toMarkdown.outer = outer;
 
 module.exports = toMarkdown;
@@ -522,7 +517,7 @@ module.exports = [
   {
     filter: 'blockquote',
     replacement: function (content) {
-      content = this.trim(content);
+      content = content.trim();
       content = content.replace(/\n{3,}/g, '\n\n');
       content = content.replace(/^/gm, '> ');
       return '\n\n' + content + '\n\n';
@@ -576,6 +571,7 @@ module.exports = [
     }
   }
 ];
+
 },{}],5:[function(require,module,exports){
 /**
  * This file automatically generated from `build.js`.
