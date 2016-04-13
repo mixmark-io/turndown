@@ -33,9 +33,10 @@ test('emphasis', function () {
   ])
 })
 
+// test case reference https://daringfireball.net/projects/markdown/syntax#code
 test('code', function () {
   runTestCases([
-    ['<code>print()</code>', '`print()`']
+    ['<code>There is a literal backtick (`) here.</code>', '``There is a literal backtick (`) here.``']
   ])
 })
 
