@@ -129,13 +129,13 @@ function isFlankedByWhitespace (side, node) {
   return isFlanked
 }
 
-function flankingWhitespace (node) {
+function flankingWhitespace (node, content) {
   var leading = ''
   var trailing = ''
 
   if (!isBlock(node)) {
-    var hasLeading = /^[ \r\n\t]/.test(node.innerHTML)
-    var hasTrailing = /[ \r\n\t]$/.test(node.innerHTML)
+    var hasLeading = /^[ \r\n\t]/.test(content)
+    var hasTrailing = /[ \r\n\t]$/.test(content)
 
     if (hasLeading && !isFlankedByWhitespace('left', node)) {
       leading = ' '
@@ -173,7 +173,7 @@ function process (node) {
         )
       }
 
-      var whitespace = flankingWhitespace(node)
+      var whitespace = flankingWhitespace(node, content)
 
       if (whitespace.leading || whitespace.trailing) {
         content = content.trim()
