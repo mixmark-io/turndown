@@ -12,6 +12,7 @@ var toMarkdown
 var converters
 var mdConverters = require('./lib/md-converters')
 var gfmConverters = require('./lib/gfm-converters')
+var pandocConverters = require('./lib/pandoc-converters')
 var HtmlParser = require('./lib/html-parser')
 var collapse = require('collapse-whitespace')
 
@@ -205,6 +206,10 @@ toMarkdown = function (input, options) {
   converters = mdConverters.slice(0)
   if (options.gfm) {
     converters = gfmConverters.concat(converters)
+  }
+
+  if (options.pandoc) {
+    converters = pandocConverters.concat(converters)
   }
 
   if (options.converters) {

@@ -13,6 +13,7 @@ var toMarkdown
 var converters
 var mdConverters = require('./lib/md-converters')
 var gfmConverters = require('./lib/gfm-converters')
+var pandocConverters = require('./lib/pandoc-converters')
 var HtmlParser = require('./lib/html-parser')
 var collapse = require('collapse-whitespace')
 
@@ -208,6 +209,10 @@ toMarkdown = function (input, options) {
     converters = gfmConverters.concat(converters)
   }
 
+  if (options.pandoc) {
+    converters = pandocConverters.concat(converters)
+  }
+
   if (options.converters) {
     converters = options.converters.concat(converters)
   }
@@ -229,7 +234,7 @@ toMarkdown.outer = outer
 
 module.exports = toMarkdown
 
-},{"./lib/gfm-converters":2,"./lib/html-parser":3,"./lib/md-converters":4,"collapse-whitespace":7}],2:[function(require,module,exports){
+},{"./lib/gfm-converters":2,"./lib/html-parser":3,"./lib/md-converters":4,"collapse-whitespace":7,"./lib/pandoc-converters":8}],2:[function(require,module,exports){
 'use strict'
 
 function cell (content, node) {
