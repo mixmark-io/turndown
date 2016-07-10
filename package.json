@@ -1,7 +1,7 @@
 {
   "name": "to-markdown",
   "description": "HTML-to-Markdown converter",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "author": "Dom Christie",
   "browser": {
     "jsdom": false
