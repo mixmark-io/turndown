@@ -159,6 +159,16 @@ test('tables', function () {
         '|  |  |  | Row 5, Column 4 |'
       ].join('\n'),
       'Empty cells'
+    ],
+    [
+      '<table><tr><th>H1</th><th>H2</th></tr></table>',
+      ['| H1 | H2 |', '| --- | --- |'].join('\n'),
+      '<th>s not in <thead>'
+    ],
+    [
+      '<table><tr><th>H1</th><td>C2</td></tr></table>',
+      ['| H1 | C2 |'].join('\n'),
+      'Mixture of <th> and <td> not in <thead>'
     ]
   ])
 })
