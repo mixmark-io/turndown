@@ -1,15 +1,18 @@
 {
-  "name": "to-markdown",
-  "description": "HTML-to-Markdown converter",
-  "version": "3.0.1",
   "author": "Dom Christie",
+  "name": "@forestryio/to-markdown",
+  "url": "http://domchristie.github.com/to-markdown/",
+  "description": "HTML-to-Markdown converter",
+  "version": "1.0.0",
   "browser": {
     "jsdom": false
   },
+
   "dependencies": {
     "collapse-whitespace": "1.1.2",
     "jsdom": "^9.0.0"
   },
+
   "devDependencies": {
     "qunit": "^0.7.6",
     "saucie": "0.1.3",
@@ -17,21 +20,23 @@
     "testem": "^0.8.2",
     "watchify": "^2.5.0"
   },
+
   "engines": {
     "node": "^4"
   },
+
   "keywords": [
     "markdown"
   ],
+
   "license": "MIT",
   "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/domchristie/to-markdown.git"
   },
+
   "scripts": {
-    "start": "watchify -s toMarkdown -o dist/to-markdown.js index.js -v",
     "test": "standard index.js lib/**/*.js test/**/*.js && qunit -c ./index.js -t ./test/to-markdown-test.js ./test/gfm-test.js"
-  },
-  "url": "http://domchristie.github.com/to-markdown/"
+  }
 }
