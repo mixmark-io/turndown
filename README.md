@@ -1,43 +1,17 @@
 # to-markdown
 
-An HTML to Markdown converter written in JavaScript.
-
-The API is as follows:
+A custom fork of to-markdown that fixes some stuff we needed fixed. Also An HTML to Markdown converter written in JavaScript. The API is as follows:
 
 ```js
 toMarkdown(stringOfHTML, options);
 ```
 
-**Note** to-markdown v2+ runs on Node 4+. For a version compatible with Node 0.10 - 0.12, please use [to-markdown v1.x](https://github.com/domchristie/to-markdown/tree/1.x).
-
 ## Installation
-
-### Browser
-
-Download the compiled script located at `dist/to-markdown.js`.
-
-```html
-<script src="PATH/TO/to-markdown.js"></script>
-<script>toMarkdown('<h1>Hello world!</h1>')</script>
-```
-
-Or with **Bower**:
-
-```sh
-$ bower install to-markdown
-```
-
-```html
-<script src="PATH/TO/bower_components/to-markdown/dist/to-markdown.js"></script>
-<script>toMarkdown('<h1>Hello world!</h1>')</script>
-```
-
-### Node.js
 
 Install the `to-markdown` module:
 
 ```sh
-$ npm install to-markdown
+$ npm install @forestryio/to-markdown
 ```
 
 Then you can use it like below:
