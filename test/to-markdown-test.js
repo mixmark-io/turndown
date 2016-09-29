@@ -380,6 +380,11 @@ test('leading/trailing whitespace', function () {
       '<h1><img src="image.png"> Hello world.</h1>',
       '# ![](image.png) Hello world.',
       'Whitespace and void elements'
+    ],
+    [
+      'Hello <strong><a href="https://www.google.com">Hello </a></strong>Hello',
+      'Hello **[Hello](https://www.google.com)** Hello',
+      'Whitespace in bold links.'
     ]
   ])
 })
