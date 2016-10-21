@@ -196,7 +196,7 @@ toMarkdown = function (input, options) {
   }
 
   if (input === '') {
-    return '';
+    return ''
   }
 
   // Escape potential ol triggers
