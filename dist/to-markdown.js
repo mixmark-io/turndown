@@ -196,6 +196,10 @@ toMarkdown = function (input, options) {
     throw new TypeError(input + ' is not a string')
   }
 
+  if (input === '') {
+    return ''
+  }
+
   // Escape potential ol triggers
   input = input.replace(/(\d+)\. /g, '$1\\. ')
 
