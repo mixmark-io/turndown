@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>to-markdown.js - an HTML to Markdown converter written in javascript</title>
+<link rel="stylesheet" href="normalise.css"></link>
+<style>
+  body {
+    width: 751.538px;
+    margin: 0 auto;
+    font-family: sans-serif;
+    line-height: 1.4;
+  }
+  .lock-x {
+    margin-right: 10px;
+  }
+  .lock-x textarea {
+    width: 100%;
+    padding: 4px;
+  }
+  .output {
+    border: 1px dashed #999;
+    padding: 4px;
+    min-height: px;
+  }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script>
+<script src="https://rawgithub.com/domchristie/to-markdown/master/src/to-markdown.js"></script>
+<script>
+  $(function(){
+    var $input = $('.input');
+    function updateOutput() {
+      $('.output').text(toMarkdown($input.val()));
+    }
+    updateOutput();
+    $input.keyup(function() {
+      updateOutput();
+    });
+  });
+</script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-26662448-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</head>
+<body>
+  <h1>to-markdown.js</h1>
+  
+  <h2>Try it</h2>
+  <h3>HTML input:</h3>
+  <div class="lock-x">
+    <textarea class="input" cols="100" rows="10"><h3>Some HTML</h3>
+
+<p>Hello world! This demonstrates <a href="https://github.com/domchristie/to-markdown">to-markdown.js</a> – an HTML to Markdown converter.</p>
+
+<hr />
+
+<ol>
+  <li>Number 1</li>
+  <li>Number Two</li>
+</ol></textarea>
+  </div>
+  
+  <h3>Markdown output:</h3>
+  <div class="lock-x">
+    <textarea class="output" cols="100" rows="10" class="output"></textarea>
+  </div>
+  
+  <p><a href="https://github.com/domchristie/to-markdown">Source on GitHub</a></p>
+  <p><small>to-markdown is copyright &copy; 2011 <a href="http://domchristie.co.uk">Dom Christie</a> and is released under the MIT licence.</small></p>
+</body>
+</html>
