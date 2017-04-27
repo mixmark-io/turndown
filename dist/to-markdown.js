@@ -75,7 +75,7 @@ function bfsOrder (node) {
  */
 
 function escapeContent (text) {
-  return text.replace(/[_#*~]/g, '\\$&')
+  return text.replace(/[_#`*~]/g, '\\$&')
 }
 
 /*
@@ -88,7 +88,11 @@ function getContent (node) {
     if (node.childNodes[i].nodeType === 1) {
       text += node.childNodes[i]._replacement
     } else if (node.childNodes[i].nodeType === 3) {
-      text += escapeContent(node.childNodes[i].data)
+      if (node.nodeName === 'CODE') {
+        text += node.childNodes[i].data;
+      } else {
+        text += escapeContent(node.childNodes[i].data)
+      }
     } else continue
   }
   return text
@@ -491,7 +495,23 @@ module.exports = [
       return node.nodeName === 'CODE' && !isCodeBlock
     },
     replacement: function (content) {
-      return '`' + content + '`'
+      if (content.indexOf('`') < 0) {
+        return '`' + content + '`'
+      } else {
+
+        // See test case: <p>A backtick-delimited string in a code span: <code>`foo`</code></p>
+        var text = '``'
+        if (content.startsWith('`')) {
+          text += ' '
+        }
+
+        text += content
+
+        if (content.endsWith('`')) {
+          text += ' '
+        }
+        return text += '``'
+      }
     }
   },
 

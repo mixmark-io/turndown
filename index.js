@@ -74,7 +74,7 @@ function bfsOrder (node) {
  */
 
 function escapeContent (text) {
-  return text.replace(/[_#*~]/g, '\\$&')
+  return text.replace(/[_#`*~]/g, '\\$&')
 }
 
 /*
@@ -87,7 +87,11 @@ function getContent (node) {
     if (node.childNodes[i].nodeType === 1) {
       text += node.childNodes[i]._replacement
     } else if (node.childNodes[i].nodeType === 3) {
-      text += escapeContent(node.childNodes[i].data)
+      if (node.nodeName === 'CODE') {
+        text += node.childNodes[i].data;
+      } else {
+        text += escapeContent(node.childNodes[i].data)
+      }
     } else continue
   }
   return text

@@ -35,7 +35,12 @@ test('emphasis', function () {
 
 test('code', function () {
   runTestCases([
-    ['<code>print()</code>', '`print()`']
+    ['<code>print()</code>', '`print()`'],
+    // test case reference https://daringfireball.net/projects/markdown/syntax#code
+    ['<p>Use the <code>printf()</code> function.</p>', 'Use the `printf()` function.'],
+    ['<code>There is a literal backtick (`) here.</code>', '``There is a literal backtick (`) here.``'],
+    ['<p>A backtick-delimited string in a code span: <code>`foo`</code></p>', 'A backtick-delimited string in a code span: `` `foo` ``'],
+    ['<p>Please don\'t use any <code>&lt;blink&gt;</code> tags.</p>', 'Please don\'t use any `<blink>` tags.']
   ])
 })
 
