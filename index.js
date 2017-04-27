@@ -74,7 +74,7 @@ function bfsOrder (node) {
  */
 
 function escapeContent (text) {
-  return text.replace(/[_#*`~]/g, '\\$&')
+  return text.replace(/[_#*~]/g, '\\$&')
 }
 
 /*
