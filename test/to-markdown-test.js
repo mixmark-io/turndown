@@ -398,6 +398,18 @@ test('blank', function () {
   ])
 })
 
+test('escaped text', function () {
+  runTestCases([
+    ['<p>Sign Here: ____________________</p>', 'Sign Here: \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_']
+  ])
+})
+
+test('replacements not escapted', function () {
+  runTestCases([
+    ['<strong><em>Strong Emphasis on these `___` and  `###` chars</em></strong>', '**_Strong Emphasis on these \\`\\_\\_\\_\\` and \\`\\#\\#\\#\\` chars_**']
+  ])
+})
+
 test('custom converters', function () {
   var html
   var converter

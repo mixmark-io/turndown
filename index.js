@@ -70,6 +70,14 @@ function bfsOrder (node) {
 }
 
 /*
+ * Escapes text that is HTML content text, not replacement text.
+ */
+
+function escapeContent (text) {
+  return text.replace(/[_#*`~]/g, '\\$&')
+}
+
+/*
  * Contructs a Markdown string of replacement text for a given node
  */
 
@@ -79,7 +87,7 @@ function getContent (node) {
     if (node.childNodes[i].nodeType === 1) {
       text += node.childNodes[i]._replacement
     } else if (node.childNodes[i].nodeType === 3) {
-      text += node.childNodes[i].data
+      text += escapeContent(node.childNodes[i].data)
     } else continue
   }
   return text
