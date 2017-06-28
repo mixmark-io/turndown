@@ -1,164 +1,48 @@
-# to-markdown
+# Turndown
 
-An HTML to Markdown converter written in JavaScript.
+![](https://api.travis-ci.org/domchristie/turndown.svg)
 
-The API is as follows:
+Convert HTML into Markdown with JavaScript.
 
-```js
-toMarkdown(stringOfHTML, options);
-```
-
-**Note** to-markdown v2+ runs on Node 4+. For a version compatible with Node 0.10 - 0.12, please use [to-markdown v1.x](https://github.com/domchristie/to-markdown/tree/1.x).
+**Note this is currently a work-in-progress to replace https://github.com/domchristie/to-markdown. It is pre-release software. API changes are likely.**
 
 ## Installation
 
-### Browser
+npm:
 
-Download the compiled script located at `dist/to-markdown.js`.
+```
+npm install turndown
+```
+
+Browser:
 
 ```html
-<script src="PATH/TO/to-markdown.js"></script>
-<script>toMarkdown('<h1>Hello world!</h1>')</script>
+<script src="https://unpkg.com/turndown/dist/turndown.js"></script>
 ```
 
-Or with **Bower**:
-
-```sh
-$ bower install to-markdown
-```
-
-```html
-<script src="PATH/TO/bower_components/to-markdown/dist/to-markdown.js"></script>
-<script>toMarkdown('<h1>Hello world!</h1>')</script>
-```
-
-### Node.js
-
-Install the `to-markdown` module:
-
-```sh
-$ npm install to-markdown
-```
-
-Then you can use it like below:
+## Usage
 
 ```js
-var toMarkdown = require('to-markdown');
-toMarkdown('<h1>Hello world!</h1>');
+var turndownService = new TurndownService()
+var markdown = turndownService.turndown('<h1>Hello world!</h1>')
 ```
-
-(Note it is no longer necessary to call `.toMarkdown` on the required module as of v1.)
 
 ## Options
 
-### `converters` (array)
+Options can be passed in to the constructor on instantiation.
 
-to-markdown can be extended by passing in an array of converters to the options object:
+| Option                | Valid values  | Default |
+| :-------------------- | :------------ | :------ |
+| `headingStyle`        | `setext` or `atx` | `setext`  |
+| `hr`                  | Any [Thematic break](http://spec.commonmark.org/0.27/#thematic-breaks) | `* * *` |
+| `bulletListMarker`    | `-`, `+`, or `*` | `*` |
+| `codeBlockStyle`      | `indented` or `fenced` | `indented` |
+| `fence`               | <code>```</code> or `~~~` | <code>```</code> |
+| `emDelimiter`         | `_` or `*` | `_` |
+| `strongDelimiter`     | `**` or `__` | `**` |
+| `linkStyle`           | `inlined` or `referenced` | `inlined` |
+| `linkReferenceStyle`  | `full`, `collapsed`, or `shortcut` | `full` |
 
-```js
-toMarkdown(stringOfHTML, { converters: [converter1, converter2, …] });
-```
+## License
 
-A converter object consists of a **filter**, and a **replacement**. This example from the source replaces `code` elements:
-
-```js
-{
-  filter: 'code',
-  replacement: function(content) {
-    return '`' + content + '`';
-  }
-}
-```
-
-#### `filter` (string|array|function)
-
-The filter property determines whether or not an element should be replaced. DOM nodes can be selected simply by filtering by tag name, with strings or with arrays of strings:
-
- * `filter: 'p'` will select `p` elements
- * `filter: ['em', 'i']` will select `em` or `i` elements
-
-Alternatively, the filter can be a function that returns a boolean depending on whether a given node should be replaced. The function is passed a DOM node as its only argument. For example, the following will match any `span` element with an `italic` font style:
-
-```js
-filter: function (node) {
-  return node.nodeName === 'SPAN' && /italic/i.test(node.style.fontStyle);
-}
-```
-
-#### `replacement` (function)
-
-The replacement function determines how an element should be converted. It should return the markdown string for a given node. The function is passed the node’s content, as well as the node itself (used in more complex conversions). It is called in the context of `toMarkdown`, and therefore has access to the methods detailed below.
-
-The following converter replaces heading elements (`h1`-`h6`):
-
-```js
-{
-  filter: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
-
-  replacement: function(innerHTML, node) {
-    var hLevel = node.tagName.charAt(1);
-    var hPrefix = '';
-    for(var i = 0; i < hLevel; i++) {
-      hPrefix += '#';
-    }
-    return '\n' + hPrefix + ' ' + innerHTML + '\n\n';
-  }
-}
-```
-
-### `gfm` (boolean)
-
-to-markdown has beta support for GitHub flavored markdown (GFM). Set the `gfm` option to true:
-
-```js
-toMarkdown('<del>Hello world!</del>', { gfm: true });
-```
-
-## Methods
-
-The following methods can be called on the `toMarkdown` object.
-
-### `isBlock(node)`
-
-Returns `true`/`false` depending on whether the element is block level.
-
-### `isVoid(node)`
-
-Returns `true`/`false` depending on whether the element is [void](http://www.w3.org/TR/html-markup/syntax.html#syntax-elements).
-
-### `outer(node)`
-
-Returns the content of the node along with the element itself.
-
-## Development
-
-First make sure you have node.js/npm installed, then:
-
-```sh
-$ npm install --dev
-$ bower install --dev
-```
-
-Automatically browserify the module when source files change by running:
-
-```sh
-$ npm start
-```
-
-### Tests
-
-To run the tests in the browser, open `test/index.html`.
-
-To run in node.js:
-
-```sh
-$ npm test
-```
-
-## Credits
-
-Thanks to all [contributors](https://github.com/domchristie/to-markdown/graphs/contributors). Also, thanks to [Alex Cornejo](https://github.com/acornejo) for advice and inspiration for the breadth-first search algorithm.
-
-## Licence
-
-to-markdown is copyright &copy; 2011+ [Dom Christie](http://domchristie.co.uk) and released under the MIT license.
+turndown is copyright © 2017+ Dom Christie and released under the MIT license.

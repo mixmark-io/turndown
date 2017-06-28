@@ -1,4 +1,4 @@
-bower_components/
-node_modules/
-bower_components/
+dist
+lib
+node_modules
 npm-debug.log

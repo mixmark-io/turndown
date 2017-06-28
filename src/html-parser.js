@@ -2,14 +2,14 @@
  * Set up window for Node.js
  */
 
-var _window = (typeof window !== 'undefined' ? window : this)
+var root = (typeof window !== 'undefined' ? window : {})
 
 /*
  * Parsing HTML strings
  */
 
-function canParseHtmlNatively () {
-  var Parser = _window.DOMParser
+function canParseHTMLNatively () {
+  var Parser = root.DOMParser
   var canParse = false
 
   // Adapted from https://gist.github.com/1129031
@@ -24,7 +24,7 @@ function canParseHtmlNatively () {
   return canParse
 }
 
-function createHtmlParser () {
+function createHTMLParser () {
   var Parser = function () {}
 
   // For Node.js environments
@@ -63,14 +63,12 @@ function createHtmlParser () {
 
 function shouldUseActiveX () {
   var useActiveX = false
-
   try {
     document.implementation.createHTMLDocument('').open()
   } catch (e) {
     if (window.ActiveXObject) useActiveX = true
   }
-
   return useActiveX
 }
 
-module.exports = canParseHtmlNatively() ? _window.DOMParser : createHtmlParser()
+export default canParseHTMLNatively() ? root.DOMParser : createHTMLParser()
