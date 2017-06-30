@@ -730,40 +730,40 @@ function TurndownService (options) {
     linkStyle: 'inlined',
     linkReferenceStyle: 'full',
     br: '  ',
-    blankConverter: {
-      replacement: function (content, node) {
-        return node.isBlock ? '\n\n' : ''
+    blankReplacement: function (content, node) {
+      return node.isBlock ? '\n\n' : ''
+    },
+    defaultReplacement: function (content, node) {
+      return node.isBlock ? '\n\n' + content + '\n\n' : content
+    },
+    keep: function (node) {
+      switch (node.nodeName) {
+        case 'TABLE':
+          return true
+        case 'PRE':
+          return node.firstChild && node.firstChild.nodeName !== 'CODE'
+        default:
+          return false
       }
     },
-    defaultConverter: {
-      replacement: function (content, node) {
-        return node.isBlock ? '\n\n' + content + '\n\n' : content
-      }
-    },
-    keepConverter: {
-      filter: function (node) {
-        switch (node.nodeName) {
-          case 'TABLE':
-            return true
-          case 'PRE':
-            return node.firstChild && node.firstChild.nodeName !== 'CODE'
-          default:
-            return false
-        }
-      },
-      replacement: function (content, node) {
-        return node.isBlock ? '\n\n' + node.outerHTML + '\n\n' : node.outerHTML
-      }
-    },
-    removeConverter: {
-      filter: ['head', 'script'],
-      replacement: function () {
-        return ''
-      }
-    }
+    remove: ['head', 'script', 'style']
   };
   optionsValidator.validate(options);
   this.options = extend({}, defaults, options);
+
+  this.options.keepConverter = this.options.keepConverter || {
+    filter: this.options.keep,
+    replacement: function (content, node) {
+      return node.isBlock ? '\n\n' + content + '\n\n' : content
+    }
+  };
+
+  this.options.removeConverter = this.options.removeConverter || {
+    filter: this.options.remove,
+    replacement: function () {
+      return ''
+    }
+  };
 }
 
 TurndownService.prototype = {
@@ -850,7 +850,6 @@ TurndownService.prototype = {
     var content = this.process(node);
     var whitespace = node.flankingWhitespace;
     if (whitespace.leading || whitespace.trailing) content = content.trim();
-
     return (
       whitespace.leading +
       converter.replacement(content, node, this.options) +
@@ -866,17 +865,19 @@ TurndownService.prototype = {
     if (this.filterValue(this.options.keepConverter, node)) {
       return this.options.keepConverter
     }
+
     if (this.filterValue(this.options.removeConverter, node)) {
       return this.options.removeConverter
     }
-    if (node.isBlank) return this.options.blankConverter
+
+    if (node.isBlank) return { replacement: this.options.blankReplacement }
 
     for (var key in this.options.converters) {
       var converter = this.options.converters[key];
       if (this.filterValue(converter, node)) return converter
     }
 
-    return this.options.defaultConverter
+    return { replacement: this.options.defaultReplacement }
   },
 
   filterValue: function filterValue (converter, node) {
