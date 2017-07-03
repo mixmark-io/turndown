@@ -126,6 +126,7 @@ test('lists', function () {
   runTestCases([
     ['1986. What a great season.', '1986\\. What a great season.', 'ol triggers are escaped'],
     ['<ol>\n\t<li>Hello world</li>\n\t<li>Foo bar</li>\n</ol>', '1.  Hello world\n2.  Foo bar', 'ol'],
+    ['<ol start="2">\n\t<li>Hello world</li>\n\t<li>Foo bar</li>\n</ol>', '2.  Hello world\n3.  Foo bar', 'ol with start attribute'],
     ['<ul>\n\t<li>Hello world</li>\n\t<li>Foo bar</li>\n</ul>', '*   Hello world\n*   Foo bar', 'ul'],
     [
       ['<ul>',
