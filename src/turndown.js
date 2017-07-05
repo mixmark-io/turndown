@@ -9,6 +9,8 @@ var trailingNewLinesRegExp = /\n*$/
 var optionsValidator = new OptionsValidator()
 
 export default function TurndownService (options) {
+  if (!(this instanceof TurndownService)) return new TurndownService(options)
+
   var defaults = {
     converters: COMMONMARK_CONVERTERS,
     headingStyle: 'setext',
