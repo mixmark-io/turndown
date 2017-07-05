@@ -37,7 +37,7 @@ export default function TurndownService (options) {
           return false
       }
     },
-    remove: ['head', 'script', 'style']
+    remove: ['head', 'link', 'meta', 'script', 'style']
   }
   optionsValidator.validate(options)
   this.options = extend({}, defaults, options)
