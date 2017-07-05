@@ -718,6 +718,8 @@ var trailingNewLinesRegExp = /\n*$/;
 var optionsValidator = new OptionsValidator();
 
 function TurndownService (options) {
+  if (!(this instanceof TurndownService)) return new TurndownService(options)
+
   var defaults = {
     converters: converters,
     headingStyle: 'setext',
@@ -746,7 +748,7 @@ function TurndownService (options) {
           return false
       }
     },
-    remove: ['head', 'script', 'style']
+    remove: ['head', 'link', 'meta', 'script', 'style']
   };
   optionsValidator.validate(options);
   this.options = extend({}, defaults, options);
