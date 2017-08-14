@@ -241,7 +241,8 @@ converters.code = {
   },
 
   replacement: function (content) {
-    return '`' + content + '`'
+    var delimiter = /`/.test(content) ? '``' : '`';
+    return delimiter + content + delimiter
   }
 };
 
