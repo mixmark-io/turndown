@@ -114,6 +114,14 @@ to-markdown has beta support for GitHub flavored markdown (GFM). Set the `gfm` o
 toMarkdown('<del>Hello world!</del>', { gfm: true });
 ```
 
+### `escapeOrderedList` (boolean)
+
+By default, to-markdown will escape plain text numbered lists. This is in an attempt to have [lossless conversion between HTML and markdown](https://github.com/domchristie/to-markdown/issues/81#issuecomment-96992781). For example, `1. Item A` will become `1\. Item A` when escaped. Set `escapeOrderedList` to false to disable this functionality:
+
+```js
+toMarkdown('<b>1. Item A</b>', { escapeOrderedList: false });
+```
+
 ## Methods
 
 The following methods can be called on the `toMarkdown` object.

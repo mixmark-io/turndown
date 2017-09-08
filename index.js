@@ -191,6 +191,11 @@ function process (node) {
 toMarkdown = function (input, options) {
   options = options || {}
 
+  // Default escaping ol triggers to true
+  if (typeof options.escapeOrderedList !== 'boolean') {
+    options.escapeOrderedList = true
+  }
+
   if (typeof input !== 'string') {
     throw new TypeError(input + ' is not a string')
   }
@@ -200,7 +205,9 @@ toMarkdown = function (input, options) {
   }
 
   // Escape potential ol triggers
-  input = input.replace(/(\d+)\. /g, '$1\\. ')
+  if (options.escapeOrderedList) {
+    input = input.replace(/(\d+)\. /g, '$1\\. ')
+  }
 
   var clone = htmlToDom(input).body
   var nodes = bfsOrder(clone)
