@@ -1,8 +1,8 @@
 import { repeat } from './utilities'
 
-var converters = {}
+var rules = {}
 
-converters.paragraph = {
+rules.paragraph = {
   filter: 'p',
 
   replacement: function (content) {
@@ -10,7 +10,7 @@ converters.paragraph = {
   }
 }
 
-converters.lineBreak = {
+rules.lineBreak = {
   filter: 'br',
 
   replacement: function (content, node, options) {
@@ -18,7 +18,7 @@ converters.lineBreak = {
   }
 }
 
-converters.heading = {
+rules.heading = {
   filter: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
 
   replacement: function (content, node, options) {
@@ -35,7 +35,7 @@ converters.heading = {
   }
 }
 
-converters.blockquote = {
+rules.blockquote = {
   filter: 'blockquote',
 
   replacement: function (content) {
@@ -45,7 +45,7 @@ converters.blockquote = {
   }
 }
 
-converters.list = {
+rules.list = {
   filter: ['ul', 'ol'],
 
   replacement: function (content, node) {
@@ -58,7 +58,7 @@ converters.list = {
   }
 }
 
-converters.listItem = {
+rules.listItem = {
   filter: 'li',
 
   replacement: function (content, node, options) {
@@ -79,7 +79,7 @@ converters.listItem = {
   }
 }
 
-converters.indentedCodeBlock = {
+rules.indentedCodeBlock = {
   filter: function (node, options) {
     return (
       options.codeBlockStyle === 'indented' &&
@@ -98,7 +98,7 @@ converters.indentedCodeBlock = {
   }
 }
 
-converters.fencedCodeBlock = {
+rules.fencedCodeBlock = {
   filter: function (node, options) {
     return (
       options.codeBlockStyle === 'fenced' &&
@@ -120,7 +120,7 @@ converters.fencedCodeBlock = {
   }
 }
 
-converters.horizontalRule = {
+rules.horizontalRule = {
   filter: 'hr',
 
   replacement: function (content, node, options) {
@@ -128,7 +128,7 @@ converters.horizontalRule = {
   }
 }
 
-converters.inlineLink = {
+rules.inlineLink = {
   filter: function (node, options) {
     return (
       options.linkStyle === 'inlined' &&
@@ -144,7 +144,7 @@ converters.inlineLink = {
   }
 }
 
-converters.referenceLink = {
+rules.referenceLink = {
   filter: function (node, options) {
     return (
       options.linkStyle === 'referenced' &&
@@ -190,7 +190,7 @@ converters.referenceLink = {
   }
 }
 
-converters.emphasis = {
+rules.emphasis = {
   filter: ['em', 'i'],
 
   replacement: function (content, node, options) {
@@ -198,7 +198,7 @@ converters.emphasis = {
   }
 }
 
-converters.strong = {
+rules.strong = {
   filter: ['strong', 'b'],
 
   replacement: function (content, node, options) {
@@ -206,7 +206,7 @@ converters.strong = {
   }
 }
 
-converters.code = {
+rules.code = {
   filter: function (node) {
     var hasSiblings = node.previousSibling || node.nextSibling
     var isCodeBlock = node.parentNode.nodeName === 'PRE' && !hasSiblings
@@ -220,7 +220,7 @@ converters.code = {
   }
 }
 
-converters.image = {
+rules.image = {
   filter: 'img',
 
   replacement: function (content, node) {
@@ -232,4 +232,4 @@ converters.image = {
   }
 }
 
-export default converters
+export default rules

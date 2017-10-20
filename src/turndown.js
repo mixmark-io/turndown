@@ -1,4 +1,4 @@
-import COMMONMARK_CONVERTERS from './commonmark-converters'
+import COMMONMARK_RULES from './commonmark-rules'
 import OptionsValidator from './options-validator'
 import { extend } from './utilities'
 import RootNode from './root-node'
@@ -12,7 +12,7 @@ export default function TurndownService (options) {
   if (!(this instanceof TurndownService)) return new TurndownService(options)
 
   var defaults = {
-    converters: COMMONMARK_CONVERTERS,
+    rules: COMMONMARK_RULES,
     headingStyle: 'setext',
     hr: '* * *',
     bulletListMarker: '*',
@@ -139,22 +139,22 @@ TurndownService.prototype = {
    */
 
   replacementForNode: function replacementForNode (node) {
-    var converter = this.converterForNode(node)
+    var rule = this.ruleForNode(node)
     var content = this.process(node)
     var whitespace = node.flankingWhitespace
     if (whitespace.leading || whitespace.trailing) content = content.trim()
     return (
       whitespace.leading +
-      converter.replacement(content, node, this.options) +
+      rule.replacement(content, node, this.options) +
       whitespace.trailing
     )
   },
 
   /**
-   * Finds a converter for a given node
+   * Finds a rule for a given node
    */
 
-  converterForNode: function converterForNode (node) {
+  ruleForNode: function ruleForNode (node) {
     if (this.filterValue(this.options.keepConverter, node)) {
       return this.options.keepConverter
     }
@@ -165,32 +165,32 @@ TurndownService.prototype = {
 
     if (node.isBlank) return { replacement: this.options.blankReplacement }
 
-    for (var key in this.options.converters) {
-      var converter = this.options.converters[key]
-      if (this.filterValue(converter, node)) return converter
+    for (var key in this.options.rules) {
+      var rule = this.options.rules[key]
+      if (this.filterValue(rule, node)) return rule
     }
 
     return { replacement: this.options.defaultReplacement }
   },
 
-  filterValue: function filterValue (converter, node) {
-    var filter = converter.filter
+  filterValue: function filterValue (rule, node) {
+    var filter = rule.filter
     if (typeof filter === 'string') {
       if (filter === node.nodeName.toLowerCase()) return true
     } else if (Array.isArray(filter)) {
       if (filter.indexOf(node.nodeName.toLowerCase()) > -1) return true
     } else if (typeof filter === 'function') {
-      if (filter.call(converter, node, this.options)) return true
+      if (filter.call(rule, node, this.options)) return true
     } else {
       throw new TypeError('`filter` needs to be a string, array, or function')
     }
   },
 
   postProcess: function postProcess (output) {
-    for (var key in this.options.converters) {
-      var converter = this.options.converters[key]
-      if (typeof converter.append === 'function') {
-        output = join(output, converter.append(this.options))
+    for (var key in this.options.rules) {
+      var rule = this.options.rules[key]
+      if (typeof rule.append === 'function') {
+        output = join(output, rule.append(this.options))
       }
     }
     return output.replace(/^[\t\r\n]+/, '').replace(/[\t\r\n\s]+$/, '')
