@@ -73,6 +73,22 @@ TurndownService.prototype = {
     return this.postProcess(this.process(root))
   },
 
+  use: function (plugin) {
+    if (Array.isArray(plugin)) {
+      for (var i = 0; i < plugin.length; i++) this.use(plugin[i])
+    } else if (typeof plugin === 'function') {
+      plugin(this)
+    } else {
+      throw new TypeError('plugin must be a Function or an Array of Functions')
+    }
+    return this
+  },
+
+  addRule: function (key, rule) {
+    this.options.rules[key] = rule
+    return this
+  },
+
   /**
    * Reduces a DOM node down to its Markdown string equivalent
    */

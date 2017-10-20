@@ -104,3 +104,55 @@ test('invalid options', function (t) {
     /- headingStyle needs to be either: setext or atx/
   )
 })
+
+test('#addRule returns the instance', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService
+  var rule = {
+    filter: ['del', 's', 'strike'],
+    replacement: function (content) {
+      return '~~' + content + '~~'
+    }
+  }
+  t.equal(turndownService.addRule('strikethrough', rule), turndownService)
+})
+
+test('#addRule adds the rule', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService
+  var rule = {
+    filter: ['del', 's', 'strike'],
+    replacement: function (content) {
+      return '~~' + content + '~~'
+    }
+  }
+  turndownService.addRule('strikethrough', rule)
+  t.equal(turndownService.options.rules.strikethrough, rule)
+})
+
+test('#use returns the instance for chaining', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService
+  t.equal(turndownService.use(function plugin () {}), turndownService)
+})
+
+test('#use with a single plugin calls the fn with instance', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService
+  function plugin (service) {
+    t.equal(service, turndownService)
+  }
+  turndownService.use(plugin)
+})
+
+test('#use with multiple plugins calls each fn with instance', function (t) {
+  t.plan(2)
+  var turndownService = new TurndownService
+  function plugin1 (service) {
+    t.equal(service, turndownService)
+  }
+  function plugin2 (service) {
+    t.equal(service, turndownService)
+  }
+  turndownService.use([plugin1, plugin2])
+})

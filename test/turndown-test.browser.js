@@ -783,6 +783,22 @@ TurndownService.prototype = {
     return this.postProcess(this.process(root))
   },
 
+  use: function (plugin) {
+    if (Array.isArray(plugin)) {
+      for (var i = 0; i < plugin.length; i++) this.use(plugin[i]);
+    } else if (typeof plugin === 'function') {
+      plugin(this);
+    } else {
+      throw new TypeError('plugin must be a Function or an Array of Functions')
+    }
+    return this
+  },
+
+  addRule: function (key, rule) {
+    this.options.rules[key] = rule;
+    return this
+  },
+
   /**
    * Reduces a DOM node down to its Markdown string equivalent
    */
@@ -8938,6 +8954,58 @@ test('invalid options', function (t) {
     },
     /- headingStyle needs to be either: setext or atx/
   )
+})
+
+test('#addRule returns the instance', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService
+  var rule = {
+    filter: ['del', 's', 'strike'],
+    replacement: function (content) {
+      return '~~' + content + '~~'
+    }
+  }
+  t.equal(turndownService.addRule('strikethrough', rule), turndownService)
+})
+
+test('#addRule adds the rule', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService
+  var rule = {
+    filter: ['del', 's', 'strike'],
+    replacement: function (content) {
+      return '~~' + content + '~~'
+    }
+  }
+  turndownService.addRule('strikethrough', rule)
+  t.equal(turndownService.options.rules.strikethrough, rule)
+})
+
+test('#use returns the instance for chaining', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService
+  t.equal(turndownService.use(function plugin () {}), turndownService)
+})
+
+test('#use with a single plugin calls the plugin with the instance', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService
+  function plugin (service) {
+    t.equal(service, turndownService)
+  }
+  turndownService.use(plugin)
+})
+
+test('#use with multiple plugins calls each plugin with the instance', function (t) {
+  t.plan(2)
+  var turndownService = new TurndownService
+  function plugin1 (service) {
+    t.equal(service, turndownService)
+  }
+  function plugin2 (service) {
+    t.equal(service, turndownService)
+  }
+  turndownService.use([plugin1, plugin2])
 })
 
 },{"../lib/turndown.cjs":1,"fs":4,"jsdom":3,"tape":58}]},{},[64]);
