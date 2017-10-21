@@ -98,7 +98,7 @@ TurndownService.prototype = {
     return reduce.call(parentNode.childNodes, function (output, node) {
       node = new Node(node)
 
-      var replacement
+      var replacement = ''
       if (node.nodeType === 3) {
         replacement = _this.escape(node.nodeValue)
       } else if (node.nodeType === 1) {
