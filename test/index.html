@@ -749,6 +749,12 @@ Content in another div</pre>
   <pre class="expected">\[This\] is a sentence with brackets</pre>
 </div>
 
+<!-- https://github.com/domchristie/to-markdown/issues/188#issuecomment-332216019 -->
+<div class="case" data-name"escaping * performance">
+  <div class="input">fasdf *883 asdf wer qweasd fsd asdf asdfaqwe rqwefrsdf</div>
+  <pre class="expected">fasdf *883 asdf wer qweasd fsd asdf asdfaqwe rqwefrsdf</pre>
+</div>
+
 <!-- /TEST CASES -->
 
 <script src="turndown-test.browser.js"></script>
