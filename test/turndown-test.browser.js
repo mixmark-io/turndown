@@ -8999,7 +8999,7 @@ test('#use returns the instance for chaining', function (t) {
   t.equal(turndownService.use(function plugin () {}), turndownService)
 })
 
-test('#use with a single plugin calls the plugin with the instance', function (t) {
+test('#use with a single plugin calls the fn with instance', function (t) {
   t.plan(1)
   var turndownService = new TurndownService
   function plugin (service) {
@@ -9008,7 +9008,7 @@ test('#use with a single plugin calls the plugin with the instance', function (t
   turndownService.use(plugin)
 })
 
-test('#use with multiple plugins calls each plugin with the instance', function (t) {
+test('#use with multiple plugins calls each fn with instance', function (t) {
   t.plan(2)
   var turndownService = new TurndownService
   function plugin1 (service) {
