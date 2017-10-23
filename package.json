@@ -1,7 +1,7 @@
 {
   "name": "turndown",
   "description": "A library that converts HTML to Markdown",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "Dom Christie",
   "browser": {
     "jsdom": false
