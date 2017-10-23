@@ -125,7 +125,9 @@ TurndownService.prototype = {
         .replace(/^(\W* {0,3})(\d+)\. /gm, '$1$2\\. ')
 
         // Escape ul bullet points
-        .replace(/^([^\\\w]*)([*+-]) /gm, '$1\\$2 ')
+        .replace(/^([^\\\w]*)[*+-] /gm, function (match) {
+          return match.replace(/([*+-])/g, '\\$1')
+        })
 
         // Escape blockquote indents
         .replace(/^(\W* {0,3})> /gm, '$1\\> ')

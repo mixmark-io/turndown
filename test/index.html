@@ -755,6 +755,11 @@ Content in another div</pre>
   <pre class="expected">fasdf *883 asdf wer qweasd fsd asdf asdfaqwe rqwefrsdf</pre>
 </div>
 
+<div class="case" data-name="escaping multiple asterisks">
+  <div class="input"><p>* * ** It aims to be*</p></div>
+  <pre class="expected">\* \* \*\* It aims to be*</pre>
+</div>
+
 <!-- /TEST CASES -->
 
 <script src="turndown-test.browser.js"></script>
