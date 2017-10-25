@@ -852,11 +852,6 @@ TurndownService.prototype = {
           return match.replace(/_/g, '\\_')
         })
 
-        // Escape `
-        .replace(/[^\\]`[^`\s.].+?`/g, function (match) {
-          return match.replace(/`/g, '\\`')
-        })
-
         // Escape link brackets
         .replace(/\[([^\]]*)\]/g, '\\[$1\\]') // eslint-disable-line no-useless-escape
     )
