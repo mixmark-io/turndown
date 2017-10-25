@@ -94,15 +94,15 @@ TurndownService.prototype = {
    */
 
   process: function process (parentNode) {
-    var _this = this
+    var self = this
     return reduce.call(parentNode.childNodes, function (output, node) {
       node = new Node(node)
 
       var replacement = ''
       if (node.nodeType === 3) {
-        replacement = _this.escape(node.nodeValue)
+        replacement = node.isCode ? node.nodeValue : self.escape(node.nodeValue)
       } else if (node.nodeType === 1) {
-        replacement = _this.replacementForNode(node)
+        replacement = self.replacementForNode(node)
       }
 
       return join(output, replacement)

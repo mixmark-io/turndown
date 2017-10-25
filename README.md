@@ -46,6 +46,10 @@ Options can be passed in to the constructor on instantiation.
 | `linkStyle`           | `inlined` or `referenced` | `inlined` |
 | `linkReferenceStyle`  | `full`, `collapsed`, or `shortcut` | `full` |
 
+## Methods
+
+
+
 ## License
 
 turndown is copyright © 2017+ Dom Christie and released under the MIT license.
