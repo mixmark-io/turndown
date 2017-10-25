@@ -760,6 +760,11 @@ Content in another div</pre>
   <pre class="expected">\* \* \*\* It aims to be*</pre>
 </div>
 
+<div class="case" data-name="escaping delimiters around short words and numbers">
+  <div class="input"><p>_Really_? Is that what it _is_? A **2000** year-old computer?</p></div>
+  <pre class="expected">\_Really\_? Is that what it \_is\_? A \*\*2000\*\* year-old computer?</pre>
+</div>
+
 <!-- /TEST CASES -->
 
 <script src="turndown-test.browser.js"></script>

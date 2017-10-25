@@ -132,23 +132,13 @@ TurndownService.prototype = {
         // Escape blockquote indents
         .replace(/^(\W* {0,3})> /gm, '$1\\> ')
 
-        // Escape strong *
-        .replace(/[^\\]\*\*[^*\s.].+?[^\s]\*\*/g, function (match) {
+        // Escape em/strong *
+        .replace(/\*+(?![*\s\W]).+?\*+/g, function (match) {
           return match.replace(/\*/g, '\\*')
         })
 
-        // Escape em *
-        .replace(/[^\\]\*[^*\s.].+?[^\s]\*/g, function (match) {
-          return match.replace(/\*/g, '\\*')
-        })
-
-        // Escape strong _
-        .replace(/[^\\]__[^_\s.].+?[^\s]__/g, function (match) {
-          return match.replace(/_/g, '\\_')
-        })
-
-        // Escape em _
-        .replace(/[^\\]_[^_\s.].+?[^\s]_/g, function (match) {
+        // Escape em/strong _
+        .replace(/_+(?![_\s\W]).+?_+/g, function (match) {
           return match.replace(/_/g, '\\_')
         })
 
