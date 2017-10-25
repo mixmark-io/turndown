@@ -649,6 +649,11 @@ text after blank div</pre>
 Content in another div</pre>
 </div>
 
+<div class="case" data-name="escaping headings with #">
+  <div class="input">### This is not a heading</div>
+  <pre class="expected">\### This is not a heading</pre>
+</div>
+
 <div class="case" data-name="escaping em markdown with *">
   <div class="input">To add emphasis, surround text with *. For example: *this is emphasis*</div>
   <pre class="expected">To add emphasis, surround text with *. For example: \*this is emphasis\*</pre>
@@ -747,6 +752,11 @@ Content in another div</pre>
 <div class="case" data-name="not escaping >">
   <div class="input">42 > 1</div>
   <pre class="expected">42 > 1</pre>
+</div>
+
+<div class="case" data-name="escaping code">
+  <div class="input">`not code`</div>
+  <pre class="expected">\`not code\`</pre>
 </div>
 
 <div class="case" data-name="escaping []">

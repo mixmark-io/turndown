@@ -827,6 +827,9 @@ TurndownService.prototype = {
   escape: function escape (string) {
     return (
       string
+        // Escape headings
+        .replace(/^(#{1,6} )/gm, '\\$1')
+
         // Escape hr
         .replace(/^([-*_] *){3,}$/gm, function (match, character) {
           return match.split(character).join('\\' + character)
@@ -851,6 +854,11 @@ TurndownService.prototype = {
         // Escape em/strong _
         .replace(/_+(?![_\s\W]).+?_+/g, function (match) {
           return match.replace(/_/g, '\\_')
+        })
+
+        // Escape code _
+        .replace(/`+(?![`\s\W]).+?`+/g, function (match) {
+          return match.replace(/`/g, '\\`')
         })
 
         // Escape link brackets
