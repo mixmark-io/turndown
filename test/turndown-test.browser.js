@@ -755,14 +755,14 @@ function TurndownService (options) {
   optionsValidator.validate(options);
   this.options = extend({}, defaults, options);
 
-  this.options.keepConverter = this.options.keepConverter || {
+  this.options.keepRule = this.options.keepRule || {
     filter: this.options.keep,
     replacement: function (content, node) {
       return node.isBlock ? '\n\n' + content + '\n\n' : content
     }
   };
 
-  this.options.removeConverter = this.options.removeConverter || {
+  this.options.removeRule = this.options.removeRule || {
     filter: this.options.remove,
     replacement: function () {
       return ''
@@ -887,12 +887,12 @@ TurndownService.prototype = {
    */
 
   ruleForNode: function ruleForNode (node) {
-    if (this.filterValue(this.options.keepConverter, node)) {
-      return this.options.keepConverter
+    if (this.filterValue(this.options.keepRule, node)) {
+      return this.options.keepRule
     }
 
-    if (this.filterValue(this.options.removeConverter, node)) {
-      return this.options.removeConverter
+    if (this.filterValue(this.options.removeRule, node)) {
+      return this.options.removeRule
     }
 
     if (node.isBlank) return { replacement: this.options.blankReplacement }
