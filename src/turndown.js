@@ -93,7 +93,7 @@ TurndownService.prototype = {
    * Reduces a DOM node down to its Markdown string equivalent
    */
 
-  process: function process (parentNode) {
+  process: function (parentNode) {
     var self = this
     return reduce.call(parentNode.childNodes, function (output, node) {
       node = new Node(node)
@@ -113,7 +113,7 @@ TurndownService.prototype = {
    * Escapes Markdown syntax
    */
 
-  escape: function escape (string) {
+  escape: function (string) {
     return (
       string
         // Escape headings
@@ -159,7 +159,7 @@ TurndownService.prototype = {
    * Converts an element node to its Markdown equivalent
    */
 
-  replacementForNode: function replacementForNode (node) {
+  replacementForNode: function (node) {
     var rule = this.ruleForNode(node)
     var content = this.process(node)
     var whitespace = node.flankingWhitespace
@@ -175,7 +175,7 @@ TurndownService.prototype = {
    * Finds a rule for a given node
    */
 
-  ruleForNode: function ruleForNode (node) {
+  ruleForNode: function (node) {
     if (this.filterValue(this.options.keepRule, node)) {
       return this.options.keepRule
     }
@@ -194,7 +194,7 @@ TurndownService.prototype = {
     return { replacement: this.options.defaultReplacement }
   },
 
-  filterValue: function filterValue (rule, node) {
+  filterValue: function (rule, node) {
     var filter = rule.filter
     if (typeof filter === 'string') {
       if (filter === node.nodeName.toLowerCase()) return true
@@ -207,7 +207,7 @@ TurndownService.prototype = {
     }
   },
 
-  postProcess: function postProcess (output) {
+  postProcess: function (output) {
     for (var key in this.options.rules) {
       var rule = this.options.rules[key]
       if (typeof rule.append === 'function') {
