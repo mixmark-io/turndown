@@ -116,6 +116,9 @@ TurndownService.prototype = {
   escape: function (string) {
     return (
       string
+        // Escape backslash escapes!
+        .replace(/\\(\S)/g, '\\\\$1')
+
         // Escape headings
         .replace(/^(#{1,6} )/gm, '\\$1')
 

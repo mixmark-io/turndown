@@ -649,6 +649,11 @@ text after blank div</pre>
 Content in another div</pre>
 </div>
 
+<div class="case" data-name="escaping backslashes">
+  <div class="input">*\*</div>
+  <pre class="expected">*\\*</pre>
+</div>
+
 <div class="case" data-name="escaping headings with #">
   <div class="input">### This is not a heading</div>
   <pre class="expected">\### This is not a heading</pre>
