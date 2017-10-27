@@ -154,7 +154,7 @@ TurndownService.prototype = {
         })
 
         // Escape link brackets
-        .replace(/\[([^\]]*)\]/g, '\\[$1\\]') // eslint-disable-line no-useless-escape
+        .replace(/[\[\]]/g, '\\$&') // eslint-disable-line no-useless-escape
     )
   },
 
