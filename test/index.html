@@ -58,6 +58,21 @@ sit</pre>
   <pre class="expected">``There is a literal backtick (`) here``</pre>
 </div>
 
+<div class="case" data-name="code containing three or more backticks">
+  <div class="input"><code>here are three ``` here are four ```` that's it</code></div>
+  <pre class="expected">`here are three ``` here are four ```` that's it`</pre>
+</div>
+
+<div class="case" data-name="code containing one or more backticks">
+  <div class="input"><code>here are three ``` here are four ```` here is one ` that's it</code></div>
+  <pre class="expected">``here are three ``` here are four ```` here is one ` that's it``</pre>
+</div>
+
+<div class="case" data-name="code starting with a backtick">
+  <div class="input"><code>`starting with a backtick</code></div>
+  <pre class="expected">`` `starting with a backtick``</pre>
+</div>
+
 <div class="case" data-name="code containing markdown syntax">
   <div class="input"><code>_emphasis_</code></div>
   <pre class="expected">`_emphasis_`</pre>

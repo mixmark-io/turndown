@@ -215,8 +215,17 @@ rules.code = {
   },
 
   replacement: function (content) {
-    var delimiter = /`/.test(content) ? '``' : '`'
-    return delimiter + content + delimiter
+    var delimiter = '`'
+    var leadingSpace = ''
+    var trailingSpace = ''
+    var matches = content.match(/`+/gm)
+    if (matches) {
+      if (/^`/.test(content)) leadingSpace = ' '
+      if (/`$/.test(content)) trailingSpace = ' '
+      while (matches.indexOf(delimiter) !== -1) delimiter = delimiter + '`'
+    }
+
+    return delimiter + leadingSpace + content + trailingSpace + delimiter
   }
 }
 
