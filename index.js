@@ -13,7 +13,6 @@ var converters
 var mdConverters = require('./lib/md-converters')
 var gfmConverters = require('./lib/gfm-converters')
 var HtmlParser = require('./lib/html-parser')
-var collapse = require('collapse-whitespace')
 
 /*
  * Utilities
@@ -41,9 +40,7 @@ function isVoid (node) {
 }
 
 function htmlToDom (string) {
-  var tree = new HtmlParser().parseFromString(string, 'text/html')
-  collapse(tree.documentElement, isBlock)
-  return tree
+  return new HtmlParser().parseFromString(string, 'text/html')
 }
 
 /*
@@ -204,7 +201,6 @@ toMarkdown = function (input, options) {
 
   var clone = htmlToDom(input).body
   var nodes = bfsOrder(clone)
-  var output
 
   converters = mdConverters.slice(0)
   if (options.gfm) {
@@ -219,11 +215,7 @@ toMarkdown = function (input, options) {
   for (var i = nodes.length - 1; i >= 0; i--) {
     process(nodes[i])
   }
-  output = getContent(clone)
-
-  return output.replace(/^[\t\r\n]+|[\t\r\n\s]+$/g, '')
-    .replace(/\n\s+\n/g, '\n\n')
-    .replace(/\n{3,}/g, '\n\n')
+  return getContent(clone)
 }
 
 toMarkdown.isBlock = isBlock
