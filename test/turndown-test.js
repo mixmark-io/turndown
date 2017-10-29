@@ -118,7 +118,7 @@ test('#addRule returns the instance', function (t) {
 })
 
 test('#addRule adds the rule', function (t) {
-  t.plan(1)
+  t.plan(2)
   var turndownService = new TurndownService
   var rule = {
     filter: ['del', 's', 'strike'],
@@ -126,8 +126,12 @@ test('#addRule adds the rule', function (t) {
       return '~~' + content + '~~'
     }
   }
+  // Assert rules#add is called
+  turndownService.rules.add = function (key, r) {
+    t.equal(key, 'strikethrough')
+    t.equal(rule, r)
+  }
   turndownService.addRule('strikethrough', rule)
-  t.equal(turndownService.options.rules.strikethrough, rule)
 })
 
 test('#use returns the instance for chaining', function (t) {

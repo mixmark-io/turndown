@@ -1,4 +1,5 @@
 import COMMONMARK_RULES from './commonmark-rules'
+import Rules from './rules'
 import OptionsValidator from './options-validator'
 import { extend } from './utilities'
 import RootNode from './root-node'
@@ -43,23 +44,18 @@ export default function TurndownService (options) {
   }
   optionsValidator.validate(options)
   this.options = extend({}, defaults, options)
-
-  this.options.keepRule = this.options.keepRule || {
-    filter: this.options.keep,
-    replacement: function (content, node) {
-      return node.isBlock ? '\n\n' + content + '\n\n' : content
-    }
-  }
-
-  this.options.removeRule = this.options.removeRule || {
-    filter: this.options.remove,
-    replacement: function () {
-      return ''
-    }
-  }
+  this.rules = new Rules(this.options)
 }
 
 TurndownService.prototype = {
+  /**
+   * The entry point for converting a string or DOM node to Markdown
+   * @public
+   * @param {String|HTMLElement} input The string or DOM node to convert
+   * @returns A Markdown representation of the input
+   * @type String
+   */
+
   turndown: function (input) {
     if (!canConvert(input)) {
       throw new TypeError(
@@ -69,9 +65,17 @@ TurndownService.prototype = {
 
     if (input === '') return ''
 
-    var root = new RootNode(input)
-    return this.postProcess(this.process(root))
+    var output = process.call(this, new RootNode(input))
+    return postProcess.call(this, output)
   },
+
+  /**
+   * Add one or more plugins
+   * @public
+   * @param {Function|Array} plugin The plugin or array of plugins to add
+   * @returns The Turndown instance for chaining
+   * @type Object
+   */
 
   use: function (plugin) {
     if (Array.isArray(plugin)) {
@@ -84,33 +88,26 @@ TurndownService.prototype = {
     return this
   },
 
+  /**
+   * Adds a rule
+   * @public
+   * @param {String} key The unique key of the rule
+   * @param {Object} rule The rule
+   * @returns The Turndown instance for chaining
+   * @type Object
+   */
+
   addRule: function (key, rule) {
-    this.options.rules[key] = rule
+    this.rules.add(key, rule)
     return this
   },
 
   /**
-   * Reduces a DOM node down to its Markdown string equivalent
-   */
-
-  process: function (parentNode) {
-    var self = this
-    return reduce.call(parentNode.childNodes, function (output, node) {
-      node = new Node(node)
-
-      var replacement = ''
-      if (node.nodeType === 3) {
-        replacement = node.isCode ? node.nodeValue : self.escape(node.nodeValue)
-      } else if (node.nodeType === 1) {
-        replacement = self.replacementForNode(node)
-      }
-
-      return join(output, replacement)
-    }, '')
-  },
-
-  /**
    * Escapes Markdown syntax
+   * @public
+   * @param {String} string The string to escape
+   * @returns A string with Markdown syntax escaped
+   * @type String
    */
 
   escape: function (string) {
@@ -156,70 +153,80 @@ TurndownService.prototype = {
         // Escape link brackets
         .replace(/[\[\]]/g, '\\$&') // eslint-disable-line no-useless-escape
     )
-  },
-
-  /**
-   * Converts an element node to its Markdown equivalent
-   */
-
-  replacementForNode: function (node) {
-    var rule = this.ruleForNode(node)
-    var content = this.process(node)
-    var whitespace = node.flankingWhitespace
-    if (whitespace.leading || whitespace.trailing) content = content.trim()
-    return (
-      whitespace.leading +
-      rule.replacement(content, node, this.options) +
-      whitespace.trailing
-    )
-  },
-
-  /**
-   * Finds a rule for a given node
-   */
-
-  ruleForNode: function (node) {
-    if (this.filterValue(this.options.keepRule, node)) {
-      return this.options.keepRule
-    }
-
-    if (this.filterValue(this.options.removeRule, node)) {
-      return this.options.removeRule
-    }
-
-    if (node.isBlank) return { replacement: this.options.blankReplacement }
-
-    for (var key in this.options.rules) {
-      var rule = this.options.rules[key]
-      if (this.filterValue(rule, node)) return rule
-    }
-
-    return { replacement: this.options.defaultReplacement }
-  },
-
-  filterValue: function (rule, node) {
-    var filter = rule.filter
-    if (typeof filter === 'string') {
-      if (filter === node.nodeName.toLowerCase()) return true
-    } else if (Array.isArray(filter)) {
-      if (filter.indexOf(node.nodeName.toLowerCase()) > -1) return true
-    } else if (typeof filter === 'function') {
-      if (filter.call(rule, node, this.options)) return true
-    } else {
-      throw new TypeError('`filter` needs to be a string, array, or function')
-    }
-  },
-
-  postProcess: function (output) {
-    for (var key in this.options.rules) {
-      var rule = this.options.rules[key]
-      if (typeof rule.append === 'function') {
-        output = join(output, rule.append(this.options))
-      }
-    }
-    return output.replace(/^[\t\r\n]+/, '').replace(/[\t\r\n\s]+$/, '')
   }
 }
+
+/**
+ * Reduces a DOM node down to its Markdown string equivalent
+ * @private
+ * @param {HTMLElement} parentNode The node to convert
+ * @returns A Markdown representation of the node
+ * @type String
+ */
+
+function process (parentNode) {
+  var self = this
+  return reduce.call(parentNode.childNodes, function (output, node) {
+    node = new Node(node)
+
+    var replacement = ''
+    if (node.nodeType === 3) {
+      replacement = node.isCode ? node.nodeValue : self.escape(node.nodeValue)
+    } else if (node.nodeType === 1) {
+      replacement = replacementForNode.call(self, node)
+    }
+
+    return join(output, replacement)
+  }, '')
+}
+
+/**
+ * Appends strings as each rule requires and trims the output
+ * @private
+ * @param {String} output The conversion output
+ * @returns A trimmed version of the ouput
+ * @type String
+ */
+
+function postProcess (output) {
+  var self = this
+  this.rules.forEach(function (rule) {
+    if (typeof rule.append === 'function') {
+      output = join(output, rule.append(self.options))
+    }
+  })
+
+  return output.replace(/^[\t\r\n]+/, '').replace(/[\t\r\n\s]+$/, '')
+}
+
+/**
+ * Converts an element node to its Markdown equivalent
+ * @private
+ * @param {HTMLElement} node The node to convert
+ * @returns A Markdown representation of the node
+ * @type String
+ */
+
+function replacementForNode (node) {
+  var rule = this.rules.forNode(node)
+  var content = process.call(this, node)
+  var whitespace = node.flankingWhitespace
+  if (whitespace.leading || whitespace.trailing) content = content.trim()
+  return (
+    whitespace.leading +
+    rule.replacement(content, node, this.options) +
+    whitespace.trailing
+  )
+}
+
+/**
+ * Determines the new lines between the current output and the replacement
+ * @private
+ * @param {String} output The current conversion output
+ * @param {String} replacement The string to append to the output
+ * @returns The whitespace to separate the current output and the replacement
+ * @type String
+ */
 
 function separatingNewlines (output, replacement) {
   var newlines = [
@@ -242,6 +249,10 @@ function join (string1, string2) {
 
 /**
  * Determines whether an input can be converted
+ * @private
+ * @param {String|HTMLElement} input Describe this parameter
+ * @returns Describe what it returns
+ * @type String|Object|Array|Boolean|Number
  */
 
 function canConvert (input) {
