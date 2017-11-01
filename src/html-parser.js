@@ -29,14 +29,9 @@ function createHTMLParser () {
 
   // For Node.js environments
   if (typeof document === 'undefined') {
-    var jsdom = require('jsdom')
+    var JSDOM = require('jsdom').JSDOM
     Parser.prototype.parseFromString = function (string) {
-      return jsdom.jsdom(string, {
-        features: {
-          FetchExternalResources: [],
-          ProcessExternalResources: false
-        }
-      })
+      return new JSDOM(string).window.document
     }
   } else {
     if (!shouldUseActiveX()) {

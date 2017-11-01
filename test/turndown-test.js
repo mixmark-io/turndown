@@ -1,75 +1,13 @@
 var test = require('tape').test
+var Attendant = require('turndown-attendant')
 var TurndownService = require('../lib/turndown.cjs')
 
-function getDocument () {
-  if (typeof window === 'undefined') {
-    var jsdom = require('jsdom')
-    var fs = require('fs')
-    return jsdom.jsdom(
-      fs.readFileSync('./test/index.html').toString()
-    )
-  } else {
-    return document
-  }
-}
+var attendant = new Attendant({
+  file: __dirname + '/index.html',
+  TurndownService: TurndownService
+})
 
-function runTestCase (testCase) {
-  var testCaseName = testCase.getAttribute('data-name')
-  var jsonOptions = testCase.getAttribute('data-options')
-  var options = jsonOptions ? JSON.parse(jsonOptions) : {}
-  var turndownService = new TurndownService(options)
-
-  var inputElement = testCase.querySelector('.input')
-  var expectedElement = testCase.querySelector('.expected')
-  var expected = expectedElement.textContent
-  var output = turndownService.turndown(inputElement)
-  var outputElement = doc.createElement('pre')
-  outputElement.className = 'output'
-  testCase.insertBefore(outputElement, inputElement.nextSibling)
-  outputElement.textContent = output
-
-  var outputHeading = doc.createElement('h3')
-  outputHeading.className = 'output-heading'
-  outputHeading.textContent = 'output'
-  testCase.insertBefore(outputHeading, outputElement)
-
-  var heading = doc.createElement('h2')
-  heading.className = 'test-case-heading'
-  heading.textContent = testCaseName
-  testCase.insertBefore(heading, inputElement)
-
-  var inputHeading = doc.createElement('h3')
-  inputHeading.className = 'input-heading'
-  inputHeading.textContent = 'Input'
-  testCase.insertBefore(inputHeading, inputElement)
-
-  var expectedHeading = doc.createElement('h3')
-  expectedHeading.className = 'expected-heading'
-  expectedHeading.textContent = 'Expected Output'
-  testCase.insertBefore(expectedHeading, expectedElement)
-
-  if (output !== expected) {
-    expectedElement.className += ' expected--err'
-    expectedHeading.className += ' expected-heading--err'
-    outputElement.className += ' output--err'
-  }
-
-  test(testCaseName + ' (DOM)', function (t) {
-    t.plan(1)
-    t.equal(output, expected)
-  })
-
-  test(testCaseName + ' (string)', function (t) {
-    t.plan(1)
-    t.equal(turndownService.turndown(inputElement.innerHTML), expected)
-  })
-}
-
-var doc = getDocument()
-var testCases = doc.querySelectorAll('.case')
-for (var i = 0; i < testCases.length; i++) {
-  runTestCase(testCases[i])
-}
+attendant.run()
 
 test('malformed documents', function (t) {
   t.plan(0)

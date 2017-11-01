@@ -29,7 +29,6 @@ OptionsValidator.prototype = {
       if (result !== true) messages.push(result)
     }
     if (messages.length) throw new Error('\n - ' + messages.join('\n - '))
-    return
   }
 }
 

@@ -65,4 +65,3 @@ function isFlankedByWhitespace (side, node) {
   }
   return isFlanked
 }
-
