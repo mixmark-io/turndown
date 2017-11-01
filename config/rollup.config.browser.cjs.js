@@ -1,7 +1,9 @@
 import config from './rollup.config'
 
 export default config({
-  format: 'cjs',
-  dest: 'lib/turndown.browser.cjs.js',
+  output: {
+    file: 'lib/turndown.browser.cjs.js',
+    format: 'cjs'
+  },
   browser: true
 })

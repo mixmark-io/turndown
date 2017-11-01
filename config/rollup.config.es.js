@@ -1,7 +1,9 @@
 import config from './rollup.config'
 
 export default config({
-  format: 'es',
-  dest: 'lib/turndown.es.js',
+  output: {
+    file: 'lib/turndown.es.js',
+    format: 'es'
+  },
   browser: false
 })

@@ -1,7 +1,9 @@
 import config from './rollup.config'
 
 export default config({
-  format: 'iife',
-  dest: 'dist/turndown.js',
+  output: {
+    file: 'dist/turndown.js',
+    format: 'iife'
+  },
   browser: true
 })

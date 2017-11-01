@@ -1,17 +1,17 @@
-import replace from 'rollup-plugin-replace'
-import nodeResolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
+import replace from 'rollup-plugin-replace'
+import resolve from 'rollup-plugin-node-resolve'
 
 export default function (config) {
   return {
-    entry: 'src/turndown.js',
-    format: config.format,
-    moduleName: 'TurndownService',
-    dest: config.dest,
+    input: 'src/turndown.js',
+    name: 'TurndownService',
+    output: config.output,
+    external: ['jsdom'],
     plugins: [
+      commonjs(),
       replace({ 'process.browser': JSON.stringify(!!config.browser) }),
-      nodeResolve({ skip: [ 'jsdom' ] }),
-      commonjs()
+      resolve()
     ]
   }
 }

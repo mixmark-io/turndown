@@ -8,17 +8,17 @@
   },
   "dependencies": {
     "collapse-whitespace": "^1.1.2",
-    "jsdom": "^9.9.1"
+    "jsdom": "^11.3.0"
   },
   "devDependencies": {
-    "browserify": "^13.3.0",
+    "browserify": "^14.5.0",
     "nodemon": "^1.10.2",
-    "rollup": "^0.36.3",
-    "rollup-plugin-commonjs": "^5.0.5",
-    "rollup-plugin-node-resolve": "^2.0.0",
-    "rollup-plugin-replace": "^1.1.1",
-    "standard": "^8.5.0",
-    "tape": "^4.6.3"
+    "rollup": "^0.50.0",
+    "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-replace": "^2.0.0",
+    "standard": "^10.0.3",
+    "tape": "^4.8.0"
   },
   "files": [
     "lib",
