@@ -6,7 +6,7 @@ export default function OptionsValidator () {
     ['hr', /([*-_] *){3,}/, 'needs to be a sequence of three of more characters matching -, _, or *, each followed optionally by any number of spaces, e.g. * * *'],
     ['bulletListMarker', ['*', '-', '+']],
     ['codeBlockStyle', ['indented', 'fenced']],
-    ['fence', ['```', `~~~`]],
+    ['fence', ['```', '~~~']],
     ['emDelimiter', ['_', '*']],
     ['strongDelimiter', ['__', '**']],
     ['linkStyle', ['inlined', 'referenced']],
