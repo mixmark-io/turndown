@@ -1,13 +1,11 @@
 import COMMONMARK_RULES from './commonmark-rules'
 import Rules from './rules'
-import OptionsValidator from './options-validator'
 import { extend } from './utilities'
 import RootNode from './root-node'
 import Node from './node'
 var reduce = Array.prototype.reduce
 var leadingNewLinesRegExp = /^\n*/
 var trailingNewLinesRegExp = /\n*$/
-var optionsValidator = new OptionsValidator()
 
 export default function TurndownService (options) {
   if (!(this instanceof TurndownService)) return new TurndownService(options)
@@ -42,7 +40,6 @@ export default function TurndownService (options) {
     },
     remove: ['head', 'link', 'meta', 'script', 'style']
   }
-  optionsValidator.validate(options)
   this.options = extend({}, defaults, options)
   this.rules = new Rules(this.options)
 }

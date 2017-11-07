@@ -33,16 +33,6 @@ test('undefined input', function (t) {
   )
 })
 
-test('invalid options', function (t) {
-  t.plan(1)
-  t.throws(
-    function () {
-      new TurndownService({ headingStyle: 'foo' })
-    },
-    /- headingStyle needs to be either: setext or atx/
-  )
-})
-
 test('#addRule returns the instance', function (t) {
   t.plan(1)
   var turndownService = new TurndownService
