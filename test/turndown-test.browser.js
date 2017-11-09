@@ -733,9 +733,6 @@ function TurndownService (options) {
     blankReplacement: function (content, node) {
       return node.isBlock ? '\n\n' : ''
     },
-    defaultReplacement: function (content, node) {
-      return node.isBlock ? '\n\n' + content + '\n\n' : content
-    },
     keep: function (node) {
       switch (node.nodeName) {
         case 'TABLE':
@@ -746,7 +743,10 @@ function TurndownService (options) {
           return false
       }
     },
-    remove: ['head', 'link', 'meta', 'script', 'style']
+    remove: ['head', 'link', 'meta', 'script', 'style'],
+    defaultReplacement: function (content, node) {
+      return node.isBlock ? '\n\n' + content + '\n\n' : content
+    }
   };
   this.options = extend({}, defaults, options);
   this.rules = new Rules(this.options);
