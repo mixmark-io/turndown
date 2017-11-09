@@ -1,4 +1,3 @@
-var test = require('tape').test
 var Attendant = require('turndown-attendant')
 var TurndownService = require('../lib/turndown.cjs')
 
@@ -6,6 +5,7 @@ var attendant = new Attendant({
   file: __dirname + '/index.html',
   TurndownService: TurndownService
 })
+var test = attendant.test
 
 attendant.run()
 
