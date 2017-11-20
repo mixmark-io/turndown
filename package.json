@@ -1,34 +1,37 @@
 {
   "name": "to-markdown",
   "description": "HTML-to-Markdown converter",
-  "url": "http://domchristie.github.com/to-markdown/",
-  "keywords": "markdown",
+  "version": "3.1.0",
   "author": "Dom Christie",
+  "browser": {
+    "jsdom": false
+  },
+  "dependencies": {
+    "collapse-whitespace": "1.1.2",
+    "jsdom": "^9.0.0"
+  },
+  "devDependencies": {
+    "qunit": "^0.7.6",
+    "saucie": "0.1.3",
+    "standard": "^6.0.8",
+    "testem": "^0.8.2",
+    "watchify": "^2.5.0"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "keywords": [
+    "markdown"
+  ],
+  "license": "MIT",
   "main": "index.js",
-  "version": "2.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/domchristie/to-markdown.git"
   },
   "scripts": {
     "start": "watchify -s toMarkdown -o dist/to-markdown.js index.js -v",
-    "test": "qunit -c ./index.js -t ./test/to-markdown-test.js ./test/gfm-test.js"
+    "test": "standard index.js lib/**/*.js test/**/*.js && qunit -c ./index.js -t ./test/to-markdown-test.js ./test/gfm-test.js"
   },
-  "devDependencies": {
-    "saucie": "0.1.3",
-    "testem": "^0.8.2",
-    "qunit": "^0.7.6",
-    "watchify": "^2.5.0"
-  },
-  "browser": {
-    "jsdom": false
-  },
-  "dependencies": {
-    "collapse-whitespace": "1.1.2",
-    "jsdom": "^6.5.1"
-  },
-  "engines": {
-    "node": "^4"
-  },
-  "license": "MIT"
+  "url": "http://domchristie.github.com/to-markdown/"
 }
