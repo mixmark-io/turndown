@@ -1,5 +1,7 @@
 # to-markdown
 
+## From version 4, to-markdown will be renamed to **turndown** with an updated API. Please see the [migration guide](https://github.com/domchristie/to-markdown/wiki/Migrating-from-to-markdown-to-Turndown) for details.
+
 An HTML to Markdown converter written in JavaScript.
 
 The API is as follows:
