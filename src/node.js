@@ -19,7 +19,7 @@ function isVoid (node) {
 function isBlank (node) {
   return (
     !isVoid(node) &&
-    !/A|TH|TD/.test(node.nodeName) &&
+    ['A', 'TH', 'TD'].indexOf(node.nodeName) === -1 &&
     /^\s*$/i.test(node.textContent)
   )
 }
