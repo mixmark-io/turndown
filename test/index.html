@@ -805,6 +805,26 @@ Content in another div</pre>
   <pre class="expected">\_Really\_? Is that what it \_is\_? A \*\*2000\*\* year-old computer?</pre>
 </div>
 
+<div class="case" data-name="non-markdown block elements">
+  <div class="input">
+    Foo
+    <div>Bar</div>
+    Baz
+  </div>
+  <pre class="expected">Foo
+
+Bar
+
+Baz</pre>
+</div>
+
+<div class="case" data-name="non-markdown inline elements">
+  <div class="input">
+    Foo <span>Bar</span>
+  </div>
+  <pre class="expected">Foo Bar</pre>
+</div>
+
 <!-- /TEST CASES -->
 
 <script src="turndown-test.browser.js"></script>
