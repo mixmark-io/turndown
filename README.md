@@ -121,6 +121,8 @@ turndownService.use(gfm)
 turndownService.use([tables, strikethrough])
 ```
 
+`use` returns the `TurndownService` instance for chaining.
+
 See **Plugins** below.
 
 ## Extending with Rules
