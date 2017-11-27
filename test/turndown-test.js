@@ -11,14 +11,14 @@ attendant.run()
 
 test('malformed documents', function (t) {
   t.plan(0)
-  var turndownService = new TurndownService
+  var turndownService = new TurndownService()
   turndownService.turndown('<HTML><head></head><BODY><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><body onload=alert(document.cookie);></body></html>')
   t.end()
 })
 
 test('null input', function (t) {
   t.plan(1)
-  var turndownService = new TurndownService
+  var turndownService = new TurndownService()
   t.throws(
     function () { turndownService.turndown(null) }, /null is not a string/
   )
@@ -26,7 +26,7 @@ test('null input', function (t) {
 
 test('undefined input', function (t) {
   t.plan(1)
-  var turndownService = new TurndownService
+  var turndownService = new TurndownService()
   t.throws(
     function () { turndownService.turndown(void (0)) },
     /undefined is not a string/
@@ -35,7 +35,7 @@ test('undefined input', function (t) {
 
 test('#addRule returns the instance', function (t) {
   t.plan(1)
-  var turndownService = new TurndownService
+  var turndownService = new TurndownService()
   var rule = {
     filter: ['del', 's', 'strike'],
     replacement: function (content) {
@@ -47,7 +47,7 @@ test('#addRule returns the instance', function (t) {
 
 test('#addRule adds the rule', function (t) {
   t.plan(2)
-  var turndownService = new TurndownService
+  var turndownService = new TurndownService()
   var rule = {
     filter: ['del', 's', 'strike'],
     replacement: function (content) {
@@ -64,13 +64,13 @@ test('#addRule adds the rule', function (t) {
 
 test('#use returns the instance for chaining', function (t) {
   t.plan(1)
-  var turndownService = new TurndownService
+  var turndownService = new TurndownService()
   t.equal(turndownService.use(function plugin () {}), turndownService)
 })
 
 test('#use with a single plugin calls the fn with instance', function (t) {
   t.plan(1)
-  var turndownService = new TurndownService
+  var turndownService = new TurndownService()
   function plugin (service) {
     t.equal(service, turndownService)
   }
@@ -79,7 +79,7 @@ test('#use with a single plugin calls the fn with instance', function (t) {
 
 test('#use with multiple plugins calls each fn with instance', function (t) {
   t.plan(2)
-  var turndownService = new TurndownService
+  var turndownService = new TurndownService()
   function plugin1 (service) {
     t.equal(service, turndownService)
   }
