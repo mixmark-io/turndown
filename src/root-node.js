@@ -5,7 +5,14 @@ import { isBlock } from './utilities'
 export default function RootNode (input) {
   var root
   if (typeof input === 'string') {
-    root = htmlParser().parseFromString(input, 'text/html').body
+    var doc = htmlParser().parseFromString(
+      // DOM parsers arrange elements in the <head> and <body>.
+      // Wrapping in a custom element ensures elements are reliably arranged in
+      // a single element.
+      '<x-turndown id="turndown-root">' + input + '</x-turndown>',
+      'text/html'
+    )
+    root = doc.getElementById('turndown-root')
   } else {
     root = input.cloneNode(true)
   }
