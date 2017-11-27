@@ -51,11 +51,8 @@ Options can be passed in to the constructor on instantiation.
 | Option                | Valid values  | Default |
 | :-------------------- | :------------ | :------ |
 | `blankReplacement`    | rule replacement function | See **Special Rules** below |
-| `keep`                | rule filter | See **Special Rules** below |
-| `remove`              | rule filter | See **Special Rules** below |
+| `keepReplacement`     | rule replacement function | See **Special Rules** below |
 | `defaultReplacement`  | rule replacement function | See **Special Rules** below |
-| `keepRule`            | rule | See **Special Rules** below |
-| `removeRule`          | rule | See **Special Rules** below |
 
 ## Methods
 
@@ -72,7 +69,39 @@ turndownService.addRule('strikethrough', {
 })
 ```
 
+`addRule` returns the `TurndownService` instance for chaining.
+
 See **Extending with Rules** below.
+
+### `keep(filter)`
+
+Determines which elements are to be kept and rendered as HTML. By default, Turndown does not keep any elements. The filter parameter works like a rule filter (see section on filters belows). Example:
+
+```js
+turndownService.keep(['del', 'ins'])
+turndownService.turndown('<p>Hello <del>world</del><ins>World</ins></p>') // 'Hello <del>world</del><ins>World</ins>'
+```
+
+This will render `<del>` and `<ins>` elements as HTML when converted.
+
+`keep` can be called multiple times, with the newly added keep filters taking precedence over older ones. Keep filters will be overridden by the standard CommonMark rules and any added rules. To keep elements that are normally handled by those rules, add a rule with the desired behaviour.
+
+`keep` returns the `TurndownService` instance for chaining.
+
+### `remove(filter)`
+
+Determines which elements are to be removed altogether i.e. converted to an empty string. By default, Turndown does not remove any elements. The filter parameter works like a rule filter (see section on filters belows). Example:
+
+```js
+turndownService.remove('del')
+turndownService.turndown('<p>Hello <del>world</del><ins>World</ins></p>') // 'Hello World'
+```
+
+This will remove `<del>` elements (and contents).
+
+`remove` can be called multiple times, with the newly added remove filters taking precedence over older ones. Remove filters will be overridden by the keep filters,  standard CommonMark rules, and any added rules. To remove elements that are normally handled by those rules, add a rule with the desired behaviour.
+
+`remove` returns the `TurndownService` instance for chaining.
 
 ### `use(plugin|array)`
 
@@ -148,9 +177,9 @@ rules.emphasis = {
 
 **Blank rule** determines how to handle blank elements. It overrides every rule (even those added via `addRule`). A node is blank if it only contains whitespace, and it's not an `<a>`, `<td>`,`<th>` or a void element. Its behaviour can be customised using the `blankReplacement` option.
 
-**Keep rule** determines how to handle the elements that should not be converted, i.e. rendered as HTML in the Markdown output. By default, it will keep `<table>` and plain `<pre>` elements. Block-level elements will be separated from surrounding content by blank lines. The keep rule `filter` can be customised using the `keep` option. To replace the rule, use the `keepRule` option. The keep rule may be overridden by rules added via `addRule`.
+**Keep rules** determine how to handle the elements that should not be converted, i.e. rendered as HTML in the Markdown output. By default, no elements are kept. Block-level elements will be separated from surrounding content by blank lines. Its behaviour can be customised using the `keepReplacement` option.
 
-**Remove rule** determines which elements to remove altogether. By default, it removes `<head>`, `<link>`, `<meta>`, `<script>`, and `<style>` elements, and replaces them with an empty string. Like the keep rule, its `filter` can be customised using the `remove` option. To replace the rule, use the `removeRule` option. The remove rule may be overridden by rules added via `addRule`.
+**Remove rules** determine which elements to remove altogether. By default, no elements are removed.
 
 **Default rule** handles nodes which are not recognised by any other rule. By default, it outputs the node's text content (separated  by blank lines if it is a block-level element). Its behaviour can be customised with the `defaultReplacement` option.
 
@@ -160,9 +189,9 @@ Turndown iterates over the set of rules, and picks the first one that matches sa
 
 1. Blank rule
 2. Added rules (optional)
-3. Keep rule
-4. Remove rule
-5. Commonmark rules
+3. Commonmark rules
+4. Keep rules
+5. Remove rules
 6. Default rule
 
 ## Plugins

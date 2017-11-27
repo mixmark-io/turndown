@@ -25,17 +25,9 @@ export default function TurndownService (options) {
     blankReplacement: function (content, node) {
       return node.isBlock ? '\n\n' : ''
     },
-    keep: function (node) {
-      switch (node.nodeName) {
-        case 'TABLE':
-          return true
-        case 'PRE':
-          return node.firstChild && node.firstChild.nodeName !== 'CODE'
-        default:
-          return false
-      }
+    keepReplacement: function (content, node) {
+      return node.isBlock ? '\n\n' + node.outerHTML + '\n\n' : node.outerHTML
     },
-    remove: ['head', 'link', 'meta', 'script', 'style'],
     defaultReplacement: function (content, node) {
       return node.isBlock ? '\n\n' + content + '\n\n' : content
     }
@@ -96,6 +88,32 @@ TurndownService.prototype = {
 
   addRule: function (key, rule) {
     this.rules.add(key, rule)
+    return this
+  },
+
+  /**
+   * Keep a node (as HTML) that matches the filter
+   * @public
+   * @param {String|Array|Function} filter The unique key of the rule
+   * @returns The Turndown instance for chaining
+   * @type Object
+   */
+
+  keep: function (filter) {
+    this.rules.keep(filter)
+    return this
+  },
+
+  /**
+   * Remove a node that matches the filter
+   * @public
+   * @param {String|Array|Function} filter The unique key of the rule
+   * @returns The Turndown instance for chaining
+   * @type Object
+   */
+
+  remove: function (filter) {
+    this.rules.remove(filter)
     return this
   },
 

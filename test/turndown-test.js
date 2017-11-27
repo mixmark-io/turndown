@@ -88,3 +88,83 @@ test('#use with multiple plugins calls each fn with instance', function (t) {
   }
   turndownService.use([plugin1, plugin2])
 })
+
+test('#keep keeps elements as HTML', function (t) {
+  t.plan(2)
+  var turndownService = new TurndownService()
+  var input = '<p>Hello <del>world</del><ins>World</ins></p>'
+
+  // Without `.keep(['del', 'ins'])`
+  t.equal(turndownService.turndown(input), 'Hello worldWorld')
+
+  // With `.keep(['del', 'ins'])`
+  turndownService.keep(['del', 'ins'])
+  t.equal(
+    turndownService.turndown('<p>Hello <del>world</del><ins>World</ins></p>'),
+    'Hello <del>world</del><ins>World</ins>'
+  )
+})
+
+test('#keep returns the TurndownService instance for chaining', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService()
+  t.equal(turndownService.keep(['del', 'ins']), turndownService)
+})
+
+test('keep rules are overridden by the standard rules', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService()
+  turndownService.keep('p')
+  t.equal(turndownService.turndown('<p>Hello world</p>'), 'Hello world')
+})
+
+test('keepReplacement can be customised', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService({
+    keepReplacement: function (content, node) {
+      return '\n\n' + node.outerHTML + '\n\n'
+    }
+  })
+  turndownService.keep(['del', 'ins'])
+  t.equal(turndownService.turndown(
+    '<p>Hello <del>world</del><ins>World</ins></p>'),
+    'Hello \n\n<del>world</del>\n\n<ins>World</ins>'
+  )
+})
+
+test('#remove removes elements', function (t) {
+  t.plan(2)
+  var turndownService = new TurndownService()
+  var input = '<del>Please redact me</del>'
+
+  // Without `.remove('del')`
+  t.equal(turndownService.turndown(input), 'Please redact me')
+
+  // With `.remove('del')`
+  turndownService.remove('del')
+  t.equal(turndownService.turndown(input), '')
+})
+
+test('#remove returns the TurndownService instance for chaining', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService()
+  t.equal(turndownService.remove(['del', 'ins']), turndownService)
+})
+
+test('remove elements are overridden by rules', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService()
+  turndownService.remove('p')
+  t.equal(turndownService.turndown('<p>Hello world</p>'), 'Hello world')
+})
+
+test('remove elements are overridden by keep', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService()
+  turndownService.keep(['del', 'ins'])
+  turndownService.remove(['del', 'ins'])
+  t.equal(turndownService.turndown(
+    '<p>Hello <del>world</del><ins>World</ins></p>'),
+    'Hello <del>world</del><ins>World</ins>'
+  )
+})
