@@ -21,7 +21,7 @@ function flankingWhitespace (node) {
   var leading = ''
   var trailing = ''
 
-  if (!isBlock(node)) {
+  if (!node.isBlock) {
     var hasLeading = /^[ \r\n\t]/.test(node.textContent)
     var hasTrailing = /[ \r\n\t]$/.test(node.textContent)
 
