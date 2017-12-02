@@ -194,6 +194,7 @@ rules.emphasis = {
   filter: ['em', 'i'],
 
   replacement: function (content, node, options) {
+    if (!content.trim()) return ''
     return options.emDelimiter + content + options.emDelimiter
   }
 }
@@ -202,6 +203,7 @@ rules.strong = {
   filter: ['strong', 'b'],
 
   replacement: function (content, node, options) {
+    if (!content.trim()) return ''
     return options.strongDelimiter + content + options.strongDelimiter
   }
 }
@@ -215,6 +217,8 @@ rules.code = {
   },
 
   replacement: function (content) {
+    if (!content.trim()) return ''
+
     var delimiter = '`'
     var leadingSpace = ''
     var trailingSpace = ''

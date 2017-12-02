@@ -1,25 +1,18 @@
-import { isBlock } from './utilities'
+import { isBlock, isVoid, hasVoid } from './utilities'
 
 export default function Node (node) {
   node.isBlock = isBlock(node)
-  node.isVoid = isVoid(node)
   node.isCode = node.nodeName.toLowerCase() === 'code' || node.parentNode.isCode
   node.isBlank = isBlank(node)
   node.flankingWhitespace = flankingWhitespace(node)
   return node
 }
 
-function isVoid (node) {
-  return [
-    'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
-    'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
-  ].indexOf(node.nodeName.toLowerCase()) !== -1
-}
-
 function isBlank (node) {
   return (
-    !isVoid(node) &&
     ['A', 'TH', 'TD'].indexOf(node.nodeName) === -1 &&
+    !isVoid(node) &&
+    !hasVoid(node) &&
     /^\s*$/i.test(node.textContent)
   )
 }

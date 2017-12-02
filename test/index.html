@@ -825,6 +825,27 @@ Baz</pre>
   <pre class="expected">Foo Bar</pre>
 </div>
 
+<div class="case" data-name="blank inline elements">
+  <div class="input">
+    Hello <em></em>world
+  </div>
+  <pre class="expected">Hello world</pre>
+</div>
+
+<div class="case" data-name="elements with a single void element">
+  <div class="input">
+    <p><img src="http://example.com/logo.png" /></p>
+  </div>
+  <pre class="expected">![](http://example.com/logo.png)</pre>
+</div>
+
+<div class="case" data-name="elements with a nested void element">
+  <div class="input">
+    <p><span><img src="http://example.com/logo.png" /></span></p>
+  </div>
+  <pre class="expected">![](http://example.com/logo.png)</pre>
+</div>
+
 <!-- /TEST CASES -->
 
 <script src="turndown-test.browser.js"></script>
