@@ -27,22 +27,8 @@ function canParseHTMLNatively () {
 function createHTMLParser () {
   var Parser = function () {}
 
-  // For Node.js environments
-  if (typeof document === 'undefined') {
-    var JSDOM = require('jsdom').JSDOM
-    Parser.prototype.parseFromString = function (string) {
-      return new JSDOM(string).window.document
-    }
-  } else {
-    if (!shouldUseActiveX()) {
-      Parser.prototype.parseFromString = function (string) {
-        var doc = document.implementation.createHTMLDocument('')
-        doc.open()
-        doc.write(string)
-        doc.close()
-        return doc
-      }
-    } else {
+  if (process.browser) {
+    if (shouldUseActiveX()) {
       Parser.prototype.parseFromString = function (string) {
         var doc = new window.ActiveXObject('htmlfile')
         doc.designMode = 'on' // disable on-page scripts
@@ -51,6 +37,19 @@ function createHTMLParser () {
         doc.close()
         return doc
       }
+    } else {
+      Parser.prototype.parseFromString = function (string) {
+        var doc = document.implementation.createHTMLDocument('')
+        doc.open()
+        doc.write(string)
+        doc.close()
+        return doc
+      }
+    }
+  } else {
+    var JSDOM = require('jsdom').JSDOM
+    Parser.prototype.parseFromString = function (string) {
+      return new JSDOM(string).window.document
     }
   }
   return Parser
