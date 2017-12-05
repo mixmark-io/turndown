@@ -1,6 +1,6 @@
-import collapse from 'collapse-whitespace'
+import collapseWhitespace from 'collapse-whitespace'
 import HTMLParser from './html-parser'
-import { isBlock } from './utilities'
+import { isBlock, isVoid } from './utilities'
 
 export default function RootNode (input) {
   var root
@@ -16,7 +16,11 @@ export default function RootNode (input) {
   } else {
     root = input.cloneNode(true)
   }
-  collapse(root, isBlock)
+  collapseWhitespace({
+    element: root,
+    isBlock: isBlock,
+    isVoid: isVoid
+  })
 
   return root
 }

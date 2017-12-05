@@ -7,7 +7,7 @@
     "jsdom": false
   },
   "dependencies": {
-    "collapse-whitespace": "^1.1.2",
+    "collapse-whitespace": "domchristie/collapse-whitespace#turndown",
     "jsdom": "^11.3.0"
   },
   "devDependencies": {
