@@ -483,7 +483,7 @@ module.exports = [
       return node.nodeName === 'CODE' && !isCodeBlock
     },
     replacement: function (content) {
-      return '`' + content + '`'
+      return `\`\`${content.replace(/^`/, ' `').replace(/`$/, '` ')}\`\``
     }
   },
 
