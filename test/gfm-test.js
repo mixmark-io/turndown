@@ -208,9 +208,16 @@ test('syntax highlighting', function () {
         '        <td>Foo</td>',
         '    </tr>',
         '</table>',
-        '```'].join('\n'),
+        '```'].join('\n')
+    ]
+  ])
+})
 
-      'HTML'
+test('syntax highlighting (markdown-it style)', function () {
+  runGfmTestCases([
+    [
+      '<pre><code class="language-javascript">alert(\'hello\')</code></pre>',
+      '```javascript\nalert(\'hello\')\n```'
     ]
   ])
 })
