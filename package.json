@@ -34,9 +34,10 @@
   "main": "lib/turndown.cjs.js",
   "module": "lib/turndown.es.js",
   "scripts": {
-    "build": "npm run build-cjs && npm run build-es && npm run build-iife",
+    "build": "npm run build-cjs && npm run build-es && npm run build-umd && npm run build-iife",
     "build-cjs": "rollup -c config/rollup.config.cjs.js && rollup -c config/rollup.config.browser.cjs.js",
     "build-es": "rollup -c config/rollup.config.es.js && rollup -c config/rollup.config.browser.es.js",
+    "build-umd": "rollup -c config/rollup.config.umd.js && rollup -c config/rollup.config.browser.umd.js",
     "build-iife": "rollup -c config/rollup.config.iife.js",
     "build-test": "browserify test/turndown-test.js --outfile test/turndown-test.browser.js",
     "prepublish": "npm run build",

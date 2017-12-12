@@ -20,6 +20,8 @@ Browser:
 <script src="https://unpkg.com/turndown/dist/turndown.js"></script>
 ```
 
+For usage with RequireJS, UMD versions are located in `lib/turndown.umd.js` (for Node.js) and `lib/turndown.browser.umd.js` for browser usage. These files are generated when the npm package is published. To generate them manually, clone this repo and run `npm run build`.
+
 ## Usage
 
 ```js
