@@ -2,14 +2,14 @@
  * Set up window for Node.js
  */
 
-var _window = (typeof window !== 'undefined' ? window : this)
+var root = (typeof window !== 'undefined' ? window : {})
 
 /*
  * Parsing HTML strings
  */
 
-function canParseHtmlNatively () {
-  var Parser = _window.DOMParser
+function canParseHTMLNatively () {
+  var Parser = root.DOMParser
   var canParse = false
 
   // Adapted from https://gist.github.com/1129031
@@ -24,30 +24,11 @@ function canParseHtmlNatively () {
   return canParse
 }
 
-function createHtmlParser () {
+function createHTMLParser () {
   var Parser = function () {}
 
-  // For Node.js environments
-  if (typeof document === 'undefined') {
-    var jsdom = require('jsdom')
-    Parser.prototype.parseFromString = function (string) {
-      return jsdom.jsdom(string, {
-        features: {
-          FetchExternalResources: [],
-          ProcessExternalResources: false
-        }
-      })
-    }
-  } else {
-    if (!shouldUseActiveX()) {
-      Parser.prototype.parseFromString = function (string) {
-        var doc = document.implementation.createHTMLDocument('')
-        doc.open()
-        doc.write(string)
-        doc.close()
-        return doc
-      }
-    } else {
+  if (process.browser) {
+    if (shouldUseActiveX()) {
       Parser.prototype.parseFromString = function (string) {
         var doc = new window.ActiveXObject('htmlfile')
         doc.designMode = 'on' // disable on-page scripts
@@ -56,6 +37,19 @@ function createHtmlParser () {
         doc.close()
         return doc
       }
+    } else {
+      Parser.prototype.parseFromString = function (string) {
+        var doc = document.implementation.createHTMLDocument('')
+        doc.open()
+        doc.write(string)
+        doc.close()
+        return doc
+      }
+    }
+  } else {
+    var JSDOM = require('jsdom').JSDOM
+    Parser.prototype.parseFromString = function (string) {
+      return new JSDOM(string).window.document
     }
   }
   return Parser
@@ -63,14 +57,12 @@ function createHtmlParser () {
 
 function shouldUseActiveX () {
   var useActiveX = false
-
   try {
     document.implementation.createHTMLDocument('').open()
   } catch (e) {
     if (window.ActiveXObject) useActiveX = true
   }
-
   return useActiveX
 }
 
-module.exports = canParseHtmlNatively() ? _window.DOMParser : createHtmlParser()
+export default canParseHTMLNatively() ? root.DOMParser : createHTMLParser()

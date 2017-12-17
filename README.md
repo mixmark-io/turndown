@@ -1,166 +1,207 @@
-# to-markdown
+# Turndown
 
-## From version 4, to-markdown will be renamed to **turndown** with an updated API. Please see the [migration guide](https://github.com/domchristie/to-markdown/wiki/Migrating-from-to-markdown-to-Turndown) for details.
+![](https://api.travis-ci.org/domchristie/turndown.svg)
 
-An HTML to Markdown converter written in JavaScript.
+Convert HTML into Markdown with JavaScript.
 
-The API is as follows:
-
-```js
-toMarkdown(stringOfHTML, options);
-```
-
-**Note** to-markdown v2+ runs on Node 4+. For a version compatible with Node 0.10 - 0.12, please use [to-markdown v1.x](https://github.com/domchristie/to-markdown/tree/1.x).
+### to-markdown has been renamed to Turndown. See the [migration guide](https://github.com/domchristie/to-markdown/wiki/Migrating-from-to-markdown-to-Turndown) for details.
 
 ## Installation
 
-### Browser
+npm:
 
-Download the compiled script located at `dist/to-markdown.js`.
+```
+npm install turndown
+```
+
+Browser:
 
 ```html
-<script src="PATH/TO/to-markdown.js"></script>
-<script>toMarkdown('<h1>Hello world!</h1>')</script>
+<script src="https://unpkg.com/turndown/dist/turndown.js"></script>
 ```
 
-Or with **Bower**:
+For usage with RequireJS, UMD versions are located in `lib/turndown.umd.js` (for Node.js) and `lib/turndown.browser.umd.js` for browser usage. These files are generated when the npm package is published. To generate them manually, clone this repo and run `npm run build`.
 
-```sh
-$ bower install to-markdown
-```
-
-```html
-<script src="PATH/TO/bower_components/to-markdown/dist/to-markdown.js"></script>
-<script>toMarkdown('<h1>Hello world!</h1>')</script>
-```
-
-### Node.js
-
-Install the `to-markdown` module:
-
-```sh
-$ npm install to-markdown
-```
-
-Then you can use it like below:
+## Usage
 
 ```js
-var toMarkdown = require('to-markdown');
-toMarkdown('<h1>Hello world!</h1>');
-```
+// For Node.js
+var TurndownService = require('turndown')
 
-(Note it is no longer necessary to call `.toMarkdown` on the required module as of v1.)
+var turndownService = new TurndownService()
+var markdown = turndownService.turndown('<h1>Hello world!</h1>')
+```
 
 ## Options
 
-### `converters` (array)
+Options can be passed in to the constructor on instantiation.
 
-to-markdown can be extended by passing in an array of converters to the options object:
+| Option                | Valid values  | Default |
+| :-------------------- | :------------ | :------ |
+| `headingStyle`        | `setext` or `atx` | `setext`  |
+| `hr`                  | Any [Thematic break](http://spec.commonmark.org/0.27/#thematic-breaks) | `* * *` |
+| `bulletListMarker`    | `-`, `+`, or `*` | `*` |
+| `codeBlockStyle`      | `indented` or `fenced` | `indented` |
+| `fence`               | ` ``` ` or `~~~` | ` ``` ` |
+| `emDelimiter`         | `_` or `*` | `_` |
+| `strongDelimiter`     | `**` or `__` | `**` |
+| `linkStyle`           | `inlined` or `referenced` | `inlined` |
+| `linkReferenceStyle`  | `full`, `collapsed`, or `shortcut` | `full` |
 
-```js
-toMarkdown(stringOfHTML, { converters: [converter1, converter2, …] });
-```
+### Advanced Options
 
-A converter object consists of a **filter**, and a **replacement**. This example from the source replaces `code` elements:
-
-```js
-{
-  filter: 'code',
-  replacement: function(content) {
-    return '`' + content + '`';
-  }
-}
-```
-
-#### `filter` (string|array|function)
-
-The filter property determines whether or not an element should be replaced. DOM nodes can be selected simply by filtering by tag name, with strings or with arrays of strings:
-
- * `filter: 'p'` will select `p` elements
- * `filter: ['em', 'i']` will select `em` or `i` elements
-
-Alternatively, the filter can be a function that returns a boolean depending on whether a given node should be replaced. The function is passed a DOM node as its only argument. For example, the following will match any `span` element with an `italic` font style:
-
-```js
-filter: function (node) {
-  return node.nodeName === 'SPAN' && /italic/i.test(node.style.fontStyle);
-}
-```
-
-#### `replacement` (function)
-
-The replacement function determines how an element should be converted. It should return the markdown string for a given node. The function is passed the node’s content, as well as the node itself (used in more complex conversions). It is called in the context of `toMarkdown`, and therefore has access to the methods detailed below.
-
-The following converter replaces heading elements (`h1`-`h6`):
-
-```js
-{
-  filter: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
-
-  replacement: function(innerHTML, node) {
-    var hLevel = node.tagName.charAt(1);
-    var hPrefix = '';
-    for(var i = 0; i < hLevel; i++) {
-      hPrefix += '#';
-    }
-    return '\n' + hPrefix + ' ' + innerHTML + '\n\n';
-  }
-}
-```
-
-### `gfm` (boolean)
-
-to-markdown has beta support for GitHub flavored markdown (GFM). Set the `gfm` option to true:
-
-```js
-toMarkdown('<del>Hello world!</del>', { gfm: true });
-```
+| Option                | Valid values  | Default |
+| :-------------------- | :------------ | :------ |
+| `blankReplacement`    | rule replacement function | See **Special Rules** below |
+| `keepReplacement`     | rule replacement function | See **Special Rules** below |
+| `defaultReplacement`  | rule replacement function | See **Special Rules** below |
 
 ## Methods
 
-The following methods can be called on the `toMarkdown` object.
+### `addRule(key, rule)`
 
-### `isBlock(node)`
+The `key` parameter is a unique name for the rule for easy reference. Example:
 
-Returns `true`/`false` depending on whether the element is block level.
-
-### `isVoid(node)`
-
-Returns `true`/`false` depending on whether the element is [void](http://www.w3.org/TR/html-markup/syntax.html#syntax-elements).
-
-### `outer(node)`
-
-Returns the content of the node along with the element itself.
-
-## Development
-
-First make sure you have node.js/npm installed, then:
-
-```sh
-$ npm install --dev
-$ bower install --dev
+```js
+turndownService.addRule('strikethrough', {
+  filter: ['del', 's', 'strike'],
+  replacement: function (content) {
+    return '~' + content + '~'
+  }
+})
 ```
 
-Automatically browserify the module when source files change by running:
+`addRule` returns the `TurndownService` instance for chaining.
 
-```sh
-$ npm start
+See **Extending with Rules** below.
+
+### `keep(filter)`
+
+Determines which elements are to be kept and rendered as HTML. By default, Turndown does not keep any elements. The filter parameter works like a rule filter (see section on filters belows). Example:
+
+```js
+turndownService.keep(['del', 'ins'])
+turndownService.turndown('<p>Hello <del>world</del><ins>World</ins></p>') // 'Hello <del>world</del><ins>World</ins>'
 ```
 
-### Tests
+This will render `<del>` and `<ins>` elements as HTML when converted.
 
-To run the tests in the browser, open `test/index.html`.
+`keep` can be called multiple times, with the newly added keep filters taking precedence over older ones. Keep filters will be overridden by the standard CommonMark rules and any added rules. To keep elements that are normally handled by those rules, add a rule with the desired behaviour.
 
-To run in node.js:
+`keep` returns the `TurndownService` instance for chaining.
 
-```sh
-$ npm test
+### `remove(filter)`
+
+Determines which elements are to be removed altogether i.e. converted to an empty string. By default, Turndown does not remove any elements. The filter parameter works like a rule filter (see section on filters belows). Example:
+
+```js
+turndownService.remove('del')
+turndownService.turndown('<p>Hello <del>world</del><ins>World</ins></p>') // 'Hello World'
 ```
 
-## Credits
+This will remove `<del>` elements (and contents).
 
-Thanks to all [contributors](https://github.com/domchristie/to-markdown/graphs/contributors). Also, thanks to [Alex Cornejo](https://github.com/acornejo) for advice and inspiration for the breadth-first search algorithm.
+`remove` can be called multiple times, with the newly added remove filters taking precedence over older ones. Remove filters will be overridden by the keep filters,  standard CommonMark rules, and any added rules. To remove elements that are normally handled by those rules, add a rule with the desired behaviour.
 
-## Licence
+`remove` returns the `TurndownService` instance for chaining.
 
-to-markdown is copyright &copy; 2011+ [Dom Christie](http://domchristie.co.uk) and released under the MIT license.
+### `use(plugin|array)`
+
+Use a plugin, or an array of plugins. Example:
+
+```js
+// Import plugins from turndown-plugin-gfm
+var turndownPluginGfm = require('turndown-plugin-gfm')
+var gfm = turndownPluginGfm.gfm
+var tables = gfm.tables
+var strikethrough = gfm.strikethrough
+
+// Use the gfm plugin
+turndownService.use(gfm)
+
+// Use the table and strikethrough plugins only
+turndownService.use([tables, strikethrough])
+```
+
+`use` returns the `TurndownService` instance for chaining.
+
+See **Plugins** below.
+
+## Extending with Rules
+
+Turndown can be extended by adding **rules**. A rule is a plain JavaScript object with `filter` and `replacement` properties. For example, the rule for converting `<p>` elements is as follows:
+
+```js
+{
+  filter: 'p',
+  replacement: function (content) {
+    return '\n\n' + content + '\n\n'
+  }
+}
+```
+
+The filter selects `<p>` elements, and the replacement function returns the `<p>` contents separated by two new lines.
+
+### `filter` String|Array|Function
+
+The filter property determines whether or not an element should be replaced with the rule's `replacement`. DOM nodes can be selected simply using a tag name or an array of tag names:
+
+ * `filter: 'p'` will select `<p>` elements
+ * `filter: ['em', 'i']` will select `<em>` or `<i>` elements
+
+Alternatively, the filter can be a function that returns a boolean depending on whether a given node should be replaced. The function is passed a DOM node as well as the `TurndownService` options. For example, the following rule selects `<a>` elements (with an `href`) when the `linkStyle` option is `inlined`:
+
+```js
+filter: function (node, options) {
+  return (
+    options.linkStyle === 'inlined' &&
+    node.nodeName === 'A' &&
+    node.getAttribute('href')
+  )
+}
+```
+
+### `replacement` Function
+
+The replacement function determines how an element should be converted. It should return the Markdown string for a given node. The function is passed the node's content, the node itself, and the `TurndownService` options.
+
+The following rule shows how `<em>` elements are converted:
+
+```js
+rules.emphasis = {
+  filter: ['em', 'i'],
+
+  replacement: function (content, node, options) {
+    return options.emDelimiter + content + options.emDelimiter
+  }
+}
+```
+
+### Special Rules
+
+**Blank rule** determines how to handle blank elements. It overrides every rule (even those added via `addRule`). A node is blank if it only contains whitespace, and it's not an `<a>`, `<td>`,`<th>` or a void element. Its behaviour can be customised using the `blankReplacement` option.
+
+**Keep rules** determine how to handle the elements that should not be converted, i.e. rendered as HTML in the Markdown output. By default, no elements are kept. Block-level elements will be separated from surrounding content by blank lines. Its behaviour can be customised using the `keepReplacement` option.
+
+**Remove rules** determine which elements to remove altogether. By default, no elements are removed.
+
+**Default rule** handles nodes which are not recognised by any other rule. By default, it outputs the node's text content (separated  by blank lines if it is a block-level element). Its behaviour can be customised with the `defaultReplacement` option.
+
+### Rule Precedence
+
+Turndown iterates over the set of rules, and picks the first one that matches satifies the `filter`. The following list describes the order of precedence:
+
+1. Blank rule
+2. Added rules (optional)
+3. Commonmark rules
+4. Keep rules
+5. Remove rules
+6. Default rule
+
+## Plugins
+
+The plugin API provides a convenient way for developers to apply multiple extensions. A plugin is just a function that is called with the `TurndownService` instance.
+
+## License
+
+turndown is copyright © 2017+ Dom Christie and released under the MIT license.
