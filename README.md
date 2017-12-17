@@ -1,6 +1,6 @@
 # Turndown
 
-![](https://api.travis-ci.org/domchristie/turndown.svg)
+[![Build Status](https://travis-ci.org/domchristie/turndown.svg?branch=master)](https://travis-ci.org/domchristie/turndown)
 
 Convert HTML into Markdown with JavaScript.
 
