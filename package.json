@@ -3,6 +3,9 @@
   "description": "A library that converts HTML to Markdown",
   "version": "4.0.0-rc.3",
   "author": "Dom Christie",
+  "main": "lib/turndown.cjs.js",
+  "module": "lib/turndown.es.js",
+  "jsnext:main": "lib/turndown.es.js",
   "browser": {
     "jsdom": false
   },
@@ -24,15 +27,12 @@
     "lib",
     "dist"
   ],
-  "jsnext:main": "lib/turndown.es.js",
   "keywords": [
     "converter",
     "html",
     "markdown"
   ],
   "license": "MIT",
-  "main": "lib/turndown.cjs.js",
-  "module": "lib/turndown.es.js",
   "scripts": {
     "build": "npm run build-cjs && npm run build-es && npm run build-umd && npm run build-iife",
     "build-cjs": "rollup -c config/rollup.config.cjs.js && rollup -c config/rollup.config.browser.cjs.js",
