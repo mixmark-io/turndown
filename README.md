@@ -32,6 +32,14 @@ var turndownService = new TurndownService()
 var markdown = turndownService.turndown('<h1>Hello world!</h1>')
 ```
 
+### Command Line Interface (CLI)
+
+```
+turndown <input> [options]
+```
+
+Where `input` is a string of HTML. `options` are hyphen-separated flags of the options listed below (e.g. `headingStyle` becomes `--heading-style`).The CLI also accepts input via stdin.
+
 ## Options
 
 Options can be passed in to the constructor on instantiation.
