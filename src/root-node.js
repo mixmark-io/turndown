@@ -1,4 +1,4 @@
-import collapseWhitespace from 'collapse-whitespace'
+import collapseWhitespace from './collapse-whitespace'
 import HTMLParser from './html-parser'
 import { isBlock, isVoid } from './utilities'
 

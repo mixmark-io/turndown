@@ -10,7 +10,6 @@
     "jsdom": false
   },
   "dependencies": {
-    "collapse-whitespace": "domchristie/collapse-whitespace#turndown",
     "jsdom": "^11.3.0"
   },
   "devDependencies": {
