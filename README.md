@@ -35,10 +35,10 @@ var markdown = turndownService.turndown('<h1>Hello world!</h1>')
 ### Command Line Interface (CLI)
 
 ```
-turndown <input> [options]
+ turndown (<input> | --input <input>) [options]
 ```
 
-Where `input` is a string of HTML. `options` are hyphen-separated flags of the options listed below (e.g. `headingStyle` becomes `--heading-style`).The CLI also accepts input via stdin.
+Where `<input>` is a string of HTML or a path to an HTML file. `options` are hyphen-separated flags of the options listed below (e.g. `headingStyle` becomes `--heading-style`).The CLI also accepts input via stdin.
 
 ## Options
 
