@@ -10,6 +10,7 @@
     "jsdom": false
   },
   "dependencies": {
+    "commander": "^2.12.2",
     "jsdom": "^11.3.0"
   },
   "devDependencies": {
@@ -36,6 +37,9 @@
     "type": "git",
     "url": "https://github.com/domchristie/turndown.git"
   },
+  "bin": {
+    "turndown": "bin/turndown.js"
+  },
   "scripts": {
     "build": "npm run build-cjs && npm run build-es && npm run build-umd && npm run build-iife",
     "build-cjs": "rollup -c config/rollup.config.cjs.js && rollup -c config/rollup.config.browser.cjs.js",
@@ -45,6 +49,6 @@
     "build-test": "browserify test/turndown-test.js --outfile test/turndown-test.browser.js",
     "prepublish": "npm run build",
     "start": "nodemon --watch ./src/**/*.js --exec 'npm run build && npm test'",
-    "test": "npm run build && npm run build-test && standard ./src/**/*.js && node test/turndown-test.js"
+    "test": "npm run build && npm run build-test && standard ./src/**/*.js ./bin/**/*.js && node test/turndown-test.js"
   }
 }
