@@ -10,7 +10,7 @@
     "jsdom": false
   },
   "dependencies": {
-    "jsdom": "^11.3.0"
+    "jsdom": "^11.9.0"
   },
   "devDependencies": {
     "browserify": "^14.5.0",
