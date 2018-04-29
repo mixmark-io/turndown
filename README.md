@@ -32,6 +32,12 @@ var turndownService = new TurndownService()
 var markdown = turndownService.turndown('<h1>Hello world!</h1>')
 ```
 
+Turndown also accepts DOM nodes as input (either element nodes, document nodes,  or document fragment nodes):
+
+```js
+var markdown = turndownService.turndown(document.getElementById('content'))
+```
+
 ## Options
 
 Options can be passed in to the constructor on instantiation.
