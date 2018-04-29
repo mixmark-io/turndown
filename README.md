@@ -113,8 +113,8 @@ Use a plugin, or an array of plugins. Example:
 // Import plugins from turndown-plugin-gfm
 var turndownPluginGfm = require('turndown-plugin-gfm')
 var gfm = turndownPluginGfm.gfm
-var tables = gfm.tables
-var strikethrough = gfm.strikethrough
+var tables = turndownPluginGfm.tables
+var strikethrough = turndownPluginGfm.strikethrough
 
 // Use the gfm plugin
 turndownService.use(gfm)
