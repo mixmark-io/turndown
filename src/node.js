@@ -10,7 +10,7 @@ export default function Node (node) {
 
 function isBlank (node) {
   return (
-    ['A', 'TH', 'TD'].indexOf(node.nodeName) === -1 &&
+    ['A', 'TBODY', 'TR', 'TH', 'TD'].indexOf(node.nodeName) === -1 &&
     /^\s*$/i.test(node.textContent) &&
     !isVoid(node) &&
     !hasVoid(node)
