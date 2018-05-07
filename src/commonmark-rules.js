@@ -110,7 +110,7 @@ rules.fencedCodeBlock = {
 
   replacement: function (content, node, options) {
     var className = node.firstChild.className || ''
-    var language = (className.match(/(language-|lang-)?(\S+)/) || [null, ''])[2]
+    var language = (className.match(/(language-|lang-)?(\S+)/) || [null, '', ''])[2]
 
     return (
       '\n\n' + options.fence + language + '\n' +
