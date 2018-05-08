@@ -110,13 +110,15 @@ rules.fencedCodeBlock = {
 
   replacement: function (content, node, options) {
     var className = node.firstChild.className || ''
-    var language = (className.match(/language-(\S+)/) || [null, ''])[1]
+    var language = (className.match(/(language-|lang-)?(\S+)/) || [null, '', ''])[2]
+    var textContent = node.firstChild.textContent.replace(/^\s+|\s+$/g, '')
+    var fence = options.fence
 
-    return (
-      '\n\n' + options.fence + language + '\n' +
-      node.firstChild.textContent +
-      '\n' + options.fence + '\n\n'
-    )
+    if (options.codeBlockStyle === 'indented') {
+      return '\n\n' + textContent + '\n\n'
+    }
+
+    return '\n' + fence + language + '\n' + textContent + '\n' + fence + '\n'
   }
 }
 
