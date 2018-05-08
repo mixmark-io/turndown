@@ -115,7 +115,8 @@ rules.fencedCodeBlock = {
     return (
       '\n\n' + options.fence + language + '\n' +
       node.firstChild.textContent +
-      '\n' + options.fence + '\n\n'
+      (options.codeBlockStyle === 'indented' ? '\n' : '') + 
+      options.fence + '\n\n'
     )
   }
 }
