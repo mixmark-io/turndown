@@ -114,7 +114,7 @@ rules.fencedCodeBlock = {
 
     return (
       '\n\n' + options.fence + language + '\n' +
-      node.firstChild.textContent +
+      node.firstChild.textContent.replace(/^\s+|\s+$/g, '') +
       '\n' + options.fence + '\n\n'
     )
   }
