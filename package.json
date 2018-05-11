@@ -14,7 +14,6 @@
   },
   "devDependencies": {
     "browserify": "^14.5.0",
-    "nodemon": "^1.10.2",
     "rollup": "^0.50.0",
     "rollup-plugin-commonjs": "^8.2.6",
     "rollup-plugin-node-resolve": "^3.0.0",
@@ -44,7 +43,6 @@
     "build-iife": "rollup -c config/rollup.config.iife.js",
     "build-test": "browserify test/turndown-test.js --outfile test/turndown-test.browser.js",
     "prepublish": "npm run build",
-    "start": "nodemon --watch ./src/**/*.js --exec 'npm run build && npm test'",
     "test": "npm run build && npm run build-test && standard ./src/**/*.js && node test/turndown-test.js"
   }
 }
