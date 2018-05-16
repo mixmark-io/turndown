@@ -195,7 +195,7 @@ rules.emphasis = {
 
 ### Rule Precedence
 
-Turndown iterates over the set of rules, and picks the first one that matches satifies the `filter`. The following list describes the order of precedence:
+Turndown iterates over the set of rules, and picks the first one that matches the `filter`. The following list describes the order of precedence:
 
 1. Blank rule
 2. Added rules (optional)
