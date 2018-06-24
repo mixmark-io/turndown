@@ -185,7 +185,7 @@ rules.emphasis = {
 
 ### Special Rules
 
-**Blank rule** determines how to handle blank elements. It overrides every rule (even those added via `addRule`). A node is blank if it only contains whitespace, and it's not an `<a>`, `<td>`,`<th>` or a void element. Its behaviour can be customised using the `blankReplacement` option.
+**Blank rule** determines how to handle blank elements. It overrides every rule (even those added via `addRule`). A node is blank if it only contains whitespace, and it's not an `<a>`, `<span>`, `<td>`,`<th>` or a void element. Its behaviour can be customised using the `blankReplacement` option.
 
 **Keep rules** determine how to handle the elements that should not be converted, i.e. rendered as HTML in the Markdown output. By default, no elements are kept. Block-level elements will be separated from surrounding content by blank lines. Its behaviour can be customised using the `keepReplacement` option.
 
