@@ -22,6 +22,7 @@ export default function TurndownService (options) {
     linkStyle: 'inlined',
     linkReferenceStyle: 'full',
     br: '  ',
+    escapeMarkdown: true,
     blankReplacement: function (content, node) {
       return node.isBlock ? '\n\n' : ''
     },
@@ -186,7 +187,9 @@ function process (parentNode) {
 
     var replacement = ''
     if (node.nodeType === 3) {
-      replacement = node.isCode ? node.nodeValue : self.escape(node.nodeValue)
+      replacement = (node.isCode || !self.options.escapeMarkdown) ?
+        node.nodeValue :
+        self.escape(node.nodeValue)
     } else if (node.nodeType === 1) {
       replacement = replacementForNode.call(self, node)
     }
