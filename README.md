@@ -53,6 +53,7 @@ Options can be passed in to the constructor on instantiation.
 | `strongDelimiter`     | `**` or `__` | `**` |
 | `linkStyle`           | `inlined` or `referenced` | `inlined` |
 | `linkReferenceStyle`  | `full`, `collapsed`, or `shortcut` | `full` |
+| `escapeMarkdown`      | `true` or `false` | `true` |
 
 ### Advanced Options
 
