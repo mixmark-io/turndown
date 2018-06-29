@@ -168,3 +168,27 @@ test('remove elements are overridden by keep', function (t) {
     'Hello <del>world</del><ins>World</ins>'
   )
 })
+
+test('escape is not called when escapeMarkdown is false', function (t) {
+  t.plan(1)
+  var escapeCalled = false
+  var turndownService = new TurndownService({escapeMarkdown: false})
+  turndownService.escape = function (string) {
+    escapeCalled = true
+    return string;
+  }
+  turndownService.turndown('<p>Paragraph. *Italic*.</p>')
+  if (escapeCalled) {
+    t.fail('escape was called even though escapeMarkdown was false')
+  } else {
+    t.pass('escape was not called')
+  }
+})
+
+test('escapeMarkdown disables escaping when false', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService({escapeMarkdown: false})
+  t.equal(turndownService.turndown(
+    '<p>Paragraph. *Italic*, **bold**, and `monospace`. Itemized [link](http://www.example.com)</p>'),
+    'Paragraph. *Italic*, **bold**, and `monospace`. Itemized [link](http://www.example.com)')
+})
