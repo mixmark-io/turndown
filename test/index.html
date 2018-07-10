@@ -88,6 +88,16 @@ sit</pre>
 =================</pre>
 </div>
 
+<div class="case" data-name="escape = when used as heading">
+  <div class="input">===</div>
+  <pre class="expected">\===</pre>
+</div>
+
+<div class="case" data-name="do not escape = outside of a heading">
+  <div class="input">A sentence containing =</div>
+  <pre class="expected">A sentence containing =</pre>
+</div>
+
 <div class="case" data-name="h1 as atx" data-options='{"headingStyle":"atx"}'>
   <div class="input"><h1>Level One Heading with ATX</h1></div>
   <pre class="expected"># Level One Heading with ATX</pre>
@@ -671,7 +681,12 @@ Content in another div</pre>
 
 <div class="case" data-name="escaping headings with #">
   <div class="input">### This is not a heading</div>
-  <pre class="expected">\#\#\# This is not a heading</pre>
+  <pre class="expected">\### This is not a heading</pre>
+</div>
+
+<div class="case" data-name="do not escape # outside of a heading">
+  <div class="input">#This is not # a heading</div>
+  <pre class="expected">#This is not # a heading</pre>
 </div>
 
 <div class="case" data-name="escaping em markdown with *">
@@ -729,9 +744,9 @@ Content in another div</pre>
   <pre class="expected">1984\. by George Orwell</pre>
 </div>
 
-<div class="case" data-name="escaping numbers followed by a full stop in a sentence">
-  <div class="input">George Orwell wrote 1984.</div>
-  <pre class="expected">George Orwell wrote 1984\.</pre>
+<div class="case" data-name="do not escape . outside of an ol">
+  <div class="input">1984.George Orwell wrote 1984.</div>
+  <pre class="expected">1984.George Orwell wrote 1984.</pre>
 </div>
 
 <div class="case" data-name="escaping ul markdown *">
@@ -749,9 +764,9 @@ Content in another div</pre>
   <pre class="expected">\+ An unordered list item</pre>
 </div>
 
-<div class="case" data-name="escaping =">
-  <div class="input">A sentence containing =</div>
-  <pre class="expected">A sentence containing \=</pre>
+<div class="case" data-name="do not escape + outside of a ul">
+  <div class="input">+1 and another +</div>
+  <pre class="expected">+1 and another +</pre>
 </div>
 
 <div class="case" data-name="escaping ~">
@@ -762,11 +777,6 @@ Content in another div</pre>
 <div class="case" data-name="escaping |">
   <div class="input">A sentence containing |</div>
   <pre class="expected">A sentence containing \|</pre>
-</div>
-
-<div class="case" data-name="escaping parentheses">
-  <div class="input">(A sentence containing)</div>
-  <pre class="expected">\(A sentence containing\)</pre>
 </div>
 
 <div class="case" data-name="escaping *">
@@ -785,13 +795,8 @@ Content in another div</pre>
 </div>
 
 <div class="case" data-name="escaping -">
-  <div class="input">45.5 - 3.5 = 42</div>
-  <pre class="expected">45\.5 \- 3\.5 \= 42</pre>
-</div>
-
-<div class="case" data-name="escaping +">
-  <div class="input">+1</div>
-  <pre class="expected">\+1</pre>
+  <div class="input">45 - 3 is 42</div>
+  <pre class="expected">45 \- 3 is 42</pre>
 </div>
 
 <div class="case" data-name="escaping > as blockquote">
@@ -799,9 +804,14 @@ Content in another div</pre>
   <pre class="expected">\> Blockquote in markdown</pre>
 </div>
 
-<div class="case" data-name="escaping > within text">
+<div class="case" data-name="escaping > as blockquote without space">
+  <div class="input">>Blockquote in markdown</div>
+  <pre class="expected">\>Blockquote in markdown</pre>
+</div>
+
+<div class="case" data-name="do not escape > outside of a blockquote">
   <div class="input">42 > 1</div>
-  <pre class="expected">42 \> 1</pre>
+  <pre class="expected">42 > 1</pre>
 </div>
 
 <div class="case" data-name="escaping code">

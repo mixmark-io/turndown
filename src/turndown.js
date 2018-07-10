@@ -6,23 +6,21 @@ import Node from './node'
 var reduce = Array.prototype.reduce
 var leadingNewLinesRegExp = /^\n*/
 var trailingNewLinesRegExp = /\n*$/
-const markdownReplacements = [
+var escapes = [
   [/\\/g, '\\\\'],
   [/\*/g, '\\*'],
   [/-/g, '\\-'],
-  [/\+/g, '\\+'],
-  [/=/g, '\\='],
-  [/#/g, '\\#'],
+  [/^\+ /g, '\\+ '],
+  [/^(=+)/g, '\\$1'],
+  [/^(#{1,6}) /g, '\\$1 '],
   [/`/g, '\\`'],
   [/~/g, '\\~'],
   [/\|/g, '\\|'],
-  [/\(/g, '\\('],
-  [/\)/g, '\\)'],
   [/\[/g, '\\['],
   [/\]/g, '\\]'],
-  [/>/g, '\\>'],
+  [/^>/g, '\\>'],
   [/_/g, '&lowbar;'],
-  [/(\d+)\./g, '$1\\.']
+  [/^(\d+)\. /g, '$1\\. ']
 ]
 
 export default function TurndownService (options) {
@@ -144,10 +142,9 @@ TurndownService.prototype = {
    */
 
   escape: function (string) {
-    return markdownReplacements.reduce(
-      (search, replacement) => search.replace(replacement[0], replacement[1]),
-      string
-    )
+    return escapes.reduce(function (accumulator, escape) {
+      return accumulator.replace(escape[0], escape[1])
+    }, string)
   }
 }
 
