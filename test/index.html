@@ -291,6 +291,22 @@ def a_fenced_code block; end
 ~~~</pre>
 </div>
 
+<div class="case" data-name="escape ~ when used as code blocks">
+  <div class="input">
+    <pre>~~~
+def aFencedCodeBlock; end
+~~~</pre>
+  </div>
+  <pre class="expected">\~~~
+def aFencedCodeBlock; end
+\~~~</pre>
+</div>
+
+<div class="case" data-name="do not escape ~ outside of code blocks">
+  <div class="input">A sentence containing ~</div>
+  <pre class="expected">A sentence containing ~</pre>
+</div>
+
 <div class="case" data-name="fenced pre/code block with language" data-options='{"codeBlockStyle": "fenced"}'>
   <div class="input">
     <pre><code class="language-ruby">def a_fenced_code block; end</code></pre>
@@ -767,11 +783,6 @@ Content in another div</pre>
 <div class="case" data-name="do not escape + outside of a ul">
   <div class="input">+1 and another +</div>
   <pre class="expected">+1 and another +</pre>
-</div>
-
-<div class="case" data-name="escaping ~">
-  <div class="input">A sentence containing ~</div>
-  <pre class="expected">A sentence containing \~</pre>
 </div>
 
 <div class="case" data-name="escaping *">
