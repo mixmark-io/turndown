@@ -88,6 +88,16 @@ sit</pre>
 =================</pre>
 </div>
 
+<div class="case" data-name="escape = when used as heading">
+  <div class="input">===</div>
+  <pre class="expected">\===</pre>
+</div>
+
+<div class="case" data-name="do not escape = outside of a heading">
+  <div class="input">A sentence containing =</div>
+  <pre class="expected">A sentence containing =</pre>
+</div>
+
 <div class="case" data-name="h1 as atx" data-options='{"headingStyle":"atx"}'>
   <div class="input"><h1>Level One Heading with ATX</h1></div>
   <pre class="expected"># Level One Heading with ATX</pre>
@@ -279,6 +289,22 @@ def a_fenced_code block; end
   <pre class="expected">~~~
 def a_fenced_code block; end
 ~~~</pre>
+</div>
+
+<div class="case" data-name="escape ~ when used as code blocks">
+  <div class="input">
+    <pre>~~~
+def aFencedCodeBlock; end
+~~~</pre>
+  </div>
+  <pre class="expected">\~~~
+def aFencedCodeBlock; end
+\~~~</pre>
+</div>
+
+<div class="case" data-name="do not escape ~ outside of code blocks">
+  <div class="input">A sentence containing ~</div>
+  <pre class="expected">A sentence containing ~</pre>
 </div>
 
 <div class="case" data-name="fenced pre/code block with language" data-options='{"codeBlockStyle": "fenced"}'>
@@ -665,8 +691,8 @@ Content in another div</pre>
 </div>
 
 <div class="case" data-name="escaping backslashes">
-  <div class="input">*\*</div>
-  <pre class="expected">*\\*</pre>
+  <div class="input">backslash \</div>
+  <pre class="expected">backslash \\</pre>
 </div>
 
 <div class="case" data-name="escaping headings with #">
@@ -674,29 +700,34 @@ Content in another div</pre>
   <pre class="expected">\### This is not a heading</pre>
 </div>
 
+<div class="case" data-name="do not escape # outside of a heading">
+  <div class="input">#This is not # a heading</div>
+  <pre class="expected">#This is not # a heading</pre>
+</div>
+
 <div class="case" data-name="escaping em markdown with *">
   <div class="input">To add emphasis, surround text with *. For example: *this is emphasis*</div>
-  <pre class="expected">To add emphasis, surround text with *. For example: \*this is emphasis\*</pre>
+  <pre class="expected">To add emphasis, surround text with \*. For example: \*this is emphasis\*</pre>
 </div>
 
 <div class="case" data-name="escaping em markdown with _">
   <div class="input">To add emphasis, surround text with _. For example: _this is emphasis_</div>
-  <pre class="expected">To add emphasis, surround text with _. For example: \_this is emphasis\_</pre>
+  <pre class="expected">To add emphasis, surround text with \_. For example: \_this is emphasis\_</pre>
 </div>
 
-<div class="case" data-name="not escaping underscores surrounded by words">
+<div class="case" data-name="not escaping within code">
   <div class="input"><pre><code>def this_is_a_method; end;</code></pre></div>
   <pre class="expected">    def this_is_a_method; end;</pre>
 </div>
 
 <div class="case" data-name="escaping strong markdown with *">
   <div class="input">To add strong emphasis, surround text with **. For example: **this is strong**</div>
-  <pre class="expected">To add strong emphasis, surround text with **. For example: \*\*this is strong\*\*</pre>
+  <pre class="expected">To add strong emphasis, surround text with \*\*. For example: \*\*this is strong\*\*</pre>
 </div>
 
 <div class="case" data-name="escaping strong markdown with _">
   <div class="input">To add strong emphasis, surround text with __. For example: __this is strong__</div>
-  <pre class="expected">To add strong emphasis, surround text with __. For example: \_\_this is strong\_\_</pre>
+  <pre class="expected">To add strong emphasis, surround text with \_\_. For example: \_\_this is strong\_\_</pre>
 </div>
 
 <div class="case" data-name="escaping hr markdown with *">
@@ -729,9 +760,9 @@ Content in another div</pre>
   <pre class="expected">1984\. by George Orwell</pre>
 </div>
 
-<div class="case" data-name="not escaping numbers in a sentence">
-  <div class="input">George Orwell wrote 1984.</div>
-  <pre class="expected">George Orwell wrote 1984.</pre>
+<div class="case" data-name="do not escape . outside of an ol">
+  <div class="input">1984.George Orwell wrote 1984.</div>
+  <pre class="expected">1984.George Orwell wrote 1984.</pre>
 </div>
 
 <div class="case" data-name="escaping ul markdown *">
@@ -749,27 +780,42 @@ Content in another div</pre>
   <pre class="expected">\+ An unordered list item</pre>
 </div>
 
-<div class="case" data-name="not escaping *">
-  <div class="input">You can use * for multiplication: 1.5 * 3 = 4.5</div>
-  <pre class="expected">You can use * for multiplication: 1.5 * 3 = 4.5</pre>
+<div class="case" data-name="do not escape + outside of a ul">
+  <div class="input">+1 and another +</div>
+  <pre class="expected">+1 and another +</pre>
 </div>
 
-<div class="case" data-name="not escaping -">
-  <div class="input">45.5 - 3.5 = 42</div>
-  <pre class="expected">45.5 - 3.5 = 42</pre>
+<div class="case" data-name="escaping *">
+  <div class="input">You can use * for multiplication</div>
+  <pre class="expected">You can use \* for multiplication</pre>
 </div>
 
-<div class="case" data-name="not escaping +">
-  <div class="input">+1</div>
-  <pre class="expected">+1</pre>
+<div class="case" data-name="escaping ** inside strong tags">
+  <div class="input"><strong>**test</strong></div>
+  <pre class="expected">**\*\*test**</pre>
 </div>
 
-<div class="case" data-name="escaping >">
+<div class="case" data-name="escaping _ inside em tags">
+  <div class="input"><em>test_italics</em></div>
+  <pre class="expected">_test\_italics_</pre>
+</div>
+
+<div class="case" data-name="escaping -">
+  <div class="input">45 - 3 is 42</div>
+  <pre class="expected">45 \- 3 is 42</pre>
+</div>
+
+<div class="case" data-name="escaping > as blockquote">
   <div class="input">> Blockquote in markdown</div>
   <pre class="expected">\> Blockquote in markdown</pre>
 </div>
 
-<div class="case" data-name="not escaping >">
+<div class="case" data-name="escaping > as blockquote without space">
+  <div class="input">>Blockquote in markdown</div>
+  <pre class="expected">\>Blockquote in markdown</pre>
+</div>
+
+<div class="case" data-name="do not escape > outside of a blockquote">
   <div class="input">42 > 1</div>
   <pre class="expected">42 > 1</pre>
 </div>
@@ -792,17 +838,17 @@ Content in another div</pre>
 <!-- https://github.com/domchristie/to-markdown/issues/188#issuecomment-332216019 -->
 <div class="case" data-name="escaping * performance">
   <div class="input">fasdf *883 asdf wer qweasd fsd asdf asdfaqwe rqwefrsdf</div>
-  <pre class="expected">fasdf *883 asdf wer qweasd fsd asdf asdfaqwe rqwefrsdf</pre>
+  <pre class="expected">fasdf \*883 asdf wer qweasd fsd asdf asdfaqwe rqwefrsdf</pre>
 </div>
 
 <div class="case" data-name="escaping multiple asterisks">
   <div class="input"><p>* * ** It aims to be*</p></div>
-  <pre class="expected">\* \* \*\* It aims to be*</pre>
+  <pre class="expected">\* \* \*\* It aims to be\*</pre>
 </div>
 
 <div class="case" data-name="escaping delimiters around short words and numbers">
   <div class="input"><p>_Really_? Is that what it _is_? A **2000** year-old computer?</p></div>
-  <pre class="expected">\_Really\_? Is that what it \_is\_? A \*\*2000\*\* year-old computer?</pre>
+  <pre class="expected">\_Really\_? Is that what it \_is\_? A \*\*2000\*\* year\-old computer?</pre>
 </div>
 
 <div class="case" data-name="non-markdown block elements">
