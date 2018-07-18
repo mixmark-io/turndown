@@ -696,7 +696,7 @@ Content in another div</pre>
 
 <div class="case" data-name="escaping em markdown with _">
   <div class="input">To add emphasis, surround text with _. For example: _this is emphasis_</div>
-  <pre class="expected">To add emphasis, surround text with &amp;lowbar;. For example: &amp;lowbar;this is emphasis&amp;lowbar;</pre>
+  <pre class="expected">To add emphasis, surround text with \_. For example: \_this is emphasis\_</pre>
 </div>
 
 <div class="case" data-name="not escaping within code">
@@ -711,7 +711,7 @@ Content in another div</pre>
 
 <div class="case" data-name="escaping strong markdown with _">
   <div class="input">To add strong emphasis, surround text with __. For example: __this is strong__</div>
-  <pre class="expected">To add strong emphasis, surround text with &amp;lowbar;&amp;lowbar;. For example: &amp;lowbar;&amp;lowbar;this is strong&amp;lowbar;&amp;lowbar;</pre>
+  <pre class="expected">To add strong emphasis, surround text with \_\_. For example: \_\_this is strong\_\_</pre>
 </div>
 
 <div class="case" data-name="escaping hr markdown with *">
@@ -726,7 +726,7 @@ Content in another div</pre>
 
 <div class="case" data-name="escaping hr markdown with _">
   <div class="input">_ _ _</div>
-  <pre class="expected">&amp;lowbar; &amp;lowbar; &amp;lowbar;</pre>
+  <pre class="expected">\_ \_ \_</pre>
 </div>
 
 <div class="case" data-name="escaping hr markdown without spaces">
@@ -774,11 +774,6 @@ Content in another div</pre>
   <pre class="expected">A sentence containing \~</pre>
 </div>
 
-<div class="case" data-name="escaping |">
-  <div class="input">A sentence containing |</div>
-  <pre class="expected">A sentence containing \|</pre>
-</div>
-
 <div class="case" data-name="escaping *">
   <div class="input">You can use * for multiplication</div>
   <pre class="expected">You can use \* for multiplication</pre>
@@ -791,7 +786,7 @@ Content in another div</pre>
 
 <div class="case" data-name="escaping _ inside em tags">
   <div class="input"><em>test_italics</em></div>
-  <pre class="expected">_test&amp;lowbar;italics_</pre>
+  <pre class="expected">_test\_italics_</pre>
 </div>
 
 <div class="case" data-name="escaping -">
@@ -842,7 +837,7 @@ Content in another div</pre>
 
 <div class="case" data-name="escaping delimiters around short words and numbers">
   <div class="input"><p>_Really_? Is that what it _is_? A **2000** year-old computer?</p></div>
-  <pre class="expected">&amp;lowbar;Really&amp;lowbar;? Is that what it &amp;lowbar;is&amp;lowbar;? A \*\*2000\*\* year\-old computer?</pre>
+  <pre class="expected">\_Really\_? Is that what it \_is\_? A \*\*2000\*\* year\-old computer?</pre>
 </div>
 
 <div class="case" data-name="non-markdown block elements">
