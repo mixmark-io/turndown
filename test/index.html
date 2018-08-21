@@ -291,20 +291,16 @@ def a_fenced_code block; end
 ~~~</pre>
 </div>
 
-<div class="case" data-name="escape ~ when used as code blocks">
+<div class="case" data-name="escaping ~~~">
   <div class="input">
-    <pre>~~~
-def aFencedCodeBlock; end
-~~~</pre>
+    <pre>~~~ foo</pre>
   </div>
-  <pre class="expected">\~~~
-def aFencedCodeBlock; end
-\~~~</pre>
+  <pre class="expected">\~~~ foo</pre>
 </div>
 
-<div class="case" data-name="not escaping ~ outside of code blocks">
-  <div class="input">A sentence containing ~</div>
-  <pre class="expected">A sentence containing ~</pre>
+<div class="case" data-name="not escaping ~~~">
+  <div class="input">A sentence containing ~~~</div>
+  <pre class="expected">A sentence containing ~~~</pre>
 </div>
 
 <div class="case" data-name="fenced pre/code block with language" data-options='{"codeBlockStyle": "fenced"}'>
