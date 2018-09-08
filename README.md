@@ -42,6 +42,10 @@ var markdown = turndownService.turndown(document.getElementById('content'))
 
 Options can be passed in to the constructor on instantiation.
 
+Example:
+
+`var turndownService = new TurndownService({ option: 'value' });`
+
 | Option                | Valid values  | Default |
 | :-------------------- | :------------ | :------ |
 | `headingStyle`        | `setext` or `atx` | `setext`  |
