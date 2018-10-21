@@ -3,22 +3,8 @@
 <head>
 <meta charset="utf-8">
 <title>Turndown Demo</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+<meta name="viewport" content="width=device-width">
 <style>
-  .cf:before,
-  .cf:after {
-      content: " ";
-      display: table;
-  }
-
-  .cf:after {
-      clear: both;
-  }
-
-  .cf {
-      *zoom: 1;
-  }
-
   * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -26,101 +12,101 @@
   }
 
   body {
-    background-color: #ccc;
     margin: 0 auto;
-    font-size: 14px;
-    font-family: sans-serif;
-    line-height: 1.4;
+    font-family: courier, monospace, sans-serif;
+    line-height: 1.3125;
     color: #333;
   }
 
   header {
-    padding: 1em;
-    overflow: hidden;
+    padding: 0.5em;
     background-color: #fff;
+    text-align: center;
   }
 
   footer {
+    font-size: 0.875em;
     text-align: center;
     color: #666;
-    text-shadow: 0 1px 0 #ddd;
   }
 
-  a,
-  a:visited {
-    font-weight: 700;
-    text-decoration: none;
-  }
-
-  h1 {
-    float: left;
+  h1,
+  label[for="input"],
+  label[for="output"] {
     margin: 0;
     font-size: 1em;
+    font-weight: 700;
+    letter-spacing: 0.0625em;
+    text-transform: uppercase;
   }
 
-  h2 {
-    color: #fff;
-    margin-bottom: 0;
+  label[for="input"],
+  label[for="output"] {
+    font-weight: 400;
+  }
+
+  .source-link {
+    font-size: 0.875em;
+  }
+
+  .row:before,
+  .row:after {
+    content: " ";
+    display: table;
+  }
+
+  .row:after {
+    clear: both;
+  }
+
+  .row {
+    *zoom: 1;
   }
 
   .col,
   .form-group {
-    padding: 0 10px;
+    padding: 0 0.5em;
   }
 
-  .form-group {
-    float: left;
+  @media (min-width: 36em) {
+    .col {
+      float: left;
+      width: 50%;
+    }
   }
 
   textarea {
     width: 100%;
-    height: 600px;
+    height: 36em;
     margin: 0;
-    padding: .5em;
+    padding: 0.5em;
     overflow: auto;
-    border: none;
+    border: 1px solid;
     background-color: #fff;
-    font-family: courier, monospace;
+    font-family: inherit;
     font-size: inherit;
+    line-height: inherit;
     color: inherit;
   }
 
   #input {
-    background: #333;
+    background-color: #333;
     color: #fff;
-  }
-
-  .toolbar {
-    padding-top: 5px;
-    padding-bottom: 5px;
-    background-color: #e6e6e6;
+    border: none;
   }
 
   select {
     display: block;
     width: 100%;
-    font-size: 14px;
+    font-size: inherit;
   }
 
-  @media (min-width: 768px) {
-    body {
-      font-size: 16px;
-    }
-
-    .col {
-      float: left;
-      width: 50%;
-      padding: 0 15px;
-    }
-
-    .row {
-      padding-right: 15px;
-      padding-left: 15px;
-    }
+  .form-group {
+    display: inline-block;
   }
 
   .form-group label {
-    font-size: 14px;
+    font-size: 0.875em;
   }
 </style>
 <script src="https://unpkg.com/turndown/dist/turndown.js"></script>
@@ -128,11 +114,11 @@
 <body>
 <header>
   <h1>turndown</h1>
-  <a style="float: right" href="https://github.com/domchristie/turndown">Source on GitHub</a>
+  <a class="source-link" href="https://github.com/domchristie/turndown">Source on GitHub</a>
 </header>
-<div class="row cf">
+<div class="row">
   <div class="col">
-    <h2>HTML</h2>
+    <label for="input">HTML</label>
     <textarea cols="100" rows=10 id="input"><h1>Turndown Demo</h1>
 
 <p>This demonstrates <a href="https://github.com/domchristie/turndown">turndown</a> – an HTML to Markdown converter in JavaScript.</p>
@@ -162,12 +148,12 @@ console.log(
 </ul></textarea>
   </div>
   <div class="col">
-    <h2>Markdown</h2>
+    <label for="output">Markdown</label>
     <textarea readonly cols="100" rows=10 id="output"></textarea>
   </div>
 </div>
 
-<div class="row cf">
+<div class="row">
   <form method="get" action="/turndown" id="options">
     <div class="form-group">
       <label for="headingStyle">Heading style</label>
@@ -246,7 +232,7 @@ console.log(
   </form>
 </div>
 
-<footer><p>turndown is copyright © 2017 <a href="http://www.domchristie.co.uk/">Dom Christie</a> and is released under the MIT license</p></footer>
+<footer><p>Turndown is copyright © 2017 <a href="http://www.domchristie.co.uk/">Dom Christie</a> and is released under the MIT license</p></footer>
 <script>
   ;(function () {
     var input = document.getElementById('input')
