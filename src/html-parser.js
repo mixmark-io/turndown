@@ -47,9 +47,9 @@ function createHTMLParser () {
       }
     }
   } else {
-    var JSDOM = require('jsdom').JSDOM
+    var minidom = require('minidom')
     Parser.prototype.parseFromString = function (string) {
-      return new JSDOM(string).window.document
+      return minidom(string)
     }
   }
   return Parser
