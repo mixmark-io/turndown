@@ -109,7 +109,7 @@ rules.fencedCodeBlock = {
   },
 
   replacement: function (content, node, options) {
-    var className = node.firstChild.className || ''
+    var className = node.firstChild.getAttribute('class') || ''
     var language = (className.match(/language-(\S+)/) || [null, ''])[1]
     var code = node.firstChild.textContent
 
@@ -153,7 +153,7 @@ rules.inlineLink = {
 
   replacement: function (content, node) {
     var href = node.getAttribute('href')
-    var title = node.title ? ' "' + node.title + '"' : ''
+    var title = node.getAttribute('title') ? ' "' + node.getAttribute('title') + '"' : ''
     return '[' + content + '](' + href + title + ')'
   }
 }
@@ -251,9 +251,9 @@ rules.image = {
   filter: 'img',
 
   replacement: function (content, node) {
-    var alt = node.alt || ''
+    var alt = node.getAttribute('alt') || ''
     var src = node.getAttribute('src') || ''
-    var title = node.title || ''
+    var title = node.getAttribute('title') || ''
     var titlePart = title ? ' "' + title + '"' : ''
     return src ? '![' + alt + ']' + '(' + src + titlePart + ')' : ''
   }
