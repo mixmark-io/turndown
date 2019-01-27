@@ -12,7 +12,7 @@ export default function RootNode (input) {
       '<x-turndown id="turndown-root">' + input + '</x-turndown>',
       'text/html'
     )
-    root = doc.getElementById('turndown-root')
+    root = doc.getElementsByTagName('x-turndown')[0]
   } else {
     root = input.cloneNode(true)
   }

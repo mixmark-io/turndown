@@ -34,7 +34,11 @@ export function isVoid (node) {
   return voidElements.indexOf(node.nodeName.toLowerCase()) !== -1
 }
 
-var voidSelector = voidElements.join()
 export function hasVoid (node) {
-  return node.querySelector && node.querySelector(voidSelector)
+  return (
+    node.getElementsByTagName &&
+    voidElements.some(function (name) {
+      return node.getElementsByTagName(name).length
+    })
+  )
 }
