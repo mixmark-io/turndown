@@ -50,7 +50,10 @@ rules.list = {
 
   replacement: function (content, node) {
     var parent = node.parentNode
-    if (parent.nodeName === 'LI' && parent.lastElementChild === node) {
+    var siblingElements = parent.children
+    var lastSiblingElement = siblingElements[siblingElements.length - 1]
+
+    if (parent.nodeName === 'LI' && node === lastSiblingElement) {
       return '\n' + content
     } else {
       return '\n\n' + content + '\n\n'
