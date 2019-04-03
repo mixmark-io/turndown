@@ -22,13 +22,15 @@ function flankingWhitespace (node) {
   var trailing = ''
 
   if (!node.isBlock) {
-    var hasLeading = /^[ \r\n\t]/.test(node.textContent)
-    var hasTrailing = /[ \r\n\t]$/.test(node.textContent)
+    var hasLeading = /^\s/.test(node.textContent)
+    var hasTrailing = /\s$/.test(node.textContent)
+    var blankWithSpaces = node.isBlank && hasLeading && hasTrailing
 
     if (hasLeading && !isFlankedByWhitespace('left', node)) {
       leading = ' '
     }
-    if (hasTrailing && !isFlankedByWhitespace('right', node)) {
+
+    if (!blankWithSpaces && hasTrailing && !isFlankedByWhitespace('right', node)) {
       trailing = ' '
     }
   }
