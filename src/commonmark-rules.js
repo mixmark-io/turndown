@@ -199,6 +199,15 @@ rules.emphasis = {
   }
 }
 
+rules.underline = {
+  filter: 'u',
+
+  replacement: function (content, node, options) {
+    if (!content.trim()) return ''
+    return options.uDelimiter + content + options.uDelimiter
+  }
+}
+
 rules.strong = {
   filter: ['strong', 'b'],
 
