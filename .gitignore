@@ -3,4 +3,6 @@ lib
 node_modules
 npm-debug.log
 test/*browser.js
+.idea/*
 .idea/
+.idea/workspace.xml
