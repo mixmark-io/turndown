@@ -33,6 +33,7 @@ export default function TurndownService (options) {
     codeBlockStyle: 'indented',
     fence: '```',
     emDelimiter: '_',
+    uDelimiter: '++',
     strongDelimiter: '**',
     linkStyle: 'inlined',
     linkReferenceStyle: 'full',
