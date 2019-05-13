@@ -21,10 +21,6 @@
     "standard": "^10.0.3",
     "turndown-attendant": "0.0.2"
   },
-  "files": [
-    "lib",
-    "dist"
-  ],
   "keywords": [
     "converter",
     "html",
