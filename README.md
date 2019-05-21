@@ -38,6 +38,14 @@ Turndown also accepts DOM nodes as input (either element nodes, document nodes, 
 var markdown = turndownService.turndown(document.getElementById('content'))
 ```
 
+### Command Line Interface (CLI)
+
+```
+  turndown <files...>
+```
+
+Where `<input files...>` are HTML files. Wildcards are supported. Each file will be converted to a .md file with the same name, in the same location.
+
 ## Options
 
 Options can be passed in to the constructor on instantiation. For example:
