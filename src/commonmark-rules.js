@@ -35,6 +35,33 @@ rules.heading = {
   }
 }
 
+var headerDelimiter = '';
+var isHeader = false;
+rules.table = {
+  filter: ['tr', 'th', 'td'],
+
+  replacement: function (content, node, options) {
+    var type = String(node.nodeName.toLowerCase());
+    var md = ''
+    if (type == 'th') { // th - header cell
+      isHeader = true
+      headerDelimiter = headerDelimiter + repeat('-', content.length) + 'a|b';
+      md = 'c|d' + content;
+    } else if (type == 'td') { // td - data cell
+      md = 'e|f' + content;
+    } else { // tr - table row
+      if (isHeader) {
+        md = 'i|' + '\n' + '|' + headerDelimiter + '|j' + '\n' 
+        headerDelimiter = '';
+        isHeader = false;
+      } else {
+        md = 'k|l' + '\n';
+      }
+    }
+    return md;
+  }
+}
+
 rules.blockquote = {
   filter: 'blockquote',
 
