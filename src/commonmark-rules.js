@@ -43,22 +43,25 @@ rules.table = {
   replacement: function (content, node, options) {
     var type = String(node.nodeName.toLowerCase());
     var md = ''
-    if (type == 'th') { // th - header cell
+    if (type == 'th') { // th - header cell      
       isHeader = true
-      headerDelimiter = headerDelimiter + repeat('-', content.length) + 'a|b';
-      md = 'c|d' + content;
+      // only header rows have a delimining line of '------' as content
+      headerDelimiter =  headerDelimiter + '|' + repeat('-', content.length);
+      // cells  are starting a cell with a '|'      
+      content = '|' + content;
     } else if (type == 'td') { // td - data cell
-      md = 'e|f' + content;
+      // cells  are starting a cell with a '|'      
+      content = '|' + content;
     } else { // tr - table row
-      if (isHeader) {
-        md = 'i|' + '\n' + '|' + headerDelimiter + '|j' + '\n' 
+      if (isHeader) { // rows are finishing a line with a '|'
+        content = content + '|' + '\n' + headerDelimiter + '|' + '\n' 
         headerDelimiter = '';
         isHeader = false;
       } else {
-        md = 'k|l' + '\n';
+        content = content + '|' + '\n';
       }
     }
-    return md;
+    return content;
   }
 }
 
