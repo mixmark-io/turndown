@@ -35,33 +35,32 @@ rules.heading = {
   }
 }
 
-var headerDelimiter = '';
-var isHeader = false;
+var headerDelimiter = ''
+var isHeader = false
 rules.table = {
   filter: ['tr', 'th', 'td'],
 
   replacement: function (content, node, options) {
-    var type = String(node.nodeName.toLowerCase());
-    var md = ''
-    if (type == 'th') { // th - header cell      
+    var type = String(node.nodeName.toLowerCase())
+    if (type === 'th') { // th - header cell
       isHeader = true
       // only header rows have a delimining line of '------' as content
-      headerDelimiter =  headerDelimiter + '|' + repeat('-', content.length);
-      // cells  are starting a cell with a '|'      
-      content = '|' + content;
-    } else if (type == 'td') { // td - data cell
-      // cells  are starting a cell with a '|'      
-      content = '|' + content;
+      headerDelimiter = headerDelimiter + '|' + repeat('-', content.length)
+      // cells  are starting a cell with a '|'
+      content = '|' + content
+    } else if (type === 'td') { // td - data cell
+      // cells  are starting a cell with a '|'
+      content = '|' + content
     } else { // tr - table row
       if (isHeader) { // rows are finishing a line with a '|'
-        content = content + '|' + '\n' + headerDelimiter + '|' + '\n' 
-        headerDelimiter = '';
-        isHeader = false;
+        content = content + '|' + '\n' + headerDelimiter + '|' + '\n'
+        headerDelimiter = ''
+        isHeader = false
       } else {
-        content = content + '|' + '\n';
+        content = content + '|' + '\n'
       }
     }
-    return content;
+    return content
   }
 }
 
