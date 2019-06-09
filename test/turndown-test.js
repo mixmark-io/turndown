@@ -168,3 +168,12 @@ test('remove elements are overridden by keep', function (t) {
     'Hello <del>world</del><ins>World</ins>'
   )
 })
+
+test('code blocks with html', function(t) {
+  t.plan(1);
+  var turndownService = new TurndownService({ codeBlockStyle: 'fenced' })
+  t.equal(turndownService.turndown(
+    '<pre><code>foo<br>bar<br>world</br>baz</code></pre>'),
+    '```\nfoo\nbar\nworld\nbaz\n```'
+  )
+});

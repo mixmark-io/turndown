@@ -26,7 +26,7 @@
  */
 
 /**
- * collapseWhitespace(options) removes extraneous whitespace from an the given element.
+ * collapseWhitespace(options) removes extraneous whitespace from the given element.
  *
  * @param {Object} options
  */
