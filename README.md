@@ -26,7 +26,7 @@ For usage with RequireJS, UMD versions are located in `lib/turndown.umd.js` (for
 
 ```js
 // For Node.js
-var TurndownService = require('turndown')
+var TurndownService = require('turndown').default
 
 var turndownService = new TurndownService()
 var markdown = turndownService.turndown('<h1>Hello world!</h1>')
