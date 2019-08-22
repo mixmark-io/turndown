@@ -6,12 +6,7 @@
   "main": "lib/turndown.cjs.js",
   "module": "lib/turndown.es.js",
   "jsnext:main": "lib/turndown.es.js",
-  "browser": {
-    "jsdom": false
-  },
-  "dependencies": {
-    "jsdom": "^11.9.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "browserify": "^16.2.3",
     "rollup": "^0.50.0",
@@ -19,7 +14,7 @@
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-replace": "^2.0.0",
     "standard": "^10.0.3",
-    "turndown-attendant": "0.0.2"
+    "turndown-attendant": "github:domchristie/turndown-attendant#dom_only"
   },
   "files": [
     "lib",

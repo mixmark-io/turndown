@@ -62,12 +62,8 @@ TurndownService.prototype = {
 
   turndown: function (input) {
     if (!canConvert(input)) {
-      throw new TypeError(
-        input + ' is not a string, or an element/document/fragment node.'
-      )
+      throw new TypeError(input + ' is not an element/document/fragment node.')
     }
-
-    if (input === '') return ''
 
     var output = process.call(this, new RootNode(input))
     return postProcess.call(this, output)
@@ -241,18 +237,14 @@ function join (string1, string2) {
 /**
  * Determines whether an input can be converted
  * @private
- * @param {String|HTMLElement} input Describe this parameter
+ * @param {HTMLElement} input Describe this parameter
  * @returns Describe what it returns
  * @type String|Object|Array|Boolean|Number
  */
 
 function canConvert (input) {
-  return (
-    input != null && (
-      typeof input === 'string' ||
-      (input.nodeType && (
-        input.nodeType === 1 || input.nodeType === 9 || input.nodeType === 11
-      ))
+  return input != null &&
+    input.nodeType && (
+      input.nodeType === 1 || input.nodeType === 9 || input.nodeType === 11
     )
-  )
 }

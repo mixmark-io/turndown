@@ -7,12 +7,18 @@ var attendant = new Attendant({
 })
 var test = attendant.test
 
+function parse (string) {
+  var root = attendant.document.createElement('x-turndown')
+  root.innerHTML = string
+  return root
+}
+
 attendant.run()
 
 test('malformed documents', function (t) {
   t.plan(0)
   var turndownService = new TurndownService()
-  turndownService.turndown('<HTML><head></head><BODY><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><body onload=alert(document.cookie);></body></html>')
+  turndownService.turndown(parse('<HTML><head></head><BODY><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><body onload=alert(document.cookie);></body></html>'))
   t.end()
 })
 
@@ -20,7 +26,7 @@ test('null input', function (t) {
   t.plan(1)
   var turndownService = new TurndownService()
   t.throws(
-    function () { turndownService.turndown(null) }, /null is not a string/
+    function () { turndownService.turndown(null) }, /null is not an element/
   )
 })
 
@@ -29,7 +35,7 @@ test('undefined input', function (t) {
   var turndownService = new TurndownService()
   t.throws(
     function () { turndownService.turndown(void (0)) },
-    /undefined is not a string/
+    /undefined is not an element/
   )
 })
 
@@ -92,7 +98,7 @@ test('#use with multiple plugins calls each fn with instance', function (t) {
 test('#keep keeps elements as HTML', function (t) {
   t.plan(2)
   var turndownService = new TurndownService()
-  var input = '<p>Hello <del>world</del><ins>World</ins></p>'
+  var input = parse('<p>Hello <del>world</del><ins>World</ins></p>')
 
   // Without `.keep(['del', 'ins'])`
   t.equal(turndownService.turndown(input), 'Hello worldWorld')
@@ -100,7 +106,9 @@ test('#keep keeps elements as HTML', function (t) {
   // With `.keep(['del', 'ins'])`
   turndownService.keep(['del', 'ins'])
   t.equal(
-    turndownService.turndown('<p>Hello <del>world</del><ins>World</ins></p>'),
+    turndownService.turndown(
+      parse('<p>Hello <del>world</del><ins>World</ins></p>')
+    ),
     'Hello <del>world</del><ins>World</ins>'
   )
 })
@@ -115,7 +123,10 @@ test('keep rules are overridden by the standard rules', function (t) {
   t.plan(1)
   var turndownService = new TurndownService()
   turndownService.keep('p')
-  t.equal(turndownService.turndown('<p>Hello world</p>'), 'Hello world')
+  t.equal(
+    turndownService.turndown(parse('<p>Hello world</p>')),
+    'Hello world'
+  )
 })
 
 test('keepReplacement can be customised', function (t) {
@@ -127,7 +138,8 @@ test('keepReplacement can be customised', function (t) {
   })
   turndownService.keep(['del', 'ins'])
   t.equal(turndownService.turndown(
-    '<p>Hello <del>world</del><ins>World</ins></p>'),
+    parse('<p>Hello <del>world</del><ins>World</ins></p>')
+  ),
     'Hello \n\n<del>world</del>\n\n<ins>World</ins>'
   )
 })
@@ -135,7 +147,7 @@ test('keepReplacement can be customised', function (t) {
 test('#remove removes elements', function (t) {
   t.plan(2)
   var turndownService = new TurndownService()
-  var input = '<del>Please redact me</del>'
+  var input = parse('<del>Please redact me</del>')
 
   // Without `.remove('del')`
   t.equal(turndownService.turndown(input), 'Please redact me')
@@ -155,7 +167,10 @@ test('remove elements are overridden by rules', function (t) {
   t.plan(1)
   var turndownService = new TurndownService()
   turndownService.remove('p')
-  t.equal(turndownService.turndown('<p>Hello world</p>'), 'Hello world')
+  t.equal(
+    turndownService.turndown(parse('<p>Hello world</p>')),
+    'Hello world'
+  )
 })
 
 test('remove elements are overridden by keep', function (t) {
@@ -163,8 +178,10 @@ test('remove elements are overridden by keep', function (t) {
   var turndownService = new TurndownService()
   turndownService.keep(['del', 'ins'])
   turndownService.remove(['del', 'ins'])
-  t.equal(turndownService.turndown(
-    '<p>Hello <del>world</del><ins>World</ins></p>'),
+  t.equal(
+    turndownService.turndown(
+      parse('<p>Hello <del>world</del><ins>World</ins></p>')
+    ),
     'Hello <del>world</del><ins>World</ins>'
   )
 })
