@@ -888,6 +888,20 @@ Baz</pre>
   <pre class="expected">![](http://example.com/logo.png)</pre>
 </div>
 
+<div class="case" data-name="text separated by a space in an element">
+  <div class="input">
+    <p>Foo<span> </span>Bar</p>
+  </div>
+  <pre class="expected">Foo Bar</pre>
+</div>
+
+<div class="case" data-name="text separated by a non-breaking space in an element">
+  <div class="input">
+    <p>Foo<span>&nbsp;</span>Bar</p>
+  </div>
+  <pre class="expected">Foo Bar</pre>
+</div>
+
 <!-- /TEST CASES -->
 
 <script src="turndown-test.browser.js"></script>
