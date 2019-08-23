@@ -10,10 +10,22 @@ rules.paragraph = {
   }
 }
 
+function isInPreformattedText (node) {
+  for (; node; node = node.parentNode) {
+    if (node.nodeName === 'PRE' || node.nodeName === 'CODE') {
+      return true
+    }
+  }
+  return false
+}
+
 rules.lineBreak = {
   filter: 'br',
 
   replacement: function (content, node, options) {
+    if (isInPreformattedText(node)) {
+      return '\n'
+    }
     return options.br + '\n'
   }
 }
@@ -92,7 +104,7 @@ rules.indentedCodeBlock = {
   replacement: function (content, node, options) {
     return (
       '\n\n    ' +
-      node.firstChild.textContent.replace(/\n/g, '\n    ') +
+      content.replace(/\n/g, '\n    ') +
       '\n\n'
     )
   }
@@ -114,7 +126,7 @@ rules.fencedCodeBlock = {
 
     return (
       '\n\n' + options.fence + language + '\n' +
-      node.firstChild.textContent +
+      content +
       '\n' + options.fence + '\n\n'
     )
   }
