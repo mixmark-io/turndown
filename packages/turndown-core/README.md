@@ -1,23 +1,19 @@
-# Turndown
+# Turndown Core
 
-[![Build Status](https://travis-ci.org/domchristie/turndown.svg?branch=master)](https://travis-ci.org/domchristie/turndown)
-
-Convert HTML into Markdown with JavaScript.
-
-### to-markdown has been renamed to Turndown. See the [migration guide](https://github.com/domchristie/to-markdown/wiki/Migrating-from-to-markdown-to-Turndown) for details.
+Convert DOM elements into Markdown with JavaScript.
 
 ## Installation
 
 npm:
 
 ```
-npm install turndown
+npm install turndown-core
 ```
 
 Browser:
 
 ```html
-<script src="https://unpkg.com/turndown/dist/turndown.js"></script>
+<script src="https://unpkg.com/turndown/dist/turndown-core.js"></script>
 ```
 
 For usage with RequireJS, UMD versions are located in `lib/turndown.umd.js` (for Node.js) and `lib/turndown.browser.umd.js` for browser usage. These files are generated when the npm package is published. To generate them manually, clone this repo and run `npm run build`.
@@ -26,15 +22,9 @@ For usage with RequireJS, UMD versions are located in `lib/turndown.umd.js` (for
 
 ```js
 // For Node.js
-var TurndownService = require('turndown')
+var TurndownService = require('turndown-core')
 
 var turndownService = new TurndownService()
-var markdown = turndownService.turndown('<h1>Hello world!</h1>')
-```
-
-Turndown also accepts DOM nodes as input (either element nodes, document nodes,  or document fragment nodes):
-
-```js
 var markdown = turndownService.turndown(document.getElementById('content'))
 ```
 
@@ -91,7 +81,9 @@ Determines which elements are to be kept and rendered as HTML. By default, Turnd
 
 ```js
 turndownService.keep(['del', 'ins'])
-turndownService.turndown('<p>Hello <del>world</del><ins>World</ins></p>') // 'Hello <del>world</del><ins>World</ins>'
+var p = document.createElement('p')
+p.innerHTML = '<p>Hello <del>world</del><ins>World</ins></p>'
+turndownService.turndown(p) // 'Hello <del>world</del><ins>World</ins>'
 ```
 
 This will render `<del>` and `<ins>` elements as HTML when converted.
@@ -106,7 +98,9 @@ Determines which elements are to be removed altogether i.e. converted to an empt
 
 ```js
 turndownService.remove('del')
-turndownService.turndown('<p>Hello <del>world</del><ins>World</ins></p>') // 'Hello World'
+var p = document.createElement('p')
+p.innerHTML = '<p>Hello <del>world</del><ins>World</ins></p>'
+turndownService.turndown(p) // 'Hello World'
 ```
 
 This will remove `<del>` elements (and contents).

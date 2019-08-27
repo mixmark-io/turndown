@@ -1,7 +1,7 @@
 {
-  "name": "turndown",
-  "description": "A library that converts HTML to Markdown",
-  "version": "5.0.3",
+  "name": "turndown-core",
+  "description": "Converts DOM elements to Markdown. For a library that converts HTML strings (+ DOM elements), try Turndown.",
+  "version": "0.0.1",
   "author": "Dom Christie",
   "main": "lib/turndown.cjs.js",
   "module": "lib/turndown.es.js",
