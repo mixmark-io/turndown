@@ -50,7 +50,10 @@ rules.list = {
 
   replacement: function (content, node) {
     var parent = node.parentNode
-    if (parent.nodeName === 'LI' && parent.lastElementChild === node) {
+    var siblingElements = parent.children
+    var lastSiblingElement = siblingElements[siblingElements.length - 1]
+
+    if (parent.nodeName === 'LI' && node === lastSiblingElement) {
       return '\n' + content
     } else {
       return '\n\n' + content + '\n\n'
@@ -109,7 +112,7 @@ rules.fencedCodeBlock = {
   },
 
   replacement: function (content, node, options) {
-    var className = node.firstChild.className || ''
+    var className = node.firstChild.getAttribute('class') || ''
     var language = (className.match(/language-(\S+)/) || [null, ''])[1]
 
     return (
@@ -139,7 +142,7 @@ rules.inlineLink = {
 
   replacement: function (content, node) {
     var href = node.getAttribute('href')
-    var title = node.title ? ' "' + node.title + '"' : ''
+    var title = node.getAttribute('title') ? ' "' + node.getAttribute('title') + '"' : ''
     return '[' + content + '](' + href + title + ')'
   }
 }
@@ -237,9 +240,9 @@ rules.image = {
   filter: 'img',
 
   replacement: function (content, node) {
-    var alt = node.alt || ''
+    var alt = node.getAttribute('alt') || ''
     var src = node.getAttribute('src') || ''
-    var title = node.title || ''
+    var title = node.getAttribute('title') || ''
     var titlePart = title ? ' "' + title + '"' : ''
     return src ? '![' + alt + ']' + '(' + src + titlePart + ')' : ''
   }

@@ -1,0 +1,43 @@
+{
+  "name": "turndown-core",
+  "description": "Converts DOM elements to Markdown. For a library that converts HTML strings (+ DOM elements), try Turndown.",
+  "version": "0.0.1",
+  "author": "Dom Christie",
+  "main": "lib/turndown.cjs.js",
+  "module": "lib/turndown.es.js",
+  "jsnext:main": "lib/turndown.es.js",
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^16.2.3",
+    "rollup": "^0.50.0",
+    "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-replace": "^2.0.0",
+    "standard": "^10.0.3",
+    "turndown-attendant": "github:domchristie/turndown-attendant#dom_only"
+  },
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "keywords": [
+    "converter",
+    "html",
+    "markdown"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/domchristie/turndown.git"
+  },
+  "scripts": {
+    "build": "npm run build-cjs && npm run build-es && npm run build-umd && npm run build-iife",
+    "build-cjs": "rollup -c config/rollup.config.cjs.js && rollup -c config/rollup.config.browser.cjs.js",
+    "build-es": "rollup -c config/rollup.config.es.js && rollup -c config/rollup.config.browser.es.js",
+    "build-umd": "rollup -c config/rollup.config.umd.js && rollup -c config/rollup.config.browser.umd.js",
+    "build-iife": "rollup -c config/rollup.config.iife.js",
+    "build-test": "browserify test/turndown-test.js --outfile test/turndown-test.browser.js",
+    "prepublish": "npm run build",
+    "test": "npm run build && npm run build-test && standard ./src/**/*.js && node test/turndown-test.js"
+  }
+}
