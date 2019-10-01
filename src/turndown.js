@@ -7,19 +7,20 @@ var reduce = Array.prototype.reduce
 var leadingNewLinesRegExp = /^\n*/
 var trailingNewLinesRegExp = /\n*$/
 var escapes = [
-  [/\\/g, '\\\\'],
-  [/\*/g, '\\*'],
-  [/^-/g, '\\-'],
-  [/^\+ /g, '\\+ '],
-  [/^(=+)/g, '\\$1'],
-  [/^(#{1,6}) /g, '\\$1 '],
-  [/`/g, '\\`'],
-  [/^~~~/g, '\\~~~'],
-  [/\[/g, '\\['],
-  [/\]/g, '\\]'],
-  [/^>/g, '\\>'],
-  [/_/g, '\\_'],
-  [/^(\d+)\. /g, '$1\\. ']
+  [/wwwlink/, 'ESCAPED']
+  [/\\/, '\\\\'],
+  [/\*/, '\\*'],
+  [/^-/, '\\-'],
+  [/^\+ /, '\\+ '],
+  [/^(=+)/, '\\$1'],
+  [/^(#{1,6}) /, '\\$1 '],
+  [/`/, '\\`'],
+  [/^~~~/, '\\~~~'],
+  [/\[/, '\\['],
+  [/\]/, '\\]'],
+  [/^>/, '\\>'],
+  [/_/, '\\_'],
+  [/^(\d+)\. /, '$1\\. ']
 ]
 
 export default function TurndownService (options) {
@@ -141,9 +142,52 @@ TurndownService.prototype = {
    */
 
   escape: function (string) {
-    return escapes.reduce(function (accumulator, escape) {
-      return accumulator.replace(escape[0], escape[1])
-    }, string)
+
+    // Since the escape regexps themselves can contain capture groups, keeping track of which capture group
+    // belongs to which escape rule is necessary.
+    let reorderedEscapes = {}
+    let reorderedIndex = 0
+    // Merge the escape regexps into a single one in following form:
+    // /(escape1)|(escape2)| ... (escape~)/g 
+    const escapesRegexp = escapes.reduce((accumulator, group, index, arr) => {
+      let regex = group[0].toString().slice(1, -1)
+      let innerGroups = []
+
+      // https://stackoverflow.com/a/19863847
+      // TODO: find a (reasonably) recursive version that handles nested brackets
+      const groups = regex.match(/(\([^\(\)]*\))/g)
+      if (groups) {
+        groups.forEach(() => { 
+          innerGroups.push(reorderedIndex++)
+        })
+      }
+      reorderedEscapes[reorderedIndex++] = {escapeIndex: index, groupsIndex: innerGroups}
+
+      accumulator += `(${group[0].toString().slice(1, -1)})` // remove the forward slashes
+      if ((arr.length - 1) !== index) {
+        accumulator += '|'
+      }
+      return accumulator
+    }, "")
+
+
+    function replacer(...args) {
+      const matchingGroups = args.slice(1, -2) // args = (match, p1, p2, (...), pn, offset, string)
+      let escaped = ""
+      matchingGroups.forEach((group, index) => {
+        if (group) { // 
+          const escapeIndex = reorderedEscapes[index].escapeIndex
+          const groupsIndex = reorderedEscapes[index].groupsIndex
+          escaped = escapes[escapeIndex][1]
+          groupsIndex.forEach((escapeGroupIndex, index) => {
+            escaped = escaped.replace(new RegExp(`\\$${index + 1}`), groups[escapeGroupIndex])
+          }); 
+        }
+      })
+      return escaped;
+    }
+
+    return string.replace(new RegExp(escapesRegexp, "g"), replacer)
   }
 }
 
