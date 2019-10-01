@@ -7,7 +7,7 @@ var reduce = Array.prototype.reduce
 var leadingNewLinesRegExp = /^\n*/
 var trailingNewLinesRegExp = /\n*$/
 var escapes = [
-  [/wwwlink/, 'ESCAPED']
+  [/wwwlink/, 'ESCAPED'],
   [/\\/, '\\\\'],
   [/\*/, '\\*'],
   [/^-/, '\\-'],
@@ -174,13 +174,14 @@ TurndownService.prototype = {
     function replacer(...args) {
       const matchingGroups = args.slice(1, -2) // args = (match, p1, p2, (...), pn, offset, string)
       let escaped = ""
-      matchingGroups.forEach((group, index) => {
-        if (group) { // 
-          const escapeIndex = reorderedEscapes[index].escapeIndex
-          const groupsIndex = reorderedEscapes[index].groupsIndex
-          escaped = escapes[escapeIndex][1]
-          groupsIndex.forEach((escapeGroupIndex, index) => {
-            escaped = escaped.replace(new RegExp(`\\$${index + 1}`), groups[escapeGroupIndex])
+      console.log(matchingGroups)
+      Object.keys(reorderedEscapes).forEach((key, index) => {
+        if (matchingGroups[key]) {
+          const escape = reorderedEscapes[key] 
+          escaped = escapes[escape.escapeIndex][1]
+          console.log(escape)
+          escape.groupsIndex.forEach((escapeGroupIndex, index) => {
+            escaped = escaped.replace(new RegExp(`\\$${index + 1}`), matchingGroups[escapeGroupIndex])
           }); 
         }
       })
