@@ -2,6 +2,17 @@ import { repeat } from './utilities'
 
 var rules = {}
 
+rules.text = {
+  filter: '#text',
+
+  replacement: function (content, node, options) {
+    if (node.isCode) return node.nodeValue
+    return options.escapes.reduce(function (accumulator, escape) {
+      return accumulator.replace(escape[0], escape[1])
+    }, node.nodeValue).trim()
+  }
+}
+
 rules.paragraph = {
   filter: 'p',
 
