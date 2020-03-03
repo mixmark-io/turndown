@@ -904,8 +904,7 @@ Baz</pre>
 
 <div class="case" data-name="triple tildes inside code" data-options='{"codeBlockStyle": "fenced", "fence": "~~~"}'>
   <div class="input">
-<pre><code>
-~~~
+<pre><code>~~~
 Code
 ~~~
 </code></pre>
@@ -919,8 +918,7 @@ Code
 
 <div class="case" data-name="triple ticks inside code" data-options='{"codeBlockStyle": "fenced", "fence": "```"}'>
   <div class="input">
-<pre><code>
-```
+<pre><code>```
 Code
 ```
 </code></pre>
@@ -934,8 +932,7 @@ Code
 
 <div class="case" data-name="four ticks inside code" data-options='{"codeBlockStyle": "fenced", "fence": "```"}'>
   <div class="input">
-<pre><code>
-````
+<pre><code>````
 Code
 ````
 </code></pre>
@@ -945,6 +942,20 @@ Code
 Code
 ````
 `````</pre>
+</div>
+
+<div class="case" data-name="empty line in start/end of code block" data-options='{"codeBlockStyle": "fenced", "fence": "```"}'>
+  <div class="input">
+<pre><code>
+Code
+
+</code></pre>
+  </div>
+  <pre class="expected">```
+
+Code
+
+```</pre>
 </div>
 
 <!-- /TEST CASES -->
