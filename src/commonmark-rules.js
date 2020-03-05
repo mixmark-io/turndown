@@ -124,7 +124,7 @@ rules.fencedCodeBlock = {
       }
     }
 
-    var fence = fenceChar.repeat(fenceSize)
+    var fence = repeat(fenceChar, fenceSize)
 
     return (
       '\n\n' + fence + language + '\n' +
