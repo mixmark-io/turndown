@@ -119,8 +119,8 @@ rules.fencedCodeBlock = {
 
     var match
     while ((match = fenceInCodeRegex.exec(code))) {
-      if (match[ 0 ].length >= fenceSize) {
-        fenceSize = match[ 0 ].length + 1
+      if (match[0].length >= fenceSize) {
+        fenceSize = match[0].length + 1
       }
     }
 
