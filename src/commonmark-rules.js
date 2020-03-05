@@ -113,7 +113,7 @@ rules.fencedCodeBlock = {
     var language = (className.match(/language-(\S+)/) || [null, ''])[1]
     var code = node.firstChild.textContent
 
-    var fenceChar = options.fence === '~~~' ? '~' : '`'
+    var fenceChar = options.fence.charAt(0)
     var fenceSize = 3
     var fenceInCodeRegex = new RegExp('^' + fenceChar + '{3,}', 'gm')
 
