@@ -111,11 +111,25 @@ rules.fencedCodeBlock = {
   replacement: function (content, node, options) {
     var className = node.firstChild.className || ''
     var language = (className.match(/language-(\S+)/) || [null, ''])[1]
+    var code = node.firstChild.textContent
+
+    var fenceChar = options.fence.charAt(0)
+    var fenceSize = 3
+    var fenceInCodeRegex = new RegExp('^' + fenceChar + '{3,}', 'gm')
+
+    var match
+    while ((match = fenceInCodeRegex.exec(code))) {
+      if (match[0].length >= fenceSize) {
+        fenceSize = match[0].length + 1
+      }
+    }
+
+    var fence = repeat(fenceChar, fenceSize)
 
     return (
-      '\n\n' + options.fence + language + '\n' +
-      node.firstChild.textContent +
-      '\n' + options.fence + '\n\n'
+      '\n\n' + fence + language + '\n' +
+      code.replace(/\n$/, '') +
+      '\n' + fence + '\n\n'
     )
   }
 }
