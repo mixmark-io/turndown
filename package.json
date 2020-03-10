@@ -10,7 +10,7 @@
     "jsdom": false
   },
   "dependencies": {
-    "jsdom": "^16.2.0"
+    "jsdom": "^16.2.1"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.2",
