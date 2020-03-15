@@ -78,7 +78,7 @@
     "build-test": "browserify test/turndown-test.js --outfile test/turndown-test.browser.js",
     "build-umd": "rollup -c config/rollup.config.umd.js && rollup -c config/rollup.config.browser.umd.js",
     "prepublish": "npm run build",
-    "test": "npm run build && npm run build-test && standard ./src/**/*.js && ./bin/**/*.js && node test/turndown-test.js"
+    "test": "npm run build && npm run build-test && standard ./src/**/*.js && ./bin/*.js && node test/turndown-test.js"
   },
   "version": "6.0.0"
 }
