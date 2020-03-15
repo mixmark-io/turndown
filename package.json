@@ -48,7 +48,7 @@
     "turndown-attendant": "0.0.3"
   },
   "bin": {
-  	"turndown": "bin/turndown.js"
+    "turndown": "bin/turndown.js"
   },
   "files": [
     "bin",
