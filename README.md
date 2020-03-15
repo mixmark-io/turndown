@@ -32,17 +32,29 @@ var turndownService = new TurndownService()
 var markdown = turndownService.turndown('<h1>Hello world!</h1>')
 ```
 
+Turndown also accepts DOM nodes as input (either element nodes, document nodes,  or document fragment nodes):
+
+```js
+var markdown = turndownService.turndown(document.getElementById('content'))
+```
+
 ### Command Line Interface (CLI)
 
 ```
- turndown (<input> | --input <input>) [options]
+ turndown (<input> | --input [input]) [options]
 ```
 
-Where `<input>` is a string of HTML or a path to an HTML file. `options` are hyphen-separated flags of the options listed below (e.g. `headingStyle` becomes `--heading-style`).The CLI also accepts input via stdin.
+Where `<input>` or `[input]` is a string of HTML or a path to an HTML file. `options` are hyphen-separated flags of the options listed below (e.g. `headingStyle` becomes `--heading-style`).
+
+The CLI accepts input via stdin if option `-i, --input` is invoked without `[input]`.
 
 ## Options
 
-Options can be passed in to the constructor on instantiation.
+Options can be passed in to the constructor on instantiation. For example:
+
+```js
+var turndownService = new TurndownService({ option: 'value' })
+```
 
 | Option                | Valid values  | Default |
 | :-------------------- | :------------ | :------ |
@@ -121,8 +133,8 @@ Use a plugin, or an array of plugins. Example:
 // Import plugins from turndown-plugin-gfm
 var turndownPluginGfm = require('turndown-plugin-gfm')
 var gfm = turndownPluginGfm.gfm
-var tables = gfm.tables
-var strikethrough = gfm.strikethrough
+var tables = turndownPluginGfm.tables
+var strikethrough = turndownPluginGfm.strikethrough
 
 // Use the gfm plugin
 turndownService.use(gfm)
@@ -197,7 +209,7 @@ rules.emphasis = {
 
 ### Rule Precedence
 
-Turndown iterates over the set of rules, and picks the first one that matches satifies the `filter`. The following list describes the order of precedence:
+Turndown iterates over the set of rules, and picks the first one that matches the `filter`. The following list describes the order of precedence:
 
 1. Blank rule
 2. Added rules (optional)
@@ -209,6 +221,18 @@ Turndown iterates over the set of rules, and picks the first one that matches sa
 ## Plugins
 
 The plugin API provides a convenient way for developers to apply multiple extensions. A plugin is just a function that is called with the `TurndownService` instance.
+
+## Escaping Markdown Characters
+
+Turndown uses backslashes (`\`) to escape Markdown characters in the HTML input. This ensures that these characters are not interpreted as Markdown when the output is compiled back to HTML. For example, the contents of `<h1>1. Hello world</h1>` needs to be escaped to `1\. Hello world`, otherwise it will be interpreted as a list item rather than a heading.
+
+To avoid the complexity and the performance implications of parsing the content of every HTML element as Markdown, Turndown uses a group of regular expressions to escape potential Markdown syntax. As a result, the escaping rules can be quite aggressive.
+
+### Overriding `TurndownService.prototype.escape`
+
+If you are confident in doing so, you may want to customise the escaping behaviour to suit your needs. This can be done by overriding `TurndownService.prototype.escape`. `escape` takes the text of each HTML element and should return a version with the Markdown characters escaped.
+
+Note: text in code elements is never passed to`escape`.
 
 ## License
 
