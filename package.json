@@ -1,54 +1,84 @@
 {
-  "name": "turndown",
-  "description": "A library that converts HTML to Markdown",
-  "version": "4.0.1",
-  "author": "Dom Christie",
-  "main": "lib/turndown.cjs.js",
-  "module": "lib/turndown.es.js",
-  "jsnext:main": "lib/turndown.es.js",
+  "_from": "turndown@6.0.0",
+  "_id": "turndown@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha512-UVJBhSyRHCpNKtQ00mNWlYUM/i+tcipkb++F0PrOpt0L7EhNd0AX9mWEpL2dRFBu7LWXMp4HgAMA4OeKKnN7og==",
+  "_location": "/turndown",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "turndown@6.0.0",
+    "name": "turndown",
+    "escapedName": "turndown",
+    "rawSpec": "6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "6.0.0"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/turndown/-/turndown-6.0.0.tgz",
+  "_shasum": "c083d6109a9366be1b84b86b20af09140ea4b413",
+  "_spec": "turndown@6.0.0",
+  "_where": "/data/data/com.termux/files/home",
+  "author": {
+    "name": "Dom Christie"
+  },
   "browser": {
     "jsdom": false
   },
-  "dependencies": {
-    "commander": "^2.12.2",
-    "jsdom": "^11.3.0"
+  "bugs": {
+    "url": "https://github.com/domchristie/turndown/issues"
   },
+  "bundleDependencies": false,
+  "dependencies": {
+    "commander": "^2.20.0",
+    "jsdom": "^16.2.0"
+  },
+  "deprecated": false,
+  "description": "A library that converts HTML to Markdown",
   "devDependencies": {
-    "browserify": "^14.5.0",
-    "nodemon": "^1.10.2",
-    "rollup": "^0.50.0",
-    "rollup-plugin-commonjs": "^8.2.6",
-    "rollup-plugin-node-resolve": "^3.0.0",
-    "rollup-plugin-replace": "^2.0.0",
+    "@rollup/plugin-commonjs": "^11.0.2",
+    "@rollup/plugin-node-resolve": "^7.1.1",
+    "@rollup/plugin-replace": "^2.3.1",
+    "browserify": "^16.2.3",
+    "rollup": "^1.32.0",
     "standard": "^10.0.3",
-    "turndown-attendant": "0.0.2"
+    "turndown-attendant": "0.0.3"
+  },
+  "bin": {
+  	"turndown": "bin/turndown.js"
   },
   "files": [
+    "bin",
     "lib",
     "dist"
   ],
+  "homepage": "https://github.com/domchristie/turndown#readme",
+  "jsnext:main": "lib/turndown.es.js",
   "keywords": [
     "converter",
     "html",
     "markdown"
   ],
   "license": "MIT",
+  "main": "lib/turndown.cjs.js",
+  "module": "lib/turndown.es.js",
+  "name": "turndown",
   "repository": {
     "type": "git",
-    "url": "https://github.com/domchristie/turndown.git"
-  },
-  "bin": {
-    "turndown": "bin/turndown.js"
+    "url": "git+https://github.com/domchristie/turndown.git"
   },
   "scripts": {
     "build": "npm run build-cjs && npm run build-es && npm run build-umd && npm run build-iife",
     "build-cjs": "rollup -c config/rollup.config.cjs.js && rollup -c config/rollup.config.browser.cjs.js",
     "build-es": "rollup -c config/rollup.config.es.js && rollup -c config/rollup.config.browser.es.js",
-    "build-umd": "rollup -c config/rollup.config.umd.js && rollup -c config/rollup.config.browser.umd.js",
     "build-iife": "rollup -c config/rollup.config.iife.js",
     "build-test": "browserify test/turndown-test.js --outfile test/turndown-test.browser.js",
+    "build-umd": "rollup -c config/rollup.config.umd.js && rollup -c config/rollup.config.browser.umd.js",
     "prepublish": "npm run build",
-    "start": "nodemon --watch ./src/**/*.js --exec 'npm run build && npm test'",
-    "test": "npm run build && npm run build-test && standard ./src/**/*.js ./bin/**/*.js && node test/turndown-test.js"
-  }
+    "test": "npm run build && npm run build-test && standard ./src/**/*.js && ./bin/**/*.js && node test/turndown-test.js"
+  },
+  "version": "6.0.0"
 }
