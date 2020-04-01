@@ -1,10 +1,10 @@
 import { isBlock, isVoid, hasVoid, isMeaningfulWhenBlank, hasMeaningfulWhenBlank } from './utilities'
 
-export default function Node (node) {
+export default function Node (node, options) {
   node.isBlock = isBlock(node)
-  node.isCode = node.nodeName.toLowerCase() === 'code' || node.parentNode.isCode
+  node.isCode = node.nodeName === 'CODE' || node.parentNode.isCode
   node.isBlank = isBlank(node)
-  node.flankingWhitespace = flankingWhitespace(node)
+  node.flankingWhitespace = flankingWhitespace(node, options)
   return node
 }
 
@@ -18,18 +18,20 @@ function isBlank (node) {
   )
 }
 
-function flankingWhitespace (node) {
-  if (node.isBlock) return { leading: '', trailing: '' }
+function flankingWhitespace (node, options) {
+  if (node.isBlock || (options.preformattedCode && node.isCode)) {
+    return { leading: '', trailing: '' }
+  }
 
   var edges = edgeWhitespace(node.textContent)
 
   // abandon leading ASCII WS if left-flanked by ASCII WS
-  if (edges.leadingAscii && isFlankedByWhitespace('left', node)) {
+  if (edges.leadingAscii && isFlankedByWhitespace('left', node, options)) {
     edges.leading = edges.leadingNonAscii
   }
 
   // abandon trailing ASCII WS if right-flanked by ASCII WS
-  if (edges.trailingAscii && isFlankedByWhitespace('right', node)) {
+  if (edges.trailingAscii && isFlankedByWhitespace('right', node, options)) {
     edges.trailing = edges.trailingNonAscii
   }
 
@@ -48,7 +50,7 @@ function edgeWhitespace (string) {
   }
 }
 
-function isFlankedByWhitespace (side, node) {
+function isFlankedByWhitespace (side, node, options) {
   var sibling
   var regExp
   var isFlanked
@@ -64,6 +66,8 @@ function isFlankedByWhitespace (side, node) {
   if (sibling) {
     if (sibling.nodeType === 3) {
       isFlanked = regExp.test(sibling.nodeValue)
+    } else if (options.preformattedCode && sibling.nodeName === 'CODE') {
+      isFlanked = false
     } else if (sibling.nodeType === 1 && !isBlock(sibling)) {
       isFlanked = regExp.test(sibling.textContent)
     }
