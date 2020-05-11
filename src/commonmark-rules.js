@@ -153,7 +153,8 @@ rules.inlineLink = {
 
   replacement: function (content, node) {
     var href = node.getAttribute('href')
-    var title = node.getAttribute('title') ? ' "' + node.getAttribute('title') + '"' : ''
+    var title = cleanAttribute(node.getAttribute('title'))
+    if (title) title = ' "' + title + '"'
     return '[' + content + '](' + href + title + ')'
   }
 }
@@ -169,7 +170,8 @@ rules.referenceLink = {
 
   replacement: function (content, node, options) {
     var href = node.getAttribute('href')
-    var title = node.title ? ' "' + node.title + '"' : ''
+    var title = cleanAttribute(node.getAttribute('title'))
+    if (title) title = ' "' + title + '"'
     var replacement
     var reference
 
@@ -251,12 +253,16 @@ rules.image = {
   filter: 'img',
 
   replacement: function (content, node) {
-    var alt = node.getAttribute('alt') || ''
+    var alt = cleanAttribute(node.getAttribute('alt'))
     var src = node.getAttribute('src') || ''
-    var title = node.getAttribute('title') || ''
+    var title = cleanAttribute(node.getAttribute('title'))
     var titlePart = title ? ' "' + title + '"' : ''
     return src ? '![' + alt + ']' + '(' + src + titlePart + ')' : ''
   }
+}
+
+function cleanAttribute (attribute) {
+  return attribute ? attribute.replace(/(\n+\s*)+/g, '\n') : ''
 }
 
 export default rules
