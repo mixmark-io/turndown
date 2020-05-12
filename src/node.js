@@ -1,4 +1,4 @@
-import { isBlock, isVoid, hasVoid } from './utilities'
+import { isBlock, isVoid, hasVoid, isMeaningfulWhenBlank, hasMeaningfulWhenBlank } from './utilities'
 
 export default function Node (node) {
   node.isBlock = isBlock(node)
@@ -10,10 +10,11 @@ export default function Node (node) {
 
 function isBlank (node) {
   return (
-    ['A', 'TH', 'TD', 'IFRAME', 'SCRIPT', 'AUDIO', 'VIDEO'].indexOf(node.nodeName) === -1 &&
-    /^\s*$/i.test(node.textContent) &&
     !isVoid(node) &&
-    !hasVoid(node)
+    !isMeaningfulWhenBlank(node) &&
+    /^\s*$/i.test(node.textContent) &&
+    !hasVoid(node) &&
+    !hasMeaningfulWhenBlank(node)
   )
 }
 

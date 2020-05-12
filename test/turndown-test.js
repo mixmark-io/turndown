@@ -118,6 +118,16 @@ test('keep rules are overridden by the standard rules', function (t) {
   t.equal(turndownService.turndown('<p>Hello world</p>'), 'Hello world')
 })
 
+test('keeping elements that have a blank textContent but contain significant elements', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService()
+  turndownService.keep('figure')
+  t.equal(
+    turndownService.turndown('<figure><iframe src="http://example.com"></iframe></figure>'),
+    '<figure><iframe src="http://example.com"></iframe></figure>'
+  )
+})
+
 test('keepReplacement can be customised', function (t) {
   t.plan(1)
   var turndownService = new TurndownService({
