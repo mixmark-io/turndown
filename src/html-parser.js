@@ -47,9 +47,10 @@ function createHTMLParser () {
       }
     }
   } else {
-    var JSDOM = require('jsdom').JSDOM
-    Parser.prototype.parseFromString = function (string) {
-      return new JSDOM(string).window.document
+    var domino = require('domino');
+    Parser.prototype.parseFromString = function (html) {
+      var window = domino.createWindow(html);
+      return window.document
     }
   }
   return Parser
@@ -60,7 +61,7 @@ function shouldUseActiveX () {
   try {
     document.implementation.createHTMLDocument('').open()
   } catch (e) {
-    if (window.ActiveXObject) useActiveX = true
+    useActiveX = true
   }
   return useActiveX
 }
