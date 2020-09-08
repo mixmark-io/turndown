@@ -128,7 +128,7 @@ rules.fencedCodeBlock = {
 
     return (
       '\n\n' + fence + language + '\n' +
-      code.replace(/\n$/, '') +
+      content +
       '\n' + fence + '\n\n'
     )
   }
