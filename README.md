@@ -24,6 +24,8 @@ For usage with RequireJS, UMD versions are located in `lib/turndown.umd.js` (for
 
 ## Usage
 
+### Node.js
+
 ```js
 // For Node.js
 var TurndownService = require('turndown')
@@ -37,6 +39,10 @@ Turndown also accepts DOM nodes as input (either element nodes, document nodes, 
 ```js
 var markdown = turndownService.turndown(document.getElementById('content'))
 ```
+
+### Browser developer console
+
+See: https://gist.github.com/vmiheer/47d56ccaf73f4fdb26aeb2969d6bfbfb
 
 ## Options
 
