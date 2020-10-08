@@ -6,7 +6,7 @@ export default function (config) {
   return {
     input: 'src/turndown.js',
     output: config.output,
-    external: ['jsdom'],
+    external: ['domino'],
     plugins: [
       commonjs(),
       replace({ 'process.browser': JSON.stringify(!!config.browser) }),

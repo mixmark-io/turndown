@@ -7,10 +7,10 @@
   "module": "lib/turndown.es.js",
   "jsnext:main": "lib/turndown.es.js",
   "browser": {
-    "jsdom": false
+    "domino": false
   },
   "dependencies": {
-    "jsdom": "^16.2.0"
+    "domino": "^2.1.6"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.2",
