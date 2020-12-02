@@ -233,19 +233,15 @@ rules.code = {
   },
 
   replacement: function (content) {
-    if (!content.trim()) return ''
+    if (!content) return ''
+    content = content.replace(/\r?\n|\r/g, ' ')
 
+    var extraSpace = /^`|^ .*?[^ ].* $|`$/.test(content) ? ' ' : ''
     var delimiter = '`'
-    var leadingSpace = ''
-    var trailingSpace = ''
-    var matches = content.match(/`+/gm)
-    if (matches) {
-      if (/^`/.test(content)) leadingSpace = ' '
-      if (/`$/.test(content)) trailingSpace = ' '
-      while (matches.indexOf(delimiter) !== -1) delimiter = delimiter + '`'
-    }
+    var matches = content.match(/`+/gm) || []
+    while (matches.indexOf(delimiter) !== -1) delimiter = delimiter + '`'
 
-    return delimiter + leadingSpace + content + trailingSpace + delimiter
+    return delimiter + extraSpace + content + extraSpace + delimiter
   }
 }
 
