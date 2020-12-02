@@ -7,7 +7,10 @@
   "module": "lib/turndown.es.js",
   "jsnext:main": "lib/turndown.es.js",
   "browser": {
-    "domino": false
+    "domino": false,
+    "./lib/turndown.cjs.js": "./lib/turndown.browser.cjs.js",
+    "./lib/turndown.es.js": "./lib/turndown.browser.es.js",
+    "./lib/turndown.umd.js": "./lib/turndown.browser.umd.js"
   },
   "dependencies": {
     "domino": "^2.1.6"
