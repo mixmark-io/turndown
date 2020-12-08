@@ -41,7 +41,7 @@ function collapseWhitespace (options) {
   if (!element.firstChild || isPre(element)) return
 
   var prevText = null
-  var prevVoid = false
+  var keepLeadingWs = false
 
   var prev = null
   var node = next(prev, element, isPre)
@@ -51,7 +51,7 @@ function collapseWhitespace (options) {
       var text = node.data.replace(/[ \r\n\t]+/g, ' ')
 
       if ((!prevText || / $/.test(prevText.data)) &&
-          !prevVoid && text[0] === ' ') {
+          !keepLeadingWs && text[0] === ' ') {
         text = text.substr(1)
       }
 
@@ -71,11 +71,14 @@ function collapseWhitespace (options) {
         }
 
         prevText = null
-        prevVoid = false
-      } else if (isVoid(node)) {
-        // Avoid trimming space around non-block, non-BR void elements.
+        keepLeadingWs = false
+      } else if (isVoid(node) || isPre(node)) {
+        // Avoid trimming space around non-block, non-BR void elements and inline PRE.
         prevText = null
-        prevVoid = true
+        keepLeadingWs = true
+      } else if (prevText) {
+        // Drop protection if set previously.
+        keepLeadingWs = false
       }
     } else {
       node = remove(node)

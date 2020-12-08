@@ -1042,6 +1042,40 @@ Code
   <pre class="expected">foo &nbsp;_bar_</pre>
 </div>
 
+<!-- Behavior of `<code>` with CSS set as `white-space: pre-wrap;`, e.g. in GitLab -->
+<div class="case" data-name="preformatted code with leading whitespace" data-options='{"preformattedCode": true}'>
+  <div class="input">Four spaces <code>    make an indented code block in Markdown</code></div>
+  <pre class="expected">Four spaces `    make an indented code block in Markdown`</pre>
+</div>
+
+<div class="case" data-name="preformatted code with trailing whitespace" data-options='{"preformattedCode": true}'>
+  <div class="input"><code>A line break  </code> <b> note the spaces</b></div>
+  <pre class="expected">`A line break  ` **note the spaces**</pre>
+</div>
+
+<div class="case" data-name="preformatted code tightly surrounded" data-options='{"preformattedCode": true}'>
+  <div class="input"><b>tight</b><code>code</code><b>wrap</b></div>
+  <pre class="expected">**tight**`code`**wrap**</pre>
+</div>
+
+<div class="case" data-name="preformatted code loosely surrounded" data-options='{"preformattedCode": true}'>
+  <div class="input"><b>not so tight </b><code>code</code><b> wrap</b></div>
+  <pre class="expected">**not so tight** `code` **wrap**</pre>
+</div>
+
+<!-- newlines become spaces + extra space must be added  -->
+<div class="case" data-name="preformatted code with newlines" data-options='{"preformattedCode": true}'>
+  <div class="input">
+<code>
+
+ nasty
+code
+
+</code>
+  </div>
+  <pre class="expected">`    nasty code   `</pre>
+</div>
+
 <!-- /TEST CASES -->
 
 <script src="turndown-test.browser.js"></script>
