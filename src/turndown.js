@@ -6,7 +6,7 @@ import Node from './node'
 var reduce = Array.prototype.reduce
 var leadingNewLinesRegExp = /^\n*/
 var trailingNewLinesRegExp = /\n*$/
-var escapes = [
+var ESCAPES = [
   [/\\/g, '\\\\'],
   [/\*/g, '\\*'],
   [/^-/g, '\\-'],
@@ -25,8 +25,10 @@ var escapes = [
 export default function TurndownService (options) {
   if (!(this instanceof TurndownService)) return new TurndownService(options)
 
+  var self = this
   var defaults = {
     rules: COMMONMARK_RULES,
+    escapes: ESCAPES,
     headingStyle: 'setext',
     hr: '* * *',
     bulletListMarker: '*',
@@ -46,6 +48,9 @@ export default function TurndownService (options) {
     },
     defaultReplacement: function (content, node) {
       return node.isBlock ? '\n\n' + content + '\n\n' : content
+    },
+    textReplacement: function (content, node, options) {
+      return node.isCode ? content : self.escape(content, node, options)
     }
   }
   this.options = extend({}, defaults, options)
@@ -141,10 +146,10 @@ TurndownService.prototype = {
    * @type String
    */
 
-  escape: function (string) {
-    return escapes.reduce(function (accumulator, escape) {
+  escape: function (content, node, options) {
+    return options.escapes.reduce(function (accumulator, escape) {
       return accumulator.replace(escape[0], escape[1])
-    }, string)
+    }, content)
   }
 }
 
@@ -163,7 +168,8 @@ function process (parentNode) {
 
     var replacement = ''
     if (node.nodeType === 3) {
-      replacement = node.isCode ? node.nodeValue : self.escape(node.nodeValue)
+      var textRule = self.rules.forNode(node)
+      replacement = textRule.replacement(node.nodeValue, node, self.options)
     } else if (node.nodeType === 1) {
       replacement = replacementForNode.call(self, node)
     }

@@ -66,6 +66,8 @@ var turndownService = new TurndownService({ option: 'value' })
 | `blankReplacement`    | rule replacement function | See **Special Rules** below |
 | `keepReplacement`     | rule replacement function | See **Special Rules** below |
 | `defaultReplacement`  | rule replacement function | See **Special Rules** below |
+| `textReplacement`     | rule replacement function | See **Special Rules** below |
+| `escapes`             | array of replacement pairs | See [source code](https://github.com/domchristie/turndown/blob/master/src/turndown.js#L9) |
 
 ## Methods
 
@@ -197,6 +199,8 @@ rules.emphasis = {
 **Remove rules** determine which elements to remove altogether. By default, no elements are removed.
 
 **Default rule** handles nodes which are not recognised by any other rule. By default, it outputs the node's text content (separated  by blank lines if it is a block-level element). Its behaviour can be customised with the `defaultReplacement` option.
+
+**Text rule** handles text nodes. By default it preserves text under `<code>` elements and escapes all other text.
 
 ### Rule Precedence
 

@@ -7,6 +7,10 @@ export default function Rules (options) {
   this._keep = []
   this._remove = []
 
+  this.textRule = {
+    replacement: options.textReplacement
+  }
+
   this.blankRule = {
     replacement: options.blankReplacement
   }
@@ -43,6 +47,7 @@ Rules.prototype = {
   },
 
   forNode: function (node) {
+    if (node.nodeType === 3) return this.textRule
     if (node.isBlank) return this.blankRule
     var rule
 
