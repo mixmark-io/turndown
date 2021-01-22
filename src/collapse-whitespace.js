@@ -37,6 +37,7 @@ function collapseWhitespace (options) {
   var isPre = options.isPre || function (node) {
     return node.nodeName === 'PRE'
   }
+  var collapseWhitespaces = options.collapseWhitespaces
 
   if (!element.firstChild || isPre(element)) return
 
@@ -48,7 +49,15 @@ function collapseWhitespace (options) {
 
   while (node !== element) {
     if (node.nodeType === 3 || node.nodeType === 4) { // Node.TEXT_NODE or Node.CDATA_SECTION_NODE
-      var text = node.data.replace(/[ \r\n\t]+/g, ' ')
+      var text
+
+      // Replace series of multiple whitespaces with a single one
+      if (collapseWhitespaces) {
+        text = node.data.replace(/[ \r\n\t]+/g, ' ')
+      } else {
+        // Replace only for leading and trailing
+        text = node.data.replace(/^[ \r\n\t]+|[ \r\n\t]+$/g, ' ')
+      }
 
       if ((!prevText || / $/.test(prevText.data)) &&
           !keepLeadingWs && text[0] === ' ') {

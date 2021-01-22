@@ -38,6 +38,7 @@ export default function TurndownService (options) {
     linkReferenceStyle: 'full',
     br: '  ',
     preformattedCode: false,
+    collapseMultipleWhitespaces: true,
     blankReplacement: function (content, node) {
       return node.isBlock ? '\n\n' : ''
     },

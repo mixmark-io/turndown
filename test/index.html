@@ -717,6 +717,16 @@ text after blank div</pre>
 Content in another div</pre>
 </div>
 
+<div class="case" data-name="preserve multiple whitespaces" data-options='{"collapseMultipleWhitespaces": false}'>
+  <div class="input"><a href="http://www.example.com">link with     spaces</a></div>
+  <pre class="expected">[link with     spaces](http://www.example.com)</pre>
+</div>
+
+<div class="case" data-name="trim string preserving multiple whitespaces" data-options='{"collapseMultipleWhitespaces": false}'>
+  <div class="input"><span>this <em>  is     an example       </em> with space</span></div>
+  <pre class="expected">this _is     an example_ with space</pre>
+</div>
+
 <div class="case" data-name="escaping backslashes">
   <div class="input">backslash \</div>
   <pre class="expected">backslash \\</pre>

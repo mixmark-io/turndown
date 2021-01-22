@@ -20,7 +20,8 @@ export default function RootNode (input, options) {
     element: root,
     isBlock: isBlock,
     isVoid: isVoid,
-    isPre: options.preformattedCode ? isPreOrCode : null
+    isPre: options.preformattedCode ? isPreOrCode : null,
+    collapseWhitespaces: options.collapseMultipleWhitespaces
   })
 
   return root

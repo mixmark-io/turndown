@@ -58,6 +58,7 @@ var turndownService = new TurndownService({ option: 'value' })
 | `linkStyle`           | `inlined` or `referenced` | `inlined` |
 | `linkReferenceStyle`  | `full`, `collapsed`, or `shortcut` | `full` |
 | `preformattedCode`    | `false` or [`true`](https://github.com/lucthev/collapse-whitespace/issues/16) | `false` |
+| `collapseMultipleWhitespaces` | `true` or `false` | `true` |
 
 ### Advanced Options
 
