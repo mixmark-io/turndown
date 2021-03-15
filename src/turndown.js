@@ -1,11 +1,9 @@
 import COMMONMARK_RULES from './commonmark-rules'
 import Rules from './rules'
-import { extend } from './utilities'
+import { extend, trimLeadingNewlines, trimTrailingNewlines } from './utilities'
 import RootNode from './root-node'
 import Node from './node'
 var reduce = Array.prototype.reduce
-var leadingNewLinesRegExp = /^\n*/
-var trailingNewLinesRegExp = /\n*$/
 var escapes = [
   [/\\/g, '\\\\'],
   [/\*/g, '\\*'],
@@ -212,31 +210,21 @@ function replacementForNode (node) {
 }
 
 /**
- * Determines the new lines between the current output and the replacement
+ * Joins replacement to the current output with appropriate number of new lines
  * @private
  * @param {String} output The current conversion output
  * @param {String} replacement The string to append to the output
- * @returns The whitespace to separate the current output and the replacement
+ * @returns Joined output
  * @type String
  */
 
-function separatingNewlines (output, replacement) {
-  var newlines = [
-    output.match(trailingNewLinesRegExp)[0],
-    replacement.match(leadingNewLinesRegExp)[0]
-  ].sort()
-  var maxNewlines = newlines[newlines.length - 1]
-  return maxNewlines.length < 2 ? maxNewlines : '\n\n'
-}
+function join (output, replacement) {
+  var s1 = trimTrailingNewlines(output)
+  var s2 = trimLeadingNewlines(replacement)
+  var nls = Math.max(output.length - s1.length, replacement.length - s2.length)
+  var separator = '\n\n'.substring(0, nls)
 
-function join (string1, string2) {
-  var separator = separatingNewlines(string1, string2)
-
-  // Remove trailing/leading newlines and replace with separator
-  string1 = string1.replace(trailingNewLinesRegExp, '')
-  string2 = string2.replace(leadingNewLinesRegExp, '')
-
-  return string1 + separator + string2
+  return s1 + separator + s2
 }
 
 /**
