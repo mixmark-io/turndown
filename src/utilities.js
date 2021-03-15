@@ -12,6 +12,17 @@ export function repeat (character, count) {
   return Array(count + 1).join(character)
 }
 
+export function trimLeadingNewlines (string) {
+  return string.replace(/^\n*/, '')
+}
+
+export function trimTrailingNewlines (string) {
+  // avoid match-at-end regexp bottleneck, see #370
+  var indexEnd = string.length
+  while (indexEnd > 0 && string[indexEnd - 1] === '\n') indexEnd--
+  return string.substring(0, indexEnd)
+}
+
 export var blockElements = [
   'ADDRESS', 'ARTICLE', 'ASIDE', 'AUDIO', 'BLOCKQUOTE', 'BODY', 'CANVAS',
   'CENTER', 'DD', 'DIR', 'DIV', 'DL', 'DT', 'FIELDSET', 'FIGCAPTION', 'FIGURE',
