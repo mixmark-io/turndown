@@ -18,7 +18,7 @@ When a string input is passed, the DOM parser is picked as follows.
 * For standalone usage, [domino](https://github.com/fgnass/domino) parser is used.
 
 Please note that a malicious string input can cause undesired effects within the DOM parser
-even before Turndown code starts processing processes the document itself.
+even before Turndown code starts processing the document itself.
 These effects especially include downloading external resources and eventual script execution.
 
 For critical applications with untrusted inputs, you should consider either cleaning up 
