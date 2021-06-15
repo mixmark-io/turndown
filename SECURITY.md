@@ -19,7 +19,7 @@ When a string input is passed, the DOM parser is picked as follows.
 
 Please note that a malicious string input can cause undesired effects within the DOM parser
 even before Turndown code starts processing the document itself.
-These effects especially include downloading external resources and eventual script execution.
+These effects especially include script execution and downloading external resources.
 
 For critical applications with untrusted inputs, you should consider either cleaning up 
 the input with a dedicated HTML sanitizer library or using an alternate DOM parser that
@@ -28,8 +28,8 @@ better suits your security needs.
 In particular, Turndown version 6 and below used [jsdom](https://github.com/jsdom/jsdom) as the
 standalone DOM parser. As `jsdom` is a fully featured DOM parser with script execution support,
 it imposes an inherent security risk. We recommend upgrading to version 7, which uses
-[domino](https://github.com/fgnass/domino) that doesn't execute scripts nor does it download
-external resources.
+[domino](https://github.com/fgnass/domino) that doesn't even support executing scripts nor
+downloading external resources.
 
 ## Reporting a Vulnerability
 
