@@ -119,12 +119,17 @@ test('keep rules are overridden by the standard rules', function (t) {
 })
 
 test('keeping elements that have a blank textContent but contain significant elements', function (t) {
-  t.plan(1)
+  t.plan(2)
   var turndownService = new TurndownService()
   turndownService.keep('figure')
   t.equal(
     turndownService.turndown('<figure><iframe src="http://example.com"></iframe></figure>'),
     '<figure><iframe src="http://example.com"></iframe></figure>'
+  )
+  // https://ckeditor.com/docs/ckeditor5/latest/features/media-embed.html
+  t.equal(
+    turndownService.turndown('<figure class="media"><oembed url="https://www.youtube.com/watch?v=QTceLKXwHLY"></oembed></figure>'),
+    '<figure class="media"><oembed url="https://www.youtube.com/watch?v=QTceLKXwHLY"></oembed></figure>'
   )
 })
 
