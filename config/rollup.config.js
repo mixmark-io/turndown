@@ -9,7 +9,7 @@ export default function (config) {
     external: ['domino'],
     plugins: [
       commonjs(),
-      replace({ 'process.browser': JSON.stringify(!!config.browser) }),
+      replace({ 'process.browser': JSON.stringify(!!config.browser), preventAssignment: true }),
       resolve()
     ]
   }
