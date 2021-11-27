@@ -242,6 +242,18 @@ console.log(
 
     input.addEventListener('input', update)
 
+    input.addEventListener('paste', function (e) {
+      var clipboardData = e.clipboardData
+      if (!clipboardData || !clipboardData.getData) {
+        return
+      }
+      var html = clipboardData.getData('text/html')
+      if (html && document.queryCommandSupported('insertText')) {
+        e.preventDefault()
+        document.execCommand('insertText', false, html)
+      }
+    })
+
     optionsForm.addEventListener('change', function () {
       turndownService = new window.TurndownService(options())
       update()
