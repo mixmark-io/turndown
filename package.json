@@ -22,7 +22,9 @@
     "browserify": "17.0.0",
     "rollup": "2.52.3",
     "standard": "^10.0.3",
-    "turndown-attendant": "0.0.3"
+    "turndown-attendant": "0.0.3",
+    "fast-check": "^2.0.0",
+    "markdown-it": "^12.2.3"
   },
   "files": [
     "lib",

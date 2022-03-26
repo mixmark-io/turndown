@@ -1,5 +1,7 @@
 var Attendant = require('turndown-attendant')
 var TurndownService = require('../lib/turndown.cjs')
+var fc = require('fast-check')
+var Md = require('markdown-it')
 
 var attendant = new Attendant({
   file: __dirname + '/index.html',
@@ -174,7 +176,104 @@ test('remove elements are overridden by keep', function (t) {
   turndownService.keep(['del', 'ins'])
   turndownService.remove(['del', 'ins'])
   t.equal(turndownService.turndown(
-    '<p>Hello <del>world</del><ins>World</ins></p>'),
+      '<p>Hello <del>world</del><ins>World</ins></p>'),
     'Hello <del>world</del><ins>World</ins>'
   )
+})
+
+// Property based tests
+
+function arbitraryHtml (opts) {
+  let { spans, divs, hr, br, unclosedP } = Object.assign({
+    spans: ['em', 'i', 'strong', 'b', 'span', 'q'],
+    divs: ['p', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+    hr: true,
+    br: true,
+    unclosedP: true
+  }, opts)
+  const pseudoDom = fc.letrec(rec => {
+    let spanOpts = [
+      fc.lorem(),
+      fc.array(rec('span'), {
+        minLength: 1
+      })
+    ]
+    if (br) {
+      spanOpts.push(fc.lorem().map(s => `${s}<br/>`))
+    }
+    if (spans.length > 0) {
+      spanOpts.push(fc.record({
+        tag: fc.constantFrom(...spans),
+        content: rec('span')
+      }))
+    }
+    let span = fc.oneof({ depthFactor: 0.5, withCrossShrink: true }, ...spanOpts)
+    let divOpts = []
+    if (hr) {
+      divOpts.push(fc.constant('<hr/>'))
+    }
+    if (unclosedP) {
+      divOpts.push(fc.lorem().map(s => `<p>${s}`))
+    }
+    if (divs.length > 0) {
+      divOpts.push(fc.record({
+        tag: fc.constantFrom(...divs),
+        content: rec('span')
+      }))
+    }
+
+    let div = fc.oneof(...divOpts)
+    return {
+      tree: fc.oneof(rec('span'), rec('div')),
+      span: span,
+      div: div
+    }
+  }).tree
+  const flatten = (tree) => {
+    if (Array.isArray(tree)) {
+      return tree.map(flatten).join(' ')
+    } else if (typeof tree === 'string') {
+      return tree
+    } else {
+      return `<${tree.tag}>${flatten(tree.content)}</${tree.tag}>`
+    }
+  }
+  return pseudoDom.map(flatten)
+}
+
+test('arbitraryHtml sanity check', (t) => {
+  let n = 0
+  fc.assert(
+    fc.property(arbitraryHtml(), fc.context(), (html, ctx) => {
+      ctx.log(`HTML: ${JSON.stringify(html)}`)
+      n += 1
+      t.plan(n)
+      t.equal(typeof html, 'string')
+    })
+  )
+})
+
+// Full-blown inverse would be f(g(x)) = x, but to account for bytewise diffs, but semantic
+// equivalence, we use a set of conditions listed in:
+// https://hypothesis.works/articles/canonical-serialization/
+test('Round Trip', (t) => {
+  let mdIt = new Md()
+  let turndownService = new TurndownService()
+  let normalize = (s) => {
+    return mdIt.render(turndownService.turndown(s))
+  }
+  let compare = (left, right) => {
+    if (left !== right) {
+      throw new Error(`left:\n<<<\n${left}\n>>>\nright:\n<<<\n${right}\n>>>`)
+    }
+  }
+  fc.assert(
+    fc.property(arbitraryHtml(), fc.context(), (html, ctx) => {
+      ctx.log(`HTML: ${JSON.stringify(html)}`)
+      let markdown = turndownService.turndown(html)
+      compare(markdown, turndownService.turndown(normalize(html)))
+      compare(normalize(html), normalize(normalize(html)))
+    })
+  )
+  t.end()
 })
