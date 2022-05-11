@@ -62,16 +62,24 @@ rules.listItem = {
   filter: 'li',
 
   replacement: function (content, node, options) {
+    const spaces = 2
+    let prefix = ''
     content = content
       .replace(/^\n+/, '') // remove leading newlines
       .replace(/\n+$/, '\n') // replace trailing newlines with just a single one
-      .replace(/\n/gm, '\n    ') // indent
-    var prefix = options.bulletListMarker + '   '
-    var parent = node.parentNode
+    const parent = node.parentNode
     if (parent.nodeName === 'OL') {
-      var start = parent.getAttribute('start')
-      var index = Array.prototype.indexOf.call(parent.children, node)
-      prefix = (start ? Number(start) + index : index + 1) + '.  '
+      const start = parseInt(parent.getAttribute('start')) || 0
+      const digits = Math.log(parent.children.length + start) * Math.LOG10E + 1 | 0
+      const index = Array.prototype.indexOf.call(parent.children, node)
+      const itemNumber = (start ? Number(start) + index : index + 1)
+      const suffix = '.'
+      const padding = (digits > spaces ? digits + 1 : spaces + 1) + suffix.length // increase padding if beyond 99
+      prefix = (itemNumber + suffix).padEnd(padding)
+      content = content.replace(/\n/gm, '\n  '.padEnd(1 + padding))
+    } else {
+      prefix = options.bulletListMarker + ' '.padEnd(1 + spaces)
+      content = content.replace(/\n/gm, '\n  '.padEnd(3 + spaces)) // indent
     }
     return (
       prefix + content + (node.nextSibling && !/\n$/.test(content) ? '\n' : '')
