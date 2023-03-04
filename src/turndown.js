@@ -25,16 +25,16 @@ export default function TurndownService (options) {
 
   var defaults = {
     rules: COMMONMARK_RULES,
-    headingStyle: 'setext',
-    hr: '* * *',
-    bulletListMarker: '*',
-    codeBlockStyle: 'indented',
+    headingStyle: 'atx',
+    hr: '---',
+    bulletListMarker: '-',
+    codeBlockStyle: 'fence',
     fence: '```',
-    emDelimiter: '_',
+    emDelimiter: '*',
     strongDelimiter: '**',
     linkStyle: 'inlined',
     linkReferenceStyle: 'full',
-    br: '  ',
+    br: '\n',
     preformattedCode: false,
     blankReplacement: function (content, node) {
       return node.isBlock ? '\n\n' : ''
