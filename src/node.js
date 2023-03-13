@@ -39,14 +39,31 @@ function flankingWhitespace (node, options) {
 }
 
 function edgeWhitespace (string) {
-  var m = string.match(/^(([ \t\r\n]*)(\s*))[\s\S]*?((\s*?)([ \t\r\n]*))$/)
+  const leadingWhiteSpaceMatch = string.match(/^(([ \t\r\n]*)(\s*))/)
+  const isWhiteSpaceOnlyString = leadingWhiteSpaceMatch && leadingWhiteSpaceMatch[0].length === string.length
+  if (isWhiteSpaceOnlyString) {
+    return {
+      leading: leadingWhiteSpaceMatch[1],
+      leadingAscii: leadingWhiteSpaceMatch[2],
+      leadingNonAscii: leadingWhiteSpaceMatch[3],
+      trailing: '',
+      trailingNonAscii: '',
+      trailingAscii: ''
+    }
+  }
+  const contentString = string.match(/^(\s*)(\S[\S\s]*)/)
+  const leadingWhiteSpace = contentString ? contentString[1] : ''
+  const content = contentString ? contentString[2] : ''
+  const trailingText = string.substring(leadingWhiteSpace.length + content.trim().length)
+  const trailingWhiteSpaceMatch = trailingText.match(/((\s*?)([ \t\r\n]*))$/)
+
   return {
-    leading: m[1], // whole string for whitespace-only strings
-    leadingAscii: m[2],
-    leadingNonAscii: m[3],
-    trailing: m[4], // empty for whitespace-only strings
-    trailingNonAscii: m[5],
-    trailingAscii: m[6]
+    leading: leadingWhiteSpaceMatch ? leadingWhiteSpaceMatch[1] : '',
+    leadingAscii: leadingWhiteSpaceMatch ? leadingWhiteSpaceMatch[2] : '',
+    leadingNonAscii: leadingWhiteSpaceMatch ? leadingWhiteSpaceMatch[3] : '',
+    trailing: trailingText,
+    trailingNonAscii: trailingWhiteSpaceMatch ? trailingWhiteSpaceMatch[2] : '',
+    trailingAscii: trailingWhiteSpaceMatch ? trailingWhiteSpaceMatch[3] : ''
   }
 }
 
