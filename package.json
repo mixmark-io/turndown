@@ -1,7 +1,7 @@
 {
   "name": "turndown",
   "description": "A library that converts HTML to Markdown",
-  "version": "7.1.1",
+  "version": "7.1.1-codeo",
   "author": "Dom Christie",
   "main": "lib/turndown.cjs.js",
   "module": "lib/turndown.es.js",
@@ -36,7 +36,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mixmark-io/turndown.git"
+    "url": "git+https://github.com/codeo-za/turndown.git"
   },
   "scripts": {
     "build": "npm run build-cjs && npm run build-es && npm run build-umd && npm run build-iife",

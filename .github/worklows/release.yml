@@ -1,0 +1,27 @@
+name: Publish Package to Github Package Manager
+on:
+    workflow_call:
+
+concurrency:
+    group: release-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    release:
+
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+
+        steps:
+            - uses: ./.github/workflows/test
+            - uses: actions/setup-node@v3
+              with:
+                node-version: '16.x'
+                registry-url: 'https://npm.pkg.github.com'
+                scope: '@codeo-za'
+            - run: npm run build
+            - run: npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_MANAGER_TOKEN }}

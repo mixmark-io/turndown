@@ -1,0 +1,28 @@
+name: Run Tests
+
+on:
+  push:
+  workflow_dispatch:
+
+concurrency:
+    group: ${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    # node
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - uses: bahmutov/npm-install@v1
+    - name: Run Tests
+      run: npm test
