@@ -24,8 +24,10 @@ test('edge whitespace detection',function (t) {
     [`${WS}\xa0`, ews(WS, `\xa0`, '', '')],
     [`HELLO WORLD`, ews('', '', '', '')],
     [``, ews('', '', '', '')],
+    [`TEST${Array(32768).join(' ')}END`, ews('', '', '', '')], // performance check
   ]
   t.plan(TEST_CASES.length)
+  t.timeoutAfter(300)
   var edgeWhitespace = turndownModule.__get__('edgeWhitespace')
   TEST_CASES.forEach(function (c) {
     t.deepEqual(edgeWhitespace(c[0]), c[1])

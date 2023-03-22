@@ -39,7 +39,7 @@ function flankingWhitespace (node, options) {
 }
 
 function edgeWhitespace (string) {
-  var m = string.match(/^(([ \t\r\n]*)(\s*))[\s\S]*?((\s*?)([ \t\r\n]*))$/)
+  var m = string.match(/^(([ \t\r\n]*)(\s*))(?:(?=\S)[\s\S]*\S)?((\s*?)([ \t\r\n]*))$/)
   return {
     leading: m[1], // whole string for whitespace-only strings
     leadingAscii: m[2],
