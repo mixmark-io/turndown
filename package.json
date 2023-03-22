@@ -20,6 +20,7 @@
     "@rollup/plugin-node-resolve": "13.0.0",
     "@rollup/plugin-replace": "2.4.2",
     "browserify": "17.0.0",
+    "rewire": "^6.0.0",
     "rollup": "2.52.3",
     "standard": "^10.0.3",
     "turndown-attendant": "0.0.3"
@@ -46,6 +47,6 @@
     "build-iife": "rollup -c config/rollup.config.iife.js",
     "build-test": "browserify test/turndown-test.js --outfile test/turndown-test.browser.js",
     "prepare": "npm run build",
-    "test": "npm run build && npm run build-test && standard ./src/**/*.js && node test/turndown-test.js"
+    "test": "npm run build && npm run build-test && standard ./src/**/*.js && node test/internals-test.js && node test/turndown-test.js"
   }
 }
