@@ -27,7 +27,7 @@ function canParseHTMLNatively () {
 function createHTMLParser () {
   var Parser = function () {}
 
-  if (process.browser) {
+  if (process.browser && typeof window !== 'undefined') {
     if (shouldUseActiveX()) {
       Parser.prototype.parseFromString = function (string) {
         var doc = new window.ActiveXObject('htmlfile')
