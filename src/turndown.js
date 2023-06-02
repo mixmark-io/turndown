@@ -4,6 +4,45 @@ import { extend, trimLeadingNewlines, trimTrailingNewlines } from './utilities'
 import RootNode from './root-node'
 import Node from './node'
 var reduce = Array.prototype.reduce
+// Taken from `commonmark.js/lib/common.js`.
+var TAGNAME = '[A-Za-z][A-Za-z0-9-]*'
+var ATTRIBUTENAME = '[a-zA-Z_:][a-zA-Z0-9:._-]*'
+var UNQUOTEDVALUE = "[^\"'=<>`\\x00-\\x20]+"
+var SINGLEQUOTEDVALUE = "'[^']*'"
+var DOUBLEQUOTEDVALUE = '"[^"]*"'
+var ATTRIBUTEVALUE =
+    '(?:' +
+    UNQUOTEDVALUE +
+    '|' +
+    SINGLEQUOTEDVALUE +
+    '|' +
+    DOUBLEQUOTEDVALUE +
+    ')'
+var ATTRIBUTEVALUESPEC = '(?:' + '\\s*=' + '\\s*' + ATTRIBUTEVALUE + ')'
+var ATTRIBUTE = '(?:' + '\\s+' + ATTRIBUTENAME + ATTRIBUTEVALUESPEC + '?)'
+var OPENTAG = '<' + TAGNAME + ATTRIBUTE + '*' + '\\s*/?>'
+var CLOSETAG = '</' + TAGNAME + '\\s*[>]'
+var HTMLCOMMENT = '<!-->|<!--->|<!--(?:[^-]+|-[^-]|--[^>])*-->'
+var PROCESSINGINSTRUCTION = '[<][?][\\s\\S]*?[?][>]'
+var DECLARATION = '<![A-Z]+' + '[^>]*>'
+var CDATA = '<!\\[CDATA\\[[\\s\\S]*?\\]\\]>'
+var HTMLTAG =
+    '(?:' +
+    OPENTAG +
+    '|' +
+    CLOSETAG +
+    '|' +
+    // Note: Turndown removes comments, so this portion of the regex isn't
+    // necessary, but doesn't cause problems.
+    HTMLCOMMENT +
+    '|' +
+    PROCESSINGINSTRUCTION +
+    '|' +
+    DECLARATION +
+    '|' +
+    CDATA +
+    ')'
+// End of copied commonmark code.
 var escapes = [
   [/\\/g, '\\\\'],
   [/\*/g, '\\*'],
@@ -17,7 +56,28 @@ var escapes = [
   [/\]/g, '\\]'],
   [/^>/g, '\\>'],
   [/_/g, '\\_'],
-  [/^(\d+)\. /g, '$1\\. ']
+  [/^(\d+)\. /g, '$1\\. '],
+  // Per [section 6.6 of the CommonMark spec](https://spec.commonmark.org/0.30/#raw-html),
+  // Raw HTML, CommonMark recognizes and passes through HTML-like tags and
+  // their contents. Therefore, Turndown needs to escape text that would parse
+  // as an HTML-like tag. This regex recognizes these tags and escapes them by
+  // inserting a leading backslash.
+  [new RegExp(HTMLTAG, 'g'), '\\$&'],
+  // Likewise, [section 4.6 of the CommonMark spec](https://spec.commonmark.org/0.30/#html-blocks),
+  // HTML blocks, requires the same treatment.
+  //
+  // This regex was copied from `commonmark.js/lib/blocks.js`, the
+  // `reHtmlBlockOpen` variable. We only need regexps for patterns not matched
+  // by the previous pattern, so this doesn't need all expressions there.
+  //
+  // TODO: this is too aggressive; it should only recognize this pattern at
+  // the beginning of a line of CommonnMark source; these will recognize the
+  // pattern at the beginning of any inline or block markup. The approach I
+  // tried was to put this in `commonmark-rules.js` for the `paragraph` and
+  // `heading` rules (the only block beginning-of-line rules). However, text
+  // outside a paragraph/heading doesn't get escaped in this case.
+  [/^<(?:script|pre|textarea|style)(?:\s|>|$)/i, '\\$&'],
+  [/^<[/]?(?:address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[123456]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|p|param|section|source|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)(?:\s|[/]?[>]|$)/i, '\\$&']
 ]
 
 export default function TurndownService (options) {
