@@ -28,7 +28,7 @@ export default function TurndownService (options) {
     headingStyle: 'atx',
     hr: '---',
     bulletListMarker: '-',
-    codeBlockStyle: 'fence',
+    codeBlockStyle: 'fenced',
     fence: '```',
     emDelimiter: '*',
     strongDelimiter: '**',
