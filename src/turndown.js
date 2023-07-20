@@ -34,7 +34,7 @@ export default function TurndownService (options) {
     strongDelimiter: '**',
     linkStyle: 'inlined',
     linkReferenceStyle: 'full',
-    br: '\n',
+    br: '  ',
     preformattedCode: false,
     blankReplacement: function (content, node) {
       return node.isBlock ? '\n\n' : ''
