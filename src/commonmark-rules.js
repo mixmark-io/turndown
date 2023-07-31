@@ -52,7 +52,10 @@ rules.list = {
     var parent = node.parentNode
     // It may not be technically valid, but owing to common usage this library should support nested ul/ol outside of li
     if (node.parentNode.nodeName.match(/^(UL|OL)$/i)) {
-      content = '    ' + content.replace(/\n/gm, '\n    ')
+      content = '    ' + content
+        .replace(/^\n+/, '') // remove leading newlines
+        .replace(/\n+$/, '\n') // replace trailing newlines with just a single one
+        .replace(/\n/gm, '\n    ') // indent
     }
     if (parent.nodeName === 'LI' && parent.lastElementChild === node) {
       return '\n' + content
@@ -72,12 +75,10 @@ rules.listItem = {
       .replace(/\n/gm, '\n    ') // indent
     var prefix = options.bulletListMarker + '   '
     var parent = node.parentNode
-    // Don't print double prefixes when ul/ol is nested inside an empty li
-    if (node.children.length === 1 && node.children[0].nodeName.match(/^(UL|OL)$/i) && node.textContent === node.children[0].textContent) {
-      prefix = '    '
-    } else if (parent.nodeName === 'OL') {
+
+    if (parent.nodeName === 'OL') {
       var start = parent.getAttribute('start')
-      var index = Array.prototype.indexOf.call(parent.children, node)
+      var index = Array.prototype.indexOf.call(Array.prototype.filter.call(parent.children, el => el.nodeName === 'LI'), node)
       prefix = (start ? Number(start) + index : index + 1) + '.  '
     }
     return (

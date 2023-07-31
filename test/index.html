@@ -523,6 +523,98 @@ Another paragraph.
 *   This is a third item at root level</pre>
 </div>
 
+
+<div class="case" data-name="nested ols and uls as intended">
+  <div class="input">
+    <ul>
+      <li>This is a list item at root level</li>
+      <li>This is another item at root level
+        <ol>
+          <li>This is a nested list item</li>
+          <li>This is another nested list item
+            <ul>
+              <li>This is a deeply nested list item</li>
+              <li>This is another deeply nested list item</li>
+              <li>This is a third deeply nested list item</li>
+            </ul>
+          </li>
+        </ol>
+      </li>
+      <li>This is a third item at root level</li>
+    </ul>
+  </div>
+  <pre class="expected">*   This is a list item at root level
+*   This is another item at root level
+    1.  This is a nested list item
+    2.  This is another nested list item
+        *   This is a deeply nested list item
+        *   This is another deeply nested list item
+        *   This is a third deeply nested list item
+*   This is a third item at root level</pre>
+</div>
+
+<div class="case" data-name="nested ols and uls outside of li">
+  <div class="input">
+    <ul>
+      <li>This is a list item at root level</li>
+      <li>This is another item at root level</li>
+      <ol>
+        <li>This is a nested list item</li>
+        <li>This is another nested list item</li>
+        <ul>
+          <li>This is a deeply nested list item</li>
+          <li>This is another deeply nested list item</li>
+          <li>This is a third deeply nested list item</li>
+        </ul>
+      </ol>
+      <li>This is a third item at root level</li>
+    </ul>
+  </div>
+  <pre class="expected">*   This is a list item at root level
+*   This is another item at root level
+
+    1.  This is a nested list item
+    2.  This is another nested list item
+    
+        *   This is a deeply nested list item
+        *   This is another deeply nested list item
+        *   This is a third deeply nested list item
+    
+
+*   This is a third item at root level</pre>
+</div>
+
+<div class="case" data-name="nested ols outside li">
+  <div class="input">
+    <ol>
+      <li>item 1</li>
+      <li>item 2</li>
+      <ol>
+        <li>item 2.1</li>
+        <li>item 2.2</li>
+        <ol>
+          <li>item 2.2.1</li>
+          <li>item 2.2.2</li>
+          <li>item 2.2.3</li>
+        </ol>
+      </ol>
+      <li>item 3</li>
+    </ol>
+  </div>
+  <pre class="expected">1.  item 1
+2.  item 2
+
+    1.  item 2.1
+    2.  item 2.2
+    
+        1.  item 2.2.1
+        2.  item 2.2.2
+        3.  item 2.2.3
+    
+
+3.  item 3</pre>
+</div>
+
 <div class="case" data-name="ul with blockquote">
   <div class="input">
     <ul>
