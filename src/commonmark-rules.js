@@ -50,6 +50,10 @@ rules.list = {
 
   replacement: function (content, node) {
     var parent = node.parentNode
+    // It may not be technically valid, but owing to common usage this library should support nested ul/ol outside of li
+    if (node.parentNode.nodeName.match(/^(UL|OL)$/i)) {
+      content = '    ' + content.replace(/\n/gm, '\n    ')
+    }
     if (parent.nodeName === 'LI' && parent.lastElementChild === node) {
       return '\n' + content
     } else {
@@ -68,7 +72,11 @@ rules.listItem = {
       .replace(/\n/gm, '\n    ') // indent
     var prefix = options.bulletListMarker + '   '
     var parent = node.parentNode
-    if (parent.nodeName === 'OL') {
+    // Don't print double prefixes when ul/ol is nested inside an empty li
+    if (node.children.length === 1 && node.children[0].nodeName.match(/^(UL|OL)$/i) && node.textContent === node.children[0].textContent ) {
+      prefix = '    '
+    }
+    else if (parent.nodeName === 'OL') {
       var start = parent.getAttribute('start')
       var index = Array.prototype.indexOf.call(parent.children, node)
       prefix = (start ? Number(start) + index : index + 1) + '.  '
