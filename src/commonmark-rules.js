@@ -73,10 +73,9 @@ rules.listItem = {
     var prefix = options.bulletListMarker + '   '
     var parent = node.parentNode
     // Don't print double prefixes when ul/ol is nested inside an empty li
-    if (node.children.length === 1 && node.children[0].nodeName.match(/^(UL|OL)$/i) && node.textContent === node.children[0].textContent ) {
+    if (node.children.length === 1 && node.children[0].nodeName.match(/^(UL|OL)$/i) && node.textContent === node.children[0].textContent) {
       prefix = '    '
-    }
-    else if (parent.nodeName === 'OL') {
+    } else if (parent.nodeName === 'OL') {
       var start = parent.getAttribute('start')
       var index = Array.prototype.indexOf.call(parent.children, node)
       prefix = (start ? Number(start) + index : index + 1) + '.  '
