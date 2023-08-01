@@ -50,7 +50,6 @@ rules.list = {
 
   replacement: function (content, node) {
     var parent = node.parentNode
-    // It may not be technically valid, but owing to common usage this library should support nested ul/ol outside of li
     if (node.parentNode.nodeName.match(/^(UL|OL)$/i)) {
       content = '    ' + content
         .replace(/^\n+/, '') // remove leading newlines
@@ -75,7 +74,6 @@ rules.listItem = {
       .replace(/\n/gm, '\n    ') // indent
     var prefix = options.bulletListMarker + '   '
     var parent = node.parentNode
-
     if (parent.nodeName === 'OL') {
       var start = parent.getAttribute('start')
       var index = Array.prototype.indexOf.call(Array.prototype.filter.call(parent.children, el => el.nodeName === 'LI'), node)
