@@ -60,7 +60,7 @@ function shouldUseActiveX () {
   try {
     document.implementation.createHTMLDocument('').open()
   } catch (e) {
-    if (window.ActiveXObject) useActiveX = true
+    if (root.ActiveXObject) useActiveX = true
   }
   return useActiveX
 }
