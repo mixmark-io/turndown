@@ -227,6 +227,22 @@ link")</pre>
   <pre class="expected">[Some `code`](http://example.com/code)</pre>
 </div>
 
+<div class="case" data-name="a with a heading child">
+  <div class="input"><a href="http://example.com/heading"><h1>heading</h1></a></div>
+  <pre class="expected">[heading
+=======](http://example.com/heading)</pre>
+</div>
+
+<div class="case" data-name="a with a paragraph child">
+  <div class="input"><a href="http://example.com/paragraph"><p>paragraph</p></a></div>
+  <pre class="expected">[paragraph](http://example.com/paragraph)</pre>
+</div>
+
+<div class="case" data-name="a with a div child">
+  <div class="input"><a href="http://example.com/div"><div>div</div></a></div>
+  <pre class="expected">[div](http://example.com/div)</pre>
+</div>
+
 <div class="case" data-name="a reference" data-options='{"linkStyle": "referenced"}'>
   <div class="input"><a href="http://example.com">Reference link</a></div>
   <pre class="expected">[Reference link][1]

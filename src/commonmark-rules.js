@@ -155,7 +155,7 @@ rules.inlineLink = {
     var href = node.getAttribute('href')
     var title = cleanAttribute(node.getAttribute('title'))
     if (title) title = ' "' + title + '"'
-    return '[' + content + '](' + href + title + ')'
+    return '[' + content.trim() + '](' + href + title + ')'
   }
 }
 
@@ -169,6 +169,7 @@ rules.referenceLink = {
   },
 
   replacement: function (content, node, options) {
+    content = content.trim()
     var href = node.getAttribute('href')
     var title = cleanAttribute(node.getAttribute('title'))
     if (title) title = ' "' + title + '"'
