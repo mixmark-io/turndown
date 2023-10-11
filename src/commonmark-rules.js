@@ -68,13 +68,28 @@ rules.listItem = {
       .replace(/\n/gm, '\n    ') // indent
     var prefix = options.bulletListMarker + '   '
     var parent = node.parentNode
+
+    // Check if the first child is a block-level element
+    var blockElements = [
+      'address', 'article', 'aside', 'blockquote', 'canvas', 'dd', 'div',
+      'dl', 'dt', 'fieldset', 'figcaption', 'figure', 'footer', 'form',
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hr', 'li', 'main',
+      'nav', 'noscript', 'ol', 'p', 'pre', 'section', 'table', 'tfoot',
+      'ul', 'video'
+    ].map(function (t) {
+      return t.toUpperCase()
+    })
+
+    var firstChildIsBlock = node.firstChild && blockElements.includes(node.firstChild.nodeName)
+
     if (parent.nodeName === 'OL') {
       var start = parent.getAttribute('start')
       var index = Array.prototype.indexOf.call(parent.children, node)
       prefix = (start ? Number(start) + index : index + 1) + '.  '
     }
+
     return (
-      prefix + content + (node.nextSibling && !/\n$/.test(content) ? '\n' : '')
+      prefix + (firstChildIsBlock ? '\n\n    ' : '') + content + (node.nextSibling && !/\n$/.test(content) ? '\n' : '')
     )
   }
 }
