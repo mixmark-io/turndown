@@ -1,6 +1,7 @@
 import COMMONMARK_RULES from './commonmark-rules'
 import Rules from './rules'
 import { extend, trimLeadingNewlines, trimTrailingNewlines } from './utilities'
+import HTMLParser from './html-parser'
 import RootNode from './root-node'
 import Node from './node'
 var reduce = Array.prototype.reduce
@@ -36,6 +37,7 @@ export default function TurndownService (options) {
     linkReferenceStyle: 'full',
     br: '  ',
     preformattedCode: false,
+    htmlParser: new HTMLParser(),
     blankReplacement: function (content, node) {
       return node.isBlock ? '\n\n' : ''
     },
@@ -68,7 +70,10 @@ TurndownService.prototype = {
 
     if (input === '') return ''
 
-    var output = process.call(this, new RootNode(input, this.options))
+    var parseHTMLString = htmlString => 
+      this.options.htmlParser.parseFromString(htmlString, 'text/html')
+
+    var output = process.call(this, new RootNode(input, parseHTMLString, this.options))
     return postProcess.call(this, output)
   },
 
