@@ -1,6 +1,11 @@
 var Attendant = require('turndown-attendant')
 var TurndownService = require('../lib/turndown.cjs')
 
+// TODO just for testing
+process.env.PARSER = 'happy-dom'
+// process.env.PARSER = 'parse5'
+// process.env.PARSER = 'domino'
+
 var attendant = new Attendant({
   file: __dirname + '/index.html',
   TurndownService: TurndownService
@@ -65,7 +70,7 @@ test('#addRule adds the rule', function (t) {
 test('#use returns the instance for chaining', function (t) {
   t.plan(1)
   var turndownService = new TurndownService()
-  t.equal(turndownService.use(function plugin () {}), turndownService)
+  t.equal(turndownService.use(function plugin () { }), turndownService)
 })
 
 test('#use with a single plugin calls the fn with instance', function (t) {

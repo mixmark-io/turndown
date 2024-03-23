@@ -2,7 +2,7 @@ var test = require('tape').test
 var rewire = require('rewire')
 var turndownModule = rewire('../lib/turndown.cjs')
 
-test('edge whitespace detection',function (t) {
+test('edge whitespace detection', function (t) {
   function ews (leadingAscii, leadingNonAscii, trailingNonAscii, trailingAscii) {
     return {
       leading: leadingAscii + leadingNonAscii,
@@ -24,7 +24,7 @@ test('edge whitespace detection',function (t) {
     [`${WS}\xa0`, ews(WS, `\xa0`, '', '')],
     [`HELLO WORLD`, ews('', '', '', '')],
     [``, ews('', '', '', '')],
-    [`TEST${Array(32768).join(' ')}END`, ews('', '', '', '')], // performance check
+    [`TEST${Array(32768).join(' ')}END`, ews('', '', '', '')] // performance check
   ]
   t.plan(TEST_CASES.length)
   t.timeoutAfter(300)

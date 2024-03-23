@@ -8,7 +8,7 @@ var root = (typeof window !== 'undefined' ? window : {})
  * Parsing HTML strings
  */
 
-function canParseHTMLNatively () {
+function canParseHTMLNatively() {
   var Parser = root.DOMParser
   var canParse = false
 
@@ -19,13 +19,13 @@ function canParseHTMLNatively () {
     if (new Parser().parseFromString('', 'text/html')) {
       canParse = true
     }
-  } catch (e) {}
+  } catch (e) { }
 
   return canParse
 }
 
-function createHTMLParser () {
-  var Parser = function () {}
+function createHTMLParser() {
+  var Parser = function () { }
 
   if (process.browser) {
     if (shouldUseActiveX()) {
@@ -47,15 +47,32 @@ function createHTMLParser () {
       }
     }
   } else {
-    var domino = require('domino')
     Parser.prototype.parseFromString = function (string) {
+      // TODO just for testing purposes
+      const parser = process.env.PARSER || 'domino'
+
+      if (parser === 'happy-dom') {
+        // console.log('Using happy-dom')
+
+        const happyDOM = require('happy-dom')
+
+        const window = new happyDOM.Window()
+        const document = window.document
+        document.body.innerHTML = string
+
+        return document
+      }
+
+      // console.log('Using domino')
+
+      var domino = require('domino')
       return domino.createDocument(string)
     }
   }
   return Parser
 }
 
-function shouldUseActiveX () {
+function shouldUseActiveX() {
   var useActiveX = false
   try {
     document.implementation.createHTMLDocument('').open()
