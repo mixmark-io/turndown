@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "domino": "^2.1.6",
-    "happy-dom": "^14.2.1"
+    "happy-dom": "^14.2.1",
+    "jsdom": "^24.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^19.0.0",
@@ -24,8 +25,8 @@
     "rewire": "^6.0.0",
     "rollup": "2.52.3",
     "standard": "^10.0.3",
-    "turndown-attendant": "0.0.3",
-    "tinybench": "^2.6.0"
+    "tinybench": "^2.6.0",
+    "turndown-attendant": "0.0.3"
   },
   "files": [
     "lib",

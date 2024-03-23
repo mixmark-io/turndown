@@ -8,7 +8,7 @@ var root = (typeof window !== 'undefined' ? window : {})
  * Parsing HTML strings
  */
 
-function canParseHTMLNatively() {
+function canParseHTMLNatively () {
   var Parser = root.DOMParser
   var canParse = false
 
@@ -24,7 +24,7 @@ function canParseHTMLNatively() {
   return canParse
 }
 
-function createHTMLParser() {
+function createHTMLParser () {
   var Parser = function () { }
 
   if (process.browser) {
@@ -63,6 +63,17 @@ function createHTMLParser() {
         return document
       }
 
+      if (parser === 'jsdom') {
+        // console.log('Using jdsom')
+
+        const { JSDOM } = require('jsdom')
+        // const dom = new JSDOM(string)
+        // return dom.window.document
+
+        const fragment = JSDOM.fragment(string)
+        return fragment
+      }
+
       // console.log('Using domino')
 
       var domino = require('domino')
@@ -72,7 +83,7 @@ function createHTMLParser() {
   return Parser
 }
 
-function shouldUseActiveX() {
+function shouldUseActiveX () {
   var useActiveX = false
   try {
     document.implementation.createHTMLDocument('').open()

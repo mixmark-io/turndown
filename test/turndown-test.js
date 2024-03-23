@@ -2,7 +2,8 @@ var Attendant = require('turndown-attendant')
 var TurndownService = require('../lib/turndown.cjs')
 
 // TODO just for testing
-process.env.PARSER = 'happy-dom'
+// process.env.PARSER = 'happy-dom'
+process.env.PARSER = 'jsdom'
 // process.env.PARSER = 'parse5'
 // process.env.PARSER = 'domino'
 

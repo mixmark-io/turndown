@@ -10,15 +10,20 @@ const bench = new tinybench.Bench({ time: 100 })
 
 bench
 	.add('domino', () => {
-		process.env.PARSER = 'domino'
-		const turndown = new TurndownService()
-		turndown.turndown(html)
-	})
+  process.env.PARSER = 'domino'
+  const turndown = new TurndownService()
+  turndown.turndown(html)
+})
 	.add('happy-dom', () => {
-		process.env.PARSER = 'happy-dom'
-		const turndown = new TurndownService()
-		turndown.turndown(html)
-	})
+  process.env.PARSER = 'happy-dom'
+  const turndown = new TurndownService()
+  turndown.turndown(html)
+})
+	.add('jsdom', () => {
+  process.env.PARSER = 'jsdom'
+  const turndown = new TurndownService()
+  turndown.turndown(html)
+})
 
 bench.warmup().then(() => bench.run()
 	.then(() => console.table(bench.table())))
