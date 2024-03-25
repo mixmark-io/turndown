@@ -13,6 +13,7 @@
     "./lib/turndown.umd.js": "./lib/turndown.browser.umd.js"
   },
   "dependencies": {
+    "@angular/domino": "github:angular/domino",
     "domino": "^2.1.6",
     "happy-dom": "^14.2.1",
     "jsdom": "^24.0.0"
