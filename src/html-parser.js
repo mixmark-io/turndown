@@ -19,13 +19,13 @@ function canParseHTMLNatively () {
     if (new Parser().parseFromString('', 'text/html')) {
       canParse = true
     }
-  } catch (e) {}
+  } catch (e) { }
 
   return canParse
 }
 
 function createHTMLParser () {
-  var Parser = function () {}
+  var Parser = function () { }
 
   if (process.browser) {
     if (shouldUseActiveX()) {
@@ -47,8 +47,36 @@ function createHTMLParser () {
       }
     }
   } else {
-    var domino = require('domino')
     Parser.prototype.parseFromString = function (string) {
+      // TODO just for testing purposes
+      const parser = process.env.PARSER || 'domino'
+
+      if (parser === 'happy-dom') {
+        // console.log('Using happy-dom')
+
+        const happyDOM = require('happy-dom')
+
+        const window = new happyDOM.Window()
+        const document = window.document
+        document.body.innerHTML = string
+
+        return document
+      }
+
+      if (parser === 'jsdom') {
+        // console.log('Using jdsom')
+
+        const { JSDOM } = require('jsdom')
+        // const dom = new JSDOM(string)
+        // return dom.window.document
+
+        const fragment = JSDOM.fragment(string)
+        return fragment
+      }
+
+      // console.log('Using domino')
+
+      var domino = require('domino')
       return domino.createDocument(string)
     }
   }
