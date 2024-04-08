@@ -6,7 +6,7 @@ export default function (config) {
   return {
     input: 'src/turndown.js',
     output: config.output,
-    external: ['domino'],
+    external: ['@mixmark-io/domino'],
     plugins: [
       commonjs(),
       replace({ 'process.browser': JSON.stringify(!!config.browser), preventAssignment: true }),

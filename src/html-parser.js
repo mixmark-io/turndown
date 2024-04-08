@@ -47,7 +47,7 @@ function createHTMLParser () {
       }
     }
   } else {
-    var domino = require('domino')
+    var domino = require('@mixmark-io/domino')
     Parser.prototype.parseFromString = function (string) {
       return domino.createDocument(string)
     }
