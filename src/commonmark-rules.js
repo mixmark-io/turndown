@@ -1,3 +1,4 @@
+import Node from './node'
 import { repeat } from './utilities'
 
 var rules = {}
@@ -47,6 +48,24 @@ rules.blockquote = {
 
 rules.list = {
   filter: ['ul', 'ol'],
+  pureAttributes: function (node, options) {
+    // When rendering in faithful mode, check that all children are `<li>` elements that can be faithfully rendered. If not, this must be rendered as HTML.
+    if (!options.renderAsPure) {
+      var childrenPure = Array.prototype.reduce.call(node.childNodes,
+        (previousValue, currentValue) =>
+          previousValue &&
+          currentValue.nodeName === 'LI' &&
+          (new Node(currentValue, options)).renderAsPure, true
+      )
+      if (!childrenPure) {
+        // If any of the children must be rendered as HTML, then this node must also be rendered as HTML.
+        node.renderAsPure = false
+        return
+      }
+    }
+    // Allow a `start` attribute if this is an `ol`.
+    return node.nodeName === 'OL' ? {start: undefined} : {}
+  },
 
   replacement: function (content, node) {
     var parent = node.parentNode
@@ -89,6 +108,15 @@ rules.indentedCodeBlock = {
     )
   },
 
+  pureAttributes: function (node, options) {
+    // Check the purity of the child block(s) which contain the code.
+    node.renderAsPure = options.renderAsPure || (node.renderAsPure && (
+      // There's only one child (the code element), and it's pure.
+      new Node(node.firstChild, options)).renderAsPure && node.childNodes.length === 1 &&
+      // There's only one child of this code element, and it's text.
+      node.firstChild.childNodes.length === 1 && node.firstChild.firstChild.nodeType === 3)
+  },
+
   replacement: function (content, node, options) {
     return (
       '\n\n    ' +
@@ -106,6 +134,22 @@ rules.fencedCodeBlock = {
       node.firstChild &&
       node.firstChild.nodeName === 'CODE'
     )
+  },
+
+  pureAttributes: function (node, options) {
+    // Check the purity of the child code element.
+    var firstChild = new Node(node.firstChild, options)
+    var className = firstChild.getAttribute('class') || ''
+    var language = (className.match(/language-(\S+)/) || [null, ''])[1]
+    // Allow the matched classname as pure Markdown. Compare using the `className` attribute, since the `class` attribute returns an object, not an easily-comparable string.
+    if (language) {
+      firstChild.renderAsPure = firstChild.renderAsPure || firstChild.className === `language-${language}`
+    }
+    node.renderAsPure = options.renderAsPure || (node.renderAsPure &&
+      // There's only one child (the code element), and it's pure.
+      firstChild.renderAsPure && node.childNodes.length === 1 &&
+      // There's only one child of this code element, and it's text.
+      node.firstChild.childNodes.length === 1 && node.firstChild.firstChild.nodeType === 3)
   },
 
   replacement: function (content, node, options) {
@@ -151,6 +195,8 @@ rules.inlineLink = {
     )
   },
 
+  pureAttributes: {href: undefined, title: undefined},
+
   replacement: function (content, node) {
     var href = node.getAttribute('href')
     if (href) href = href.replace(/([()])/g, '\\$1')
@@ -168,6 +214,8 @@ rules.referenceLink = {
       node.getAttribute('href')
     )
   },
+
+  pureAttributes: {href: undefined, title: undefined},
 
   replacement: function (content, node, options) {
     var href = node.getAttribute('href')
@@ -233,6 +281,11 @@ rules.code = {
     return node.nodeName === 'CODE' && !isCodeBlock
   },
 
+  pureAttributes: function (node, options) {
+    // An inline code block must contain only text to be rendered as Markdown.
+    node.renderAsPure = options.renderAsPure || (node.renderAsPure && node.firstChild.nodeType === 3 && node.childNodes.length === 1)
+  },
+
   replacement: function (content) {
     if (!content) return ''
     content = content.replace(/\r?\n|\r/g, ' ')
@@ -248,6 +301,7 @@ rules.code = {
 
 rules.image = {
   filter: 'img',
+  pureAttributes: {alt: undefined, src: undefined, title: undefined},
 
   replacement: function (content, node) {
     var alt = cleanAttribute(node.getAttribute('alt'))

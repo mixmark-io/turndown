@@ -37,6 +37,7 @@ function collapseWhitespace (options) {
   var isPre = options.isPre || function (node) {
     return node.nodeName === 'PRE'
   }
+  var renderAsPure = options.renderAsPure
 
   if (!element.firstChild || isPre(element)) return
 
@@ -80,7 +81,7 @@ function collapseWhitespace (options) {
         // Drop protection if set previously.
         keepLeadingWs = false
       }
-    } else {
+    } else if (renderAsPure) {
       node = remove(node)
       continue
     }
