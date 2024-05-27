@@ -252,9 +252,13 @@ rules.image = {
   replacement: function (content, node) {
     var alt = cleanAttribute(node.getAttribute('alt'))
     var src = node.getAttribute('src') || ''
+    var height = node.getAttribute('height') ?? node.getAttribute('width');
+    var width = node.getAttribute('width') ?? node.getAttribute('height');
+    var encodedSrc = encodeURI(src);
+    var size = height != null ? `#${width}x${height}` : "";
     var title = cleanAttribute(node.getAttribute('title'))
     var titlePart = title ? ' "' + title + '"' : ''
-    return src ? '![' + alt + ']' + '(' + src + titlePart + ')' : ''
+    return src ? '![' + alt + ']' + '(' + encodedSrc + size + titlePart + ')' : ''
   }
 }
 
