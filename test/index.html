@@ -381,9 +381,31 @@ def a_fenced_code block; end
       <li>Ordered list item 44</li>
     </ol>
   </div>
-  <pre class="expected">42.  Ordered list item 42
-43.  Ordered list item 43
-44.  Ordered list item 44</pre>
+  <pre class="expected">42. Ordered list item 42
+43. Ordered list item 43
+44. Ordered list item 44</pre>
+</div>
+
+<div class="case" data-name="ol with increasing start">
+  <div class="input">
+    <ol start="9">
+      <li>Ordered list item 9</li>
+      <li>Ordered list item 10</li>
+    </ol>
+  </div>
+  <pre class="expected">9.  Ordered list item 9
+10. Ordered list item 10</pre>
+</div>
+
+<div class="case" data-name="ol with high start">
+  <div class="input">
+    <ol start="99">
+      <li>Ordered list item 99</li>
+      <li>Ordered list item 100</li>
+    </ol>
+  </div>
+  <pre class="expected">99.  Ordered list item 99
+100. Ordered list item 100</pre>
 </div>
 
 <div class="case" data-name="list spacing">
@@ -471,6 +493,28 @@ Another paragraph.
 2.  A paragraph in a second list item.</pre>
 </div>
 
+<div class="case" data-name="ol with start and paragraphs">
+  <div class="input">
+    <ol start="9">
+      <li>
+        <p>This is a paragraph in a list item.</p>
+        <p>This is a paragraph in the same list item as above.</p>
+      </li>
+      <li>
+        <p>A paragraph in a second list item.</p>
+        <p>This is a paragraph in the same list item as above.</p>
+      </li>
+    </ol>
+  </div>
+  <pre class="expected">9.  This is a paragraph in a list item.
+    
+    This is a paragraph in the same list item as above.
+    
+10. A paragraph in a second list item.
+    
+    This is a paragraph in the same list item as above.</pre>
+</div>
+
 <div class="case" data-name="nested uls">
   <div class="input">
     <ul>
@@ -508,7 +552,7 @@ Another paragraph.
       <li>This is a list item at root level</li>
       <li>This is another item at root level</li>
       <li>
-        <ol>
+        <ol start="9">
           <li>This is a nested list item</li>
           <li>This is another nested list item</li>
           <li>
@@ -525,9 +569,9 @@ Another paragraph.
   </div>
   <pre class="expected">*   This is a list item at root level
 *   This is another item at root level
-*   1.  This is a nested list item
-    2.  This is another nested list item
-    3.  *   This is a deeply nested list item
+*   9.  This is a nested list item
+    10. This is another nested list item
+    11. *   This is a deeply nested list item
         *   This is another deeply nested list item
         *   This is a third deeply nested list item
 *   This is a third item at root level</pre>
