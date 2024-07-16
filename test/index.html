@@ -258,6 +258,30 @@ link")</pre>
 [Reference link with shortcut style]: http://example.com</pre>
 </div>
 
+<div class="case" data-name="duplicate reference links" data-options='{"linkStyle": "referenced"}'>
+  <div class="input"><a href="http://example.com">Reference link 1</a><a href="http://example.com">Reference link 2</a><a href="http://example.com">Reference link 1</a></div>
+  <pre class="expected">[Reference link 1][1][Reference link 2][1][Reference link 1][1]
+
+[1]: http://example.com</pre>
+</div>
+
+<div class="case" data-name="duplicate reference links with collapsed style" data-options='{"linkStyle": "referenced", "linkReferenceStyle": "collapsed"}'>
+  <div class="input"><a href="http://example.com">Reference link 1</a><a href="http://example.com">Reference link 2</a><a href="http://example.com">Reference link 1</a></div>
+  <pre class="expected">[Reference link 1][][Reference link 2][][Reference link 1][]
+
+[Reference link 1]: http://example.com
+[Reference link 2]: http://example.com</pre>
+</div>
+
+<!-- Note, there is actually a bug with shortcut links right next to one another -->
+<div class="case" data-name="duplicate reference links with shortcut style" data-options='{"linkStyle": "referenced", "linkReferenceStyle": "shortcut"}'>
+  <div class="input"><a href="http://example.com">Reference link 1</a> <a href="http://example.com">Reference link 2</a> <a href="http://example.com">Reference link 1</a></div>
+  <pre class="expected">[Reference link 1] [Reference link 2] [Reference link 1]
+
+[Reference link 1]: http://example.com
+[Reference link 2]: http://example.com</pre>
+</div>
+
 <div class="case" data-name="pre/code block">
   <div class="input"><pre><code>def code_block
   # 42 &lt; 9001
