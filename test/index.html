@@ -409,25 +409,12 @@ def a_fenced_code block; end
 
 Another paragraph.
 
-*   Unordered list item 1
-*   Unordered list item 2
-*   Unordered list item 3</pre>
+-   Unordered list item 1
+-   Unordered list item 2
+-   Unordered list item 3</pre>
 </div>
 
 <div class="case" data-name="ul">
-  <div class="input">
-    <ul>
-      <li>Unordered list item 1</li>
-      <li>Unordered list item 2</li>
-      <li>Unordered list item 3</li>
-    </ul>
-  </div>
-  <pre class="expected">*   Unordered list item 1
-*   Unordered list item 2
-*   Unordered list item 3</pre>
-</div>
-
-<div class="case" data-name="ul with custom bullet" data-options='{"bulletListMarker": "-"}'>
   <div class="input">
     <ul>
       <li>Unordered list item 1</li>
@@ -440,6 +427,19 @@ Another paragraph.
 -   Unordered list item 3</pre>
 </div>
 
+<div class="case" data-name="ul with custom bullet" data-options='{"bulletListMarker": "*"}'>
+  <div class="input">
+    <ul>
+      <li>Unordered list item 1</li>
+      <li>Unordered list item 2</li>
+      <li>Unordered list item 3</li>
+    </ul>
+  </div>
+  <pre class="expected">*   Unordered list item 1
+*   Unordered list item 2
+*   Unordered list item 3</pre>
+</div>
+
 <div class="case" data-name="ul with paragraph">
   <div class="input">
     <ul>
@@ -447,9 +447,9 @@ Another paragraph.
       <li>List item without paragraph</li>
     </ul>
   </div>
-  <pre class="expected">*   List item with paragraph
+  <pre class="expected">-   List item with paragraph
     
-*   List item without paragraph</pre>
+-   List item without paragraph</pre>
 </div>
 
 <div class="case" data-name="ol with paragraphs">
@@ -492,14 +492,14 @@ Another paragraph.
       <li>This is a third item at root level</li>
     </ul>
   </div>
-  <pre class="expected">*   This is a list item at root level
-*   This is another item at root level
-*   *   This is a nested list item
-    *   This is another nested list item
-    *   *   This is a deeply nested list item
-        *   This is another deeply nested list item
-        *   This is a third deeply nested list item
-*   This is a third item at root level</pre>
+  <pre class="expected">-   This is a list item at root level
+-   This is another item at root level
+-   -   This is a nested list item
+    -   This is another nested list item
+    -   -   This is a deeply nested list item
+        -   This is another deeply nested list item
+        -   This is a third deeply nested list item
+-   This is a third item at root level</pre>
 </div>
 
 <div class="case" data-name="nested ols and uls">
@@ -523,14 +523,14 @@ Another paragraph.
       <li>This is a third item at root level</li>
     </ul>
   </div>
-  <pre class="expected">*   This is a list item at root level
-*   This is another item at root level
-*   1.  This is a nested list item
+  <pre class="expected">-   This is a list item at root level
+-   This is another item at root level
+-   1.  This is a nested list item
     2.  This is another nested list item
-    3.  *   This is a deeply nested list item
-        *   This is another deeply nested list item
-        *   This is a third deeply nested list item
-*   This is a third item at root level</pre>
+    3.  -   This is a deeply nested list item
+        -   This is another deeply nested list item
+        -   This is a third deeply nested list item
+-   This is a third item at root level</pre>
 </div>
 
 <div class="case" data-name="ul with blockquote">
@@ -544,7 +544,7 @@ Another paragraph.
       </li>
     </ul>
   </div>
-  <pre class="expected">*   A list item with a blockquote:
+  <pre class="expected">-   A list item with a blockquote:
     
     > This is a blockquote inside a list item.</pre>
 </div>
@@ -675,10 +675,10 @@ Another div</pre>
       </li>
     </ol>
   </div>
-  <pre class="expected">*   Indented li with leading/trailing newlines
-*   **Strong with trailing space inside li with leading/trailing whitespace**
-*   li without whitespace
-*   Leading space, text, lots of whitespace … text</pre>
+  <pre class="expected">-   Indented li with leading/trailing newlines
+-   **Strong with trailing space inside li with leading/trailing whitespace**
+-   li without whitespace
+-   Leading space, text, lots of whitespace … text</pre>
 </div>
 
 <div class="case" data-name="whitespace between inline elements">
