@@ -693,6 +693,13 @@ Another div</pre>
   <pre class="expected">Text with no space after the period. _Text in em with leading/trailing spaces_ **text in strong with trailing space**</pre>
 </div>
 
+<!-- Two trailing newlines are for the line break -->
+<div class="case" data-name="newline at the end of a strong element">
+    <div class="input"><strong>Text with a trailing break<br></strong>before continuation</div>
+    <pre class="expected">**Text with a trailing break**  
+before continuation</pre>
+</div>
+
 <div class="case" data-name="whitespace in nested inline elements">
   <div class="input">Text at root <strong><a href="http://www.example.com">link text with trailing space in strong </a></strong>more text at root</div>
   <pre class="expected">Text at root **[link text with trailing space in strong](http://www.example.com)** more text at root</pre>
