@@ -75,19 +75,19 @@ function has (node, tagNames) {
   )
 }
 
-export function getOpenTag(element) {
-    // Credit: https://stackoverflow.com/questions/9604235
-    const outerHtml = element.outerHTML;
-    const len = outerHtml.length;
+export function getOpenTag (element) {
+  // Credit: https://stackoverflow.com/questions/9604235
+  const outerHtml = element.outerHTML
+  const len = outerHtml.length
 
-    if (outerHtml[len - 2] === '/') { // Is self-closing tag?
-        return outerHtml.slice(0, len-2) + ">"
-    } else {
-        const openTagLength = len - element.innerHTML.length - (element.tagName.length + 3)
-        return outerHtml.slice(0, openTagLength)
-    }
-}
-export function getCloseTag(element) {
-    return `</${element.tagName.toLowerCase()}>`
+  if (outerHtml[len - 2] === '/') { // Is self-closing tag?
+    return outerHtml.slice(0, len - 2) + '>'
+  } else {
+    const openTagLength = len - element.innerHTML.length - (element.tagName.length + 3)
+    return outerHtml.slice(0, openTagLength)
+  }
 }
 
+export function getCloseTag (element) {
+  return `</${element.tagName.toLowerCase()}>`
+}

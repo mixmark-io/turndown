@@ -47,7 +47,7 @@ export default function TurndownService (options) {
     },
     preserveReplacement: function (innerContent, node) {
       const html = node.cloneNode()
-      html.setAttribute("markdown", "1")
+      html.setAttribute('markdown', '1')
       const openTag = getOpenTag(html)
       const closeTag = getCloseTag(html)
 
