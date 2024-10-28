@@ -217,6 +217,16 @@ title")</pre>
 link")</pre>
 </div>
 
+<div class="case" data-name="a with quotes in title">
+  <div class="input"><a href="http://example.com" title="&quot;hello&quot;">An anchor</a></div>
+  <pre class="expected">[An anchor](http://example.com "\"hello\"")</pre>
+</div>
+
+<div class="case" data-name="a with parenthesis in query">
+  <div class="input"><a href="http://example.com?(query)">An anchor</a></div>
+  <pre class="expected">[An anchor](http://example.com?\(query\))</pre>
+</div>
+
 <div class="case" data-name="a without a src">
   <div class="input"><a id="about-anchor">Anchor without a title</a></div>
   <pre class="expected">Anchor without a title</pre>

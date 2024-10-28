@@ -15,7 +15,7 @@ Turndown input is
 
 When a string input is passed, the DOM parser is picked as follows.
 * For web browser usage, the corresponding native web parser is used, which is typically `DOMImplementation`.
-* For standalone usage, [domino](https://github.com/fgnass/domino) parser is used.
+* For standalone usage, custom [domino](https://github.com/mixmark-io/domino) parser is used.
 
 Please note that a malicious string input can cause undesired effects within the DOM parser
 even before Turndown code starts processing the document itself.
@@ -27,8 +27,8 @@ better suits your security needs.
 
 In particular, Turndown version 6 and below used [jsdom](https://github.com/jsdom/jsdom) as the
 standalone DOM parser. As `jsdom` is a fully featured DOM parser with script execution support,
-it imposes an inherent security risk. We recommend upgrading to version 7, which uses
-[domino](https://github.com/fgnass/domino) that doesn't even support executing scripts nor
+it imposes an inherent security risk. We recommend upgrading to version 7, which uses custom
+[domino](https://github.com/mixmark-io/domino) that doesn't even support executing scripts nor
 downloading external resources.
 
 ## Reporting a Vulnerability

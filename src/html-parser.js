@@ -47,7 +47,7 @@ function createHTMLParser () {
       }
     }
   } else {
-    var domino = require('domino')
+    var domino = require('@mixmark-io/domino')
     Parser.prototype.parseFromString = function (string) {
       return domino.createDocument(string)
     }
@@ -60,7 +60,7 @@ function shouldUseActiveX () {
   try {
     document.implementation.createHTMLDocument('').open()
   } catch (e) {
-    if (window.ActiveXObject) useActiveX = true
+    if (root.ActiveXObject) useActiveX = true
   }
   return useActiveX
 }
