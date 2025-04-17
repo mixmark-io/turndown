@@ -59,7 +59,7 @@ TurndownService.prototype = {
    * @type String
    */
 
-  turndown: function (input) {
+  turndown: async function (input) {
     if (!canConvert(input)) {
       throw new TypeError(
         input + ' is not a string, or an element/document/fragment node.'
@@ -68,7 +68,7 @@ TurndownService.prototype = {
 
     if (input === '') return ''
 
-    var output = process.call(this, new RootNode(input, this.options))
+    var output = await process.call(this, new RootNode(input, this.options))
     return postProcess.call(this, output)
   },
 
@@ -154,20 +154,28 @@ TurndownService.prototype = {
  * @type String
  */
 
-function process (parentNode) {
+async function process (parentNode) {
   var self = this
-  return reduce.call(parentNode.childNodes, function (output, node) {
-    node = new Node(node, self.options)
+  var result = ''
+  var len = parentNode.childNodes.length
+  var nodeIndex = 0
+
+  while (nodeIndex < len) {
+    var node = new Node(parentNode.childNodes[nodeIndex])
 
     var replacement = ''
     if (node.nodeType === 3) {
       replacement = node.isCode ? node.nodeValue : self.escape(node.nodeValue)
     } else if (node.nodeType === 1) {
-      replacement = replacementForNode.call(self, node)
+      replacement = await replacementForNode.call(self, node)
     }
 
-    return join(output, replacement)
-  }, '')
+    result = join(result, replacement)
+
+    nodeIndex++
+  }
+
+  return result
 }
 
 /**
@@ -197,14 +205,16 @@ function postProcess (output) {
  * @type String
  */
 
-function replacementForNode (node) {
+async function replacementForNode (node) {
   var rule = this.rules.forNode(node)
   var content = process.call(this, node)
   var whitespace = node.flankingWhitespace
   if (whitespace.leading || whitespace.trailing) content = content.trim()
+  var replacement = await rule.replacement(content, node, this.options)
+
   return (
     whitespace.leading +
-    rule.replacement(content, node, this.options) +
+    replacement +
     whitespace.trailing
   )
 }

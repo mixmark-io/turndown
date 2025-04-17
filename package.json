@@ -1,10 +1,11 @@
 {
-  "name": "turndown",
-  "description": "A library that converts HTML to Markdown",
-  "version": "7.2.0",
-  "author": "Dom Christie",
+  "name": "async-turndown",
+  "description": "A library that converts HTML to Markdown with async function",
+  "version": "0.0.1",
+  "authors": ["Dom Christie", "hirotask"],
   "main": "lib/turndown.cjs.js",
   "module": "lib/turndown.es.js",
+  "types": "@types/index.d.ts",
   "jsnext:main": "lib/turndown.es.js",
   "browser": {
     "@mixmark-io/domino": false,
@@ -37,7 +38,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mixmark-io/turndown.git"
+    "url": "https://github.com/hirotask/async-turndown.git"
   },
   "scripts": {
     "build": "npm run build-cjs && npm run build-es && npm run build-umd && npm run build-iife",
