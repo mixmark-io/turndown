@@ -386,6 +386,20 @@ def a_fenced_code block; end
 44.  Ordered list item 44</pre>
 </div>
 
+<div class="case" data-name="ol with content">
+  <div class="input">
+    <ol start="42">
+      <li>
+        <p>Ordered list item 42</p>
+        <p>Ordered list's additional content</p>
+      </li>
+    </ol>
+  </div>
+  <pre class="expected">42.  Ordered list item 42
+     
+     Ordered list's additional content</pre>
+</div>
+
 <div class="case" data-name="list spacing">
   <div class="input">
     <p>A paragraph.</p>
