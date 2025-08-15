@@ -24,6 +24,12 @@ rules.heading = {
   replacement: function (content, node, options) {
     var hLevel = Number(node.nodeName.charAt(1))
 
+    var parent = node.parentNode
+    if (parent.nodeName === 'LI') {
+      if (!content.trim()) return ''
+      return options.strongDelimiter + content + options.strongDelimiter
+    }
+
     if (options.headingStyle === 'setext' && hLevel < 3) {
       var underline = repeat((hLevel === 1 ? '=' : '-'), content.length)
       return (
@@ -74,6 +80,7 @@ rules.listItem = {
       .replace(/\n+$/, '\n') // replace trailing newlines with just a single one
       .replace(/\n/gm, '\n' + ' '.repeat(prefix.length)) // indent
     return (
+      (node.previousSibling && node.previousSibling.nodeName !== 'LI' ? '\n' : '') +
       prefix + content + (node.nextSibling && !/\n$/.test(content) ? '\n' : '')
     )
   }

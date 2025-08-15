@@ -675,6 +675,15 @@ Another div</pre>
 3.  Chapter Three with trailing whitespace</pre>
 </div>
 
+<div class="case" data-name="header inside list item">
+  <div class="input">
+    <ul>
+      <li><h1>Header inside list item</h1></li>
+    </ul>
+  </div>
+  <pre class="expected">*   **Header inside list item**</pre>
+</div>
+
 <div class="case" data-name="multilined and bizarre formatting">
   <div class="input">
     <ul>
@@ -693,6 +702,14 @@ Another div</pre>
 *   **Strong with trailing space inside li with leading/trailing whitespace**
 *   li without whitespace
 *   Leading space, text, lots of whitespace … text</pre>
+</div>
+
+<div class="case" data-name="standalone list item">
+  <div class="input">
+    <img src="logo.png" alt="Img with alt"> <li>Standalone list item</li>
+  </div>
+  <pre class="expected">![Img with alt](logo.png)
+*   Standalone list item</pre>
 </div>
 
 <div class="case" data-name="whitespace between inline elements">
