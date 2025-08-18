@@ -212,7 +212,7 @@ rules.emphasis = {
 
   replacement: function (content, node, options) {
     if (!content.trim()) return ''
-    return options.emDelimiter + content + options.emDelimiter
+    return options.emDelimiter + content.trim() + options.emDelimiter
   }
 }
 
