@@ -1,6 +1,6 @@
 import COMMONMARK_RULES from './commonmark-rules'
 import Rules from './rules'
-import { extend, trimLeadingNewlines, trimTrailingNewlines } from './utilities'
+import { extend, trimLeadingNewlines, trimTrailingNewlines, getOpenTag, getCloseTag } from './utilities'
 import RootNode from './root-node'
 import Node from './node'
 var reduce = Array.prototype.reduce
@@ -44,6 +44,15 @@ export default function TurndownService (options) {
     },
     defaultReplacement: function (content, node) {
       return node.isBlock ? '\n\n' + content + '\n\n' : content
+    },
+    preserveReplacement: function (innerContent, node) {
+      const html = node.cloneNode()
+      html.setAttribute('markdown', '1')
+      const openTag = getOpenTag(html)
+      const closeTag = getCloseTag(html)
+
+      const outerContent = openTag + innerContent + closeTag
+      return node.isBlock ? '\n\n' + outerContent + '\n\n' : outerContent
     }
   }
   this.options = extend({}, defaults, options)
@@ -128,6 +137,19 @@ TurndownService.prototype = {
 
   remove: function (filter) {
     this.rules.remove(filter)
+    return this
+  },
+
+  /**
+   * Preserves (using markdown="1") a node that matches the filter
+   * @public
+   * @param {String|Array|Function} filter The unique key of the rule
+   * @returns The Turndown instance for chaining
+   * @type Object
+   */
+
+  preserve: function (filter) {
+    this.rules.preserve(filter)
     return this
   },
 
