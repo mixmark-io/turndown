@@ -29,12 +29,12 @@ sit</pre>
 
 <div class="case" data-name="em">
   <div class="input"><em>em element</em></div>
-  <pre class="expected">_em element_</pre>
+  <pre class="expected">*em element*</pre>
 </div>
 
 <div class="case" data-name="i">
   <div class="input"><i>i element</i></div>
-  <pre class="expected">_i element_</pre>
+  <pre class="expected">*i element*</pre>
 </div>
 
 <div class="case" data-name="strong">
@@ -84,8 +84,7 @@ sit</pre>
 
 <div class="case" data-name="h1">
   <div class="input"><h1>Level One Heading</h1></div>
-  <pre class="expected">Level One Heading
-=================</pre>
+  <pre class="expected"># Level One Heading</pre>
 </div>
 
 <div class="case" data-name="escape = when used as heading">
@@ -98,20 +97,21 @@ sit</pre>
   <pre class="expected">A sentence containing =</pre>
 </div>
 
-<div class="case" data-name="h1 as atx" data-options='{"headingStyle":"atx"}'>
-  <div class="input"><h1>Level One Heading with ATX</h1></div>
-  <pre class="expected"># Level One Heading with ATX</pre>
+<div class="case" data-name="h1 as setext" data-options='{"headingStyle":"setext"}'>
+  <div class="input"><h1>Level One Heading with Setext</h1></div>
+  <pre class="expected">Level One Heading with Setext
+=============================</pre>
 </div>
 
 <div class="case" data-name="h2">
   <div class="input"><h2>Level Two Heading</h2></div>
-  <pre class="expected">Level Two Heading
------------------</pre>
+  <pre class="expected">## Level Two Heading</pre>
 </div>
 
-<div class="case" data-name="h2 as atx" data-options='{"headingStyle":"atx"}'>
-  <div class="input"><h2>Level Two Heading with ATX</h2></div>
-  <pre class="expected">## Level Two Heading with ATX</pre>
+<div class="case" data-name="h2 as setext" data-options='{"headingStyle":"setext"}'>
+  <div class="input"><h2>Level Two Heading with Setext</h2></div>
+  <pre class="expected">Level Two Heading with Setext
+-----------------------------</pre>
 </div>
 
 <div class="case" data-name="h3">
@@ -131,17 +131,17 @@ sit</pre>
 
 <div class="case" data-name="hr">
   <div class="input"><hr></div>
-  <pre class="expected">* * *</pre>
+  <pre class="expected">---</pre>
 </div>
 
 <div class="case" data-name="hr with closing tag">
   <div class="input"><hr></hr></div>
-  <pre class="expected">* * *</pre>
+  <pre class="expected">---</pre>
 </div>
 
-<div class="case" data-name="hr with option" data-options='{"hr": "- - -"}'>
+<div class="case" data-name="hr with option" data-options='{"hr": "* * *"}'>
   <div class="input"><hr></div>
-  <pre class="expected">- - -</pre>
+  <pre class="expected">* * *</pre>
 </div>
 
 <div class="case" data-name="br">
@@ -264,10 +264,12 @@ link")</pre>
   "Hello world!"
 end</code></pre></div>
 
-  <pre class="expected">    def code_block
-      # 42 < 9001
-      "Hello world!"
-    end</pre>
+  <pre class="expected">```
+def code_block
+  # 42 < 9001
+  "Hello world!"
+end
+```</pre>
 </div>
 
 <div class="case" data-name="multiple pre/code blocks">
@@ -283,17 +285,21 @@ end</code></pre>
   "Hello world!"
 end</code></pre></div>
 
-  <pre class="expected">    def first_code_block
-      # 42 < 9001
-      "Hello world!"
-    end
+  <pre class="expected">```
+def first_code_block
+  # 42 < 9001
+  "Hello world!"
+end
+```
 
 next:
 
-    def second_code_block
-      # 42 < 9001
-      "Hello world!"
-    end</pre>
+```
+def second_code_block
+  # 42 < 9001
+  "Hello world!"
+end
+```</pre>
 </div>
 
 <div class="case" data-name="pre/code block with multiple new lines">
@@ -305,14 +311,15 @@ should not be
 
 removed</code></pre></div></div>
 
-  <pre class="expected">    Multiple new lines
-    
-    
-    should not be
-    
-    
-    removed</pre>
-</div>
+  <pre class="expected">```
+Multiple new lines
+
+
+should not be
+
+
+removed
+```</div>
 
 <div class="case" data-name="fenced pre/code block" data-options='{"codeBlockStyle": "fenced"}'>
   <div class="input">
@@ -423,9 +430,9 @@ def a_fenced_code block; end
 
 Another paragraph.
 
-*   Unordered list item 1
-*   Unordered list item 2
-*   Unordered list item 3</pre>
+-   Unordered list item 1
+-   Unordered list item 2
+-   Unordered list item 3</pre>
 </div>
 
 <div class="case" data-name="ul">
@@ -436,9 +443,9 @@ Another paragraph.
       <li>Unordered list item 3</li>
     </ul>
   </div>
-  <pre class="expected">*   Unordered list item 1
-*   Unordered list item 2
-*   Unordered list item 3</pre>
+  <pre class="expected">-   Unordered list item 1
+-   Unordered list item 2
+-   Unordered list item 3</pre>
 </div>
 
 <div class="case" data-name="ul with custom bullet" data-options='{"bulletListMarker": "-"}'>
@@ -461,9 +468,9 @@ Another paragraph.
       <li>List item without paragraph</li>
     </ul>
   </div>
-  <pre class="expected">*   List item with paragraph
+  <pre class="expected">-   List item with paragraph
     
-*   List item without paragraph</pre>
+-   List item without paragraph</pre>
 </div>
 
 <div class="case" data-name="ol with paragraphs">
@@ -506,14 +513,14 @@ Another paragraph.
       <li>This is a third item at root level</li>
     </ul>
   </div>
-  <pre class="expected">*   This is a list item at root level
-*   This is another item at root level
-*   *   This is a nested list item
-    *   This is another nested list item
-    *   *   This is a deeply nested list item
-        *   This is another deeply nested list item
-        *   This is a third deeply nested list item
-*   This is a third item at root level</pre>
+  <pre class="expected">-   This is a list item at root level
+-   This is another item at root level
+-   -   This is a nested list item
+    -   This is another nested list item
+    -   -   This is a deeply nested list item
+        -   This is another deeply nested list item
+        -   This is a third deeply nested list item
+-   This is a third item at root level</pre>
 </div>
 
 <div class="case" data-name="nested ols and uls">
@@ -537,14 +544,14 @@ Another paragraph.
       <li>This is a third item at root level</li>
     </ul>
   </div>
-  <pre class="expected">*   This is a list item at root level
-*   This is another item at root level
-*   1.  This is a nested list item
+  <pre class="expected">-   This is a list item at root level
+-   This is another item at root level
+-   1.  This is a nested list item
     2.  This is another nested list item
-    3.  *   This is a deeply nested list item
-        *   This is another deeply nested list item
-        *   This is a third deeply nested list item
-*   This is a third item at root level</pre>
+    3.  -   This is a deeply nested list item
+        -   This is another deeply nested list item
+        -   This is a third deeply nested list item
+-   This is a third item at root level</pre>
 </div>
 
 <div class="case" data-name="ul with blockquote">
@@ -558,7 +565,7 @@ Another paragraph.
       </li>
     </ul>
   </div>
-  <pre class="expected">*   A list item with a blockquote:
+  <pre class="expected">-   A list item with a blockquote:
     
     > This is a blockquote inside a list item.</pre>
 </div>
@@ -604,16 +611,16 @@ Another paragraph.
       <pre><code>return 1 &lt; 2 ? shell_exec('echo $input | $markdown_script') : 0;</code></pre>
     </blockquote>
   </div>
-  <pre class="expected">> This is a header.
-> -----------------
+  <pre class="expected">> ## This is a header.
 > 
 > 1.  This is the first list item.
 > 2.  This is the second list item.
 > 
 > A code block:
 > 
->     return 1 < 2 ? shell_exec('echo $input | $markdown_script') : 0;</pre>
-</div>
+> ```
+> return 1 < 2 ? shell_exec('echo $input | $markdown_script') : 0;
+> ```</div>
 
 <div class="case" data-name="multiple divs">
   <div class="input">
@@ -644,7 +651,9 @@ Another div</pre>
   <div class="input">
     <pre ><code>Hello<!-- comment --> world</code></pre>
   </div>
-  <pre class="expected">    Hello world</pre>
+  <pre class="expected">```
+Hello world
+```</pre>
 </div>
 
 <div class="case" data-name="leading whitespace in heading">
@@ -689,10 +698,10 @@ Another div</pre>
       </li>
     </ol>
   </div>
-  <pre class="expected">*   Indented li with leading/trailing newlines
-*   **Strong with trailing space inside li with leading/trailing whitespace**
-*   li without whitespace
-*   Leading space, text, lots of whitespace … text</pre>
+  <pre class="expected">-   Indented li with leading/trailing newlines
+-   **Strong with trailing space inside li with leading/trailing whitespace**
+-   li without whitespace
+-   Leading space, text, lots of whitespace … text</pre>
 </div>
 
 <div class="case" data-name="whitespace between inline elements">
@@ -704,7 +713,7 @@ Another div</pre>
 
 <div class="case" data-name="whitespace in inline elements">
   <div class="input">Text with no space after the period.<em> Text in em with leading/trailing spaces </em><strong>text in strong with trailing space </strong></div>
-  <pre class="expected">Text with no space after the period. _Text in em with leading/trailing spaces_ **text in strong with trailing space**</pre>
+  <pre class="expected">Text with no space after the period. *Text in em with leading/trailing spaces* **text in strong with trailing space**</pre>
 </div>
 
 <div class="case" data-name="whitespace in nested inline elements">
@@ -768,7 +777,9 @@ Content in another div</pre>
 
 <div class="case" data-name="not escaping within code">
   <div class="input"><pre><code>def this_is_a_method; end;</code></pre></div>
-  <pre class="expected">    def this_is_a_method; end;</pre>
+  <pre class="expected">```
+def this_is_a_method; end;
+```</pre>
 </div>
 
 <div class="case" data-name="escaping strong markdown with *">
@@ -853,7 +864,7 @@ Content in another div</pre>
 
 <div class="case" data-name="escaping _ inside em tags">
   <div class="input"><em>test_italics</em></div>
-  <pre class="expected">_test\_italics_</pre>
+  <pre class="expected">*test\_italics*</pre>
 </div>
 
 <div class="case" data-name="escaping > as blockquote">
@@ -1028,42 +1039,42 @@ Code
 
 <div class="case" data-name="element with trailing nonASCII WS followed by nonWS">
   <div class="input"><i>foo&nbsp;</i>bar</div>
-  <pre class="expected">_foo_&nbsp;bar</pre>
+  <pre class="expected">*foo*&nbsp;bar</pre>
 </div>
 
 <div class="case" data-name="element with trailing nonASCII WS followed by nonASCII WS">
   <div class="input"><i>foo&nbsp;</i>&nbsp;bar</div>
-  <pre class="expected">_foo_&nbsp;&nbsp;bar</pre>
+  <pre class="expected">*foo*&nbsp;&nbsp;bar</pre>
 </div>
 
 <div class="case" data-name="element with trailing ASCII WS followed by nonASCII WS">
   <div class="input"><i>foo </i>&nbsp;bar</div>
-  <pre class="expected">_foo_ &nbsp;bar</pre>
+  <pre class="expected">*foo* &nbsp;bar</pre>
 </div>
 
 <div class="case" data-name="element with trailing nonASCII WS followed by ASCII WS">
   <div class="input"><i>foo&nbsp;</i> bar</div>
-  <pre class="expected">_foo_&nbsp; bar</pre>
+  <pre class="expected">*foo*&nbsp; bar</pre>
 </div>
 
 <div class="case" data-name="nonWS followed by element with leading nonASCII WS">
   <div class="input">foo<i>&nbsp;bar</i></div>
-  <pre class="expected">foo&nbsp;_bar_</pre>
+  <pre class="expected">foo&nbsp;*bar*</pre>
 </div>
 
 <div class="case" data-name="nonASCII WS followed by element with leading nonASCII WS">
   <div class="input">foo&nbsp;<i>&nbsp;bar</i></div>
-  <pre class="expected">foo&nbsp;&nbsp;_bar_</pre>
+  <pre class="expected">foo&nbsp;&nbsp;*bar*</pre>
 </div>
 
 <div class="case" data-name="nonASCII WS followed by element with leading ASCII WS">
   <div class="input">foo&nbsp;<i> bar</i></div>
-  <pre class="expected">foo&nbsp; _bar_</pre>
+  <pre class="expected">foo&nbsp; *bar*</pre>
 </div>
 
 <div class="case" data-name="ASCII WS followed by element with leading nonASCII WS">
   <div class="input">foo <i>&nbsp;bar</i></div>
-  <pre class="expected">foo &nbsp;_bar_</pre>
+  <pre class="expected">foo &nbsp;*bar*</pre>
 </div>
 
 <!-- Behavior of `<code>` with CSS set as `white-space: pre-wrap;`, e.g. in GitLab -->

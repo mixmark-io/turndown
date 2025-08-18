@@ -48,15 +48,16 @@ var turndownService = new TurndownService({ option: 'value' })
 
 | Option                | Valid values  | Default |
 | :-------------------- | :------------ | :------ |
-| `headingStyle`        | `setext` or `atx` | `setext`  |
-| `hr`                  | Any [Thematic break](http://spec.commonmark.org/0.27/#thematic-breaks) | `* * *` |
-| `bulletListMarker`    | `-`, `+`, or `*` | `*` |
-| `codeBlockStyle`      | `indented` or `fenced` | `indented` |
+| `headingStyle`        | `setext` or `atx` | `atx` |
+| `hr`                  | Any [Thematic break](http://spec.commonmark.org/0.27/#thematic-breaks) | `---` |
+| `bulletListMarker`    | `-`, `+`, or `*` | `-` |
+| `codeBlockStyle`      | `indented` or `fenced` | `fenced` |
 | `fence`               | ` ``` ` or `~~~` | ` ``` ` |
-| `emDelimiter`         | `_` or `*` | `_` |
+| `emDelimiter`         | `_` or `*` | `*` |
 | `strongDelimiter`     | `**` or `__` | `**` |
 | `linkStyle`           | `inlined` or `referenced` | `inlined` |
 | `linkReferenceStyle`  | `full`, `collapsed`, or `shortcut` | `full` |
+| `br`                  | `  ` or `\n` | `  ` |
 | `preformattedCode`    | `false` or [`true`](https://github.com/lucthev/collapse-whitespace/issues/16) | `false` |
 
 ### Advanced Options
