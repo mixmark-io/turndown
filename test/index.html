@@ -156,34 +156,34 @@ after the break</pre>
 after the break</pre>
 </div>
 
-<div class="case" data-name="img with no alt">
+<div class="case" data-name="img with no alt" data-options='{"renderAsPure": false}'>
   <div class="input"><img src="http://example.com/logo.png" /></div>
   <pre class="expected">![](http://example.com/logo.png)</pre>
 </div>
 
-<div class="case" data-name="img with relative src">
+<div class="case" data-name="img with relative src" data-options='{"renderAsPure": false}'>
   <div class="input"><img src="logo.png"></div>
   <pre class="expected">![](logo.png)</pre>
 </div>
 
 <div class="case" data-name="img with alt">
-  <div class="input"><img src="logo.png" alt="img with alt"></div>
+  <div class="input"><img src="logo.png" alt="img with alt" data-options='{"renderAsPure": false}'></div>
   <pre class="expected">![img with alt](logo.png)</pre>
 </div>
 
-<div class="case" data-name="img with no src">
+<div class="case" data-name="img with no src" data-options='{"renderAsPure": false}'>
   <div class="input"><img></div>
   <pre class="expected"></pre>
 </div>
 
-<div class="case" data-name="img with a new line in alt">
+<div class="case" data-name="img with a new line in alt" data-options='{"renderAsPure": false}'>
   <div class="input"><img src="logo.png" alt="img with
     alt"></div>
   <pre class="expected">![img with
 alt](logo.png)</pre>
 </div>
 
-<div class="case" data-name="img with more than one new line in alt">
+<div class="case" data-name="img with more than one new line in alt" data-options='{"renderAsPure": false}'>
   <div class="input"><img src="logo.png" alt="img with
     
     alt"></div>
@@ -191,7 +191,7 @@ alt](logo.png)</pre>
 alt](logo.png)</pre>
 </div>
 
-<div class="case" data-name="img with new lines in title">
+<div class="case" data-name="img with new lines in title" data-options='{"renderAsPure": false}'>
   <div class="input"><img src="logo.png" title="the
     
     title"></div>
@@ -199,17 +199,17 @@ alt](logo.png)</pre>
 title")</pre>
 </div>
 
-<div class="case" data-name="a">
+<div class="case" data-name="a" data-options='{"renderAsPure": false}'>
   <div class="input"><a href="http://example.com">An anchor</a></div>
   <pre class="expected">[An anchor](http://example.com)</pre>
 </div>
 
-<div class="case" data-name="a with title">
+<div class="case" data-name="a with title" data-options='{"renderAsPure": false}'>
   <div class="input"><a href="http://example.com" title="Title for link">An anchor</a></div>
   <pre class="expected">[An anchor](http://example.com "Title for link")</pre>
 </div>
 
-<div class="case" data-name="a with multiline title">
+<div class="case" data-name="a with multiline title" data-options='{"renderAsPure": false}'>
   <div class="input"><a href="http://example.com" title="Title for
     
     link">An anchor</a></div>
@@ -232,26 +232,26 @@ link")</pre>
   <pre class="expected">Anchor without a title</pre>
 </div>
 
-<div class="case" data-name="a with a child">
+<div class="case" data-name="a with a child" data-options='{"renderAsPure": false}'>
   <div class="input"><a href="http://example.com/code">Some <code>code</code></a></div>
   <pre class="expected">[Some `code`](http://example.com/code)</pre>
 </div>
 
-<div class="case" data-name="a reference" data-options='{"linkStyle": "referenced"}'>
+<div class="case" data-name="a reference" data-options='{"linkStyle": "referenced", "renderAsPure": false}'>
   <div class="input"><a href="http://example.com">Reference link</a></div>
   <pre class="expected">[Reference link][1]
 
 [1]: http://example.com</pre>
 </div>
 
-<div class="case" data-name="a reference with collapsed style" data-options='{"linkStyle": "referenced", "linkReferenceStyle": "collapsed"}'>
+<div class="case" data-name="a reference with collapsed style" data-options='{"linkStyle": "referenced", "linkReferenceStyle": "collapsed", "renderAsPure": false}'>
   <div class="input"><a href="http://example.com">Reference link with collapsed style</a></div>
   <pre class="expected">[Reference link with collapsed style][]
 
 [Reference link with collapsed style]: http://example.com</pre>
 </div>
 
-<div class="case" data-name="a reference with shortcut style" data-options='{"linkStyle": "referenced", "linkReferenceStyle": "shortcut"}'>
+<div class="case" data-name="a reference with shortcut style" data-options='{"linkStyle": "referenced", "linkReferenceStyle": "shortcut", "renderAsPure": false}'>
   <div class="input"><a href="http://example.com">Reference link with shortcut style</a></div>
   <pre class="expected">[Reference link with shortcut style]
 
@@ -344,7 +344,7 @@ def a_fenced_code block; end
   <pre class="expected">A sentence containing ~~~</pre>
 </div>
 
-<div class="case" data-name="fenced pre/code block with language" data-options='{"codeBlockStyle": "fenced"}'>
+<div class="case" data-name="fenced pre/code block with language" data-options='{"codeBlockStyle": "fenced", "renderAsPure": false}'>
   <div class="input">
     <pre><code class="language-ruby">def a_fenced_code block; end</code></pre>
   </div>
@@ -373,7 +373,7 @@ def a_fenced_code block; end
 3.  Ordered list item 3</pre>
 </div>
 
-<div class="case" data-name="ol with start">
+<div class="case" data-name="ol with start" data-options='{"renderAsPure": false}'>
   <div class="input">
     <ol start="42">
       <li>Ordered list item 42</li>
@@ -640,9 +640,14 @@ Another div</pre>
   <pre class="expected"></pre>
 </div>
 
+<div class="case" data-name="comment, faithful mode" data-options='{"renderAsPure": false}'>
+  <div class="input"><!-- comment --></div>
+  <pre class="expected">&lt;!-- comment --&gt;</pre>
+</div>
+
 <div class="case" data-name="pre/code with comment">
   <div class="input">
-    <pre ><code>Hello<!-- comment --> world</code></pre>
+    <pre><code>Hello<!-- comment --> world</code></pre>
   </div>
   <pre class="expected">    Hello world</pre>
 </div>
@@ -695,7 +700,7 @@ Another div</pre>
 *   Leading space, text, lots of whitespace … text</pre>
 </div>
 
-<div class="case" data-name="whitespace between inline elements">
+<div class="case" data-name="whitespace between inline elements" data-options='{"renderAsPure": false}'>
   <div class="input">
     <p>I <a href="http://example.com/need">need</a> <a href="http://www.example.com/more">more</a> spaces!</p>
   </div>
@@ -707,7 +712,7 @@ Another div</pre>
   <pre class="expected">Text with no space after the period. _Text in em with leading/trailing spaces_ **text in strong with trailing space**</pre>
 </div>
 
-<div class="case" data-name="whitespace in nested inline elements">
+<div class="case" data-name="whitespace in nested inline elements" data-options='{"renderAsPure": false}'>
   <div class="input">Text at root <strong><a href="http://www.example.com">link text with trailing space in strong </a></strong>more text at root</div>
   <pre class="expected">Text at root **[link text with trailing space in strong](http://www.example.com)** more text at root</pre>
 </div>
@@ -1098,6 +1103,152 @@ code
 </code>
   </div>
   <pre class="expected">`    nasty code   `</pre>
+</div>
+
+<div class="case" data-name="Correct escaping of inline raw HTML">
+    <div class="input">Test &lt;code&gt;tags&lt;/code&gt;, &lt;!-- comments --&gt;, &lt;?processing instructions?&gt;, &lt;!A declaration&gt;, and &lt;![CDATA[character data]]&gt;.</div>
+    <pre class="expected">Test \&lt;code&gt;tags\&lt;/code&gt;, \&lt;!-- comments --&gt;, \&lt;?processing instructions?&gt;, \&lt;!A declaration&gt;, and &lt;!\[CDATA\[character data\]\]&gt;.</pre>
+</div>
+
+<div class="case" data-name="Correct escaping of multi-line raw inline HTML">
+    <div class="input">Test &lt;code&gt;multi-line
+        tags&lt;/code&gt;, &lt;!-- multi-line
+        comments --&gt;, &lt;?multi-line
+        processing instructions?&gt;, &lt;!A multi-line
+        declaration&gt;, and &lt;![CDATA[multi-line
+        character data]]&gt;.</div>
+    <pre class="expected">Test \&lt;code&gt;multi-line tags\&lt;/code&gt;, \&lt;!-- multi-line comments --&gt;, \&lt;?multi-line processing instructions?&gt;, \&lt;!A multi-line declaration&gt;, and &lt;!\[CDATA\[multi-line character data\]\]&gt;.</pre>
+</div>
+
+<div class="case" data-name="Correct escaping of HTML blocks">
+    <div class="input"><p>&lt;pre</p> <p>&lt;script</p> <p>&lt;style</p> <p>&lt;textarea</p> <p>&lt;address</p> <p>&lt;ul</p></div>
+    <pre class="expected">\&lt;pre
+
+\&lt;script
+
+\&lt;style
+
+\&lt;textarea
+
+\&lt;address
+
+\&lt;ul</pre>
+</div>
+
+<div class="case" data-name="faithful mode 1" data-options='{"renderAsPure": false}'>
+    <div class="input">
+        <br class="foo">
+        <p dir="ltr">Test 1</p>
+        <h1 draggable="true">Test 2</h1>
+        <blockquote data-foo="bar">Test 3</blockquote>
+        <ol hidden>
+            <li>Test 4</li>
+        </ol>
+        <pre><code accesskey="f">Test 5</code></pre>
+    </div>
+    <pre class="expected">&lt;br class="foo"&gt;
+
+&lt;p dir="ltr"&gt;Test 1&lt;/p&gt;
+
+&lt;h1 draggable="true"&gt;Test 2&lt;/h1&gt;
+
+&lt;blockquote data-foo="bar"&gt;Test 3&lt;/blockquote&gt;
+
+&lt;ol hidden=""&gt;&lt;li&gt;Test 4&lt;/li&gt;&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code accesskey="f"&gt;Test 5&lt;/code&gt;&lt;/pre&gt;</pre>
+</div>
+
+<div class="case" data-name="faithful mode 2" data-options='{"codeBlockStyle": "fenced", "renderAsPure": false}'>
+  <div class="input">
+      <pre><code accesskey="f">Test 1</code></pre>
+      <hr autofocus>
+      <a href="xxx" id="yyy">Test 1</a>
+      <em contenteditable>Test 2</em>
+      <strong inert>Test 3</strong>
+      <code is="foo-test">Test 4</code>
+      <img src="xxx" alt="yyy" title="zzz" lang="es">
+  </div>
+  <pre class="expected">&lt;pre&gt;&lt;code accesskey="f"&gt;Test 1&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr autofocus=""&gt;
+
+&lt;a href="xxx" id="yyy"&gt;Test 1&lt;/a&gt; &lt;em contenteditable=""&gt;Test 2&lt;/em&gt; &lt;strong inert=""&gt;Test 3&lt;/strong&gt; &lt;code is="foo-test"&gt;Test 4&lt;/code&gt; &lt;img src="xxx" alt="yyy" title="zzz" lang="es"&gt;</pre>
+</div>
+
+<div class="case" data-name="faithful mode 3" data-options='{"renderAsPure": false}'>
+  <!-- The test framework mangles CDATA sections, processing instructions, and document type nodes. So, we can't test these. 
+    <!CDATA[[Test 1]]
+    <?Test 2?>
+    <!Test 3>
+  -->
+  <div class="input">
+    <!--Test 4-->
+  </div>
+  <pre class="expected">&lt;!--Test 4--&gt;</pre>
+</div>
+
+<div class="case" data-name="faithful mode, code blocks" data-options='{"renderAsPure": false}'>
+  <div class="input">
+    <pre><code class="foo">Test 1</code></pre>
+  </div>
+  <pre class="expected">&lt;pre&gt;&lt;code class="foo"&gt;Test 1&lt;/code&gt;&lt;/pre&gt;</pre>
+</div>
+
+
+<!-- Note that the extra newlines in the Test 1 text below checks that there are properly stripped from the resulting HTML output. -->
+<div class="case" data-name="faithful mode, unknown elements" data-options='{"renderAsPure": false}'>
+  <div class="input">
+    <details>
+      <summary>Test 
+        
+        1</summary>
+      Test 2
+    </details>
+  </div>
+  <pre class="expected">&lt;details&gt;&lt;summary&gt;Test 1&lt;/summary&gt; Test 2&lt;/details&gt;</pre>
+</div>
+
+<div class="case" data-name="faithful mode, nested elements" data-options='{"renderAsPure": false}'>
+  <div class="input">
+    <div>
+      <p><em>Test 1</em></p>
+    </div>
+  </div>
+  <pre class="expected">&lt;div&gt;&lt;p&gt;&lt;em&gt;Test 1&lt;/em&gt;&lt;/p&gt;&lt;/div&gt;</pre>
+</div>
+  
+<!-- Check that newlines in indented code blocks are translated to entities. -->
+<div class="case" data-name="faithful mode, code block" data-options='{"renderAsPure": false}'>
+  <div class="input">
+    <code><i>Test 1</i></code>
+    <pre><code><i>Test
+
+2</i></code></pre>
+  </div>
+  <pre class="expected">&lt;code&gt;&lt;i&gt;Test 1&lt;/i&gt;&lt;/code&gt;
+
+&lt;pre&gt;&lt;code&gt;&lt;i&gt;Test&amp;#10;&amp;#10;2&lt;/i&gt;&lt;/code&gt;&lt;/pre&gt;</pre>
+</div>
+    
+<div class="case" data-name="faithful mode, fenced pre/code block with language" data-options='{"codeBlockStyle": "fenced", "renderAsPure": false}'>
+  <div class="input">
+    <pre><code class="language-ruby"><i>Test
+
+1</i></code></pre>
+  </div>
+  <pre class="expected">&lt;pre&gt;&lt;code class="language-ruby"&gt;&lt;i&gt;Test&amp;#10;&amp;#10;1&lt;/i&gt;&lt;/code&gt;&lt;/pre&gt;</pre>
+</div>
+
+<div class="case" data-name="ol, faithful mode" data-options='{"renderAsPure": false}'>
+  <div class="input">
+    <ol>
+      <li>Ordered list item 1</li>
+      <li lang="en">Ordered list item 2</li>
+      <li>Ordered list item 3</li>
+    </ol>
+  </div>
+  <pre class="expected">&lt;ol&gt;&lt;li&gt;Ordered list item 1&lt;/li&gt;&lt;li lang="en"&gt;Ordered list item 2&lt;/li&gt;&lt;li&gt;Ordered list item 3&lt;/li&gt;&lt;/ol&gt;<pre>
 </div>
 
 <!-- /TEST CASES -->

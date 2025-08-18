@@ -58,6 +58,9 @@ var turndownService = new TurndownService({ option: 'value' })
 | `linkStyle`           | `inlined` or `referenced` | `inlined` |
 | `linkReferenceStyle`  | `full`, `collapsed`, or `shortcut` | `full` |
 | `preformattedCode`    | `false` or [`true`](https://github.com/lucthev/collapse-whitespace/issues/16) | `false` |
+| `renderAsPure`        | `true` or `false` | `true`
+
+The `renderAsPure` option specifies how this library handles HTML that can't be rendered as pure Markdown. For example, `<em style="color:red">bang</em>` could be rendered simply as "pure" Markdown as `*bang*`, but this loses the red color. It could also be rendered using HTML embedded in Markdown as the more verbose `<em style="color:red">bang</em>`, but this is less readable. Setting `renderAsPure` as `true` chooses the simple, lossy rendering, while setting it to `false` chooses the verbose, exact rendering.
 
 ### Advanced Options
 
@@ -174,6 +177,10 @@ filter: function (node, options) {
 }
 ```
 
+### `pureAttributes` Dict|Function
+
+The `pureAttributes` property defines which attributes of an HTML element can be rendered using pure Markdown. For example, the `<a>` tag can include the `href` attribute with any value; setting `pureAttributes: {href: undefined}` specifies this (a value of `undefined` allows any attribute value). For additional flexibility, this also accepts a `function (node, options)`; this function can modify `node.renderAsPure` and/or return a dict with allowed attributes.
+
 ### `replacement` Function
 
 The replacement function determines how an element should be converted. It should return the Markdown string for a given node. The function is passed the node's content, the node itself, and the `TurndownService` options.
@@ -225,7 +232,7 @@ To avoid the complexity and the performance implications of parsing the content 
 
 If you are confident in doing so, you may want to customise the escaping behaviour to suit your needs. This can be done by overriding `TurndownService.prototype.escape`. `escape` takes the text of each HTML element and should return a version with the Markdown characters escaped.
 
-Note: text in code elements is never passed to`escape`.
+Note: text in code elements is never passed to `escape`.
 
 ## License
 
