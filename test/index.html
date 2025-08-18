@@ -171,9 +171,19 @@ after the break</pre>
   <pre class="expected">![img with alt](logo.png)</pre>
 </div>
 
+<div class="case" data-name="img with escaped content in alt">
+  <div class="input"><img src="logo.png" alt="_img_ *with* [alt]"></div>
+  <pre class="expected">![\_img\_ \*with\* \[alt\]](logo.png)</pre>
+</div>
+
 <div class="case" data-name="img with no src">
   <div class="input"><img></div>
   <pre class="expected"></pre>
+</div>
+
+<div class="case" data-name="img with parenthesis in src">
+  <div class="input"><img src="logo.png?(query)"></div>
+  <pre class="expected">![](logo.png?\(query\))</pre>
 </div>
 
 <div class="case" data-name="img with a new line in alt">
@@ -197,6 +207,11 @@ alt](logo.png)</pre>
     title"></div>
   <pre class="expected">![](logo.png "the
 title")</pre>
+</div>
+
+<div class="case" data-name="img with quotes in title">
+  <div class="input"><img src="logo.png" title="&quot;hello&quot;"></div>
+  <pre class="expected">![](logo.png "\"hello\"")</pre>
 </div>
 
 <div class="case" data-name="a">
@@ -235,6 +250,11 @@ link")</pre>
 <div class="case" data-name="a with a child">
   <div class="input"><a href="http://example.com/code">Some <code>code</code></a></div>
   <pre class="expected">[Some `code`](http://example.com/code)</pre>
+</div>
+
+<div class="case" data-name="a with a brackets in text">
+  <div class="input"><a href="http://example.com/code">Some [text]</a></div>
+  <pre class="expected">[Some \[text\]](http://example.com/code)</pre>
 </div>
 
 <div class="case" data-name="a reference" data-options='{"linkStyle": "referenced"}'>
