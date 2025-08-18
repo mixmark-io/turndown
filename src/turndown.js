@@ -27,7 +27,7 @@ export default function TurndownService (options) {
     rules: COMMONMARK_RULES,
     headingStyle: 'setext',
     hr: '* * *',
-    bulletListMarker: '*',
+    bulletListMarker: '-',
     codeBlockStyle: 'indented',
     fence: '```',
     emDelimiter: '_',
