@@ -1,4 +1,4 @@
-import { repeat } from './utilities'
+import { repeat, trimNewlines } from './utilities'
 
 var rules = {}
 
@@ -39,8 +39,7 @@ rules.blockquote = {
   filter: 'blockquote',
 
   replacement: function (content) {
-    content = content.replace(/^\n+|\n+$/g, '')
-    content = content.replace(/^/gm, '> ')
+    content = trimNewlines(content).replace(/^/gm, '> ')
     return '\n\n' + content + '\n\n'
   }
 }
@@ -69,12 +68,11 @@ rules.listItem = {
       var index = Array.prototype.indexOf.call(parent.children, node)
       prefix = (start ? Number(start) + index : index + 1) + '.  '
     }
-    content = content
-      .replace(/^\n+/, '') // remove leading newlines
-      .replace(/\n+$/, '\n') // replace trailing newlines with just a single one
-      .replace(/\n/gm, '\n' + ' '.repeat(prefix.length)) // indent
+    var isParagraph = /\n$/.test(content)
+    content = trimNewlines(content) + (isParagraph ? '\n' : '')
+    content = content.replace(/\n/gm, '\n' + ' '.repeat(prefix.length)) // indent
     return (
-      prefix + content + (node.nextSibling && !/\n$/.test(content) ? '\n' : '')
+      prefix + content + (node.nextSibling ? '\n' : '')
     )
   }
 }

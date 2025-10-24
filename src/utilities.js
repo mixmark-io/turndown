@@ -23,6 +23,10 @@ export function trimTrailingNewlines (string) {
   return string.substring(0, indexEnd)
 }
 
+export function trimNewlines (string) {
+  return trimTrailingNewlines(trimLeadingNewlines(string))
+}
+
 export var blockElements = [
   'ADDRESS', 'ARTICLE', 'ASIDE', 'AUDIO', 'BLOCKQUOTE', 'BODY', 'CANVAS',
   'CENTER', 'DD', 'DIR', 'DIV', 'DL', 'DT', 'FIELDSET', 'FIGCAPTION', 'FIGURE',
