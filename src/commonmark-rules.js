@@ -249,6 +249,8 @@ rules.image = {
 
   replacement: function (content, node) {
     var alt = cleanAttribute(node.getAttribute('alt'))
+    // Replace one or more consecutive line breaks with ' - '
+    alt = alt.replace(/(\r?\n\s*)+/g, ' - ')
     var src = node.getAttribute('src') || ''
     var title = cleanAttribute(node.getAttribute('title'))
     var titlePart = title ? ' "' + title + '"' : ''
