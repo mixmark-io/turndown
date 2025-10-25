@@ -1100,6 +1100,37 @@ code
   <pre class="expected">`    nasty code   `</pre>
 </div>
 
+<div class="case" data-name="Correct escaping of inline raw HTML">
+    <div class="input">Test &lt;code&gt;tags&lt;/code&gt;, &lt;!-- comments --&gt;, &lt;?processing instructions?&gt;, &lt;!A declaration&gt;, and &lt;![CDATA[character data]]&gt;.</div>
+    <pre class="expected">Test \&lt;code&gt;tags\&lt;/code&gt;, \&lt;!-- comments --&gt;, \&lt;?processing instructions?&gt;, \&lt;!A declaration&gt;, and &lt;!\[CDATA\[character data\]\]&gt;.</pre>
+</div>
+
+<div class="case" data-name="Correct escaping of multi-line raw inline HTML">
+    <div class="input">Test &lt;code&gt;multi-line
+        tags&lt;/code&gt;, &lt;!-- multi-line
+        comments --&gt;, &lt;?multi-line
+        processing instructions?&gt;, &lt;!A multi-line
+        declaration&gt;, and &lt;![CDATA[multi-line
+        character data]]&gt;.</div>
+    <pre class="expected">Test \&lt;code&gt;multi-line tags\&lt;/code&gt;, \&lt;!-- multi-line comments --&gt;, \&lt;?multi-line processing instructions?&gt;, \&lt;!A multi-line declaration&gt;, and &lt;!\[CDATA\[multi-line character data\]\]&gt;.</pre>
+</div>
+
+<div class="case" data-name="Correct escaping of HTML blocks">
+    <div class="input"><p>&lt;pre</p> <p>&lt;script</p> <p>&lt;style</p> <p>&lt;textarea</p> <p>&lt;address</p> <p>&lt;ul</p></div>
+    <pre class="expected">\&lt;pre
+
+\&lt;script
+
+\&lt;style
+
+\&lt;textarea
+
+\&lt;address
+
+\&lt;ul</pre>
+</div>
+
+
 <!-- /TEST CASES -->
 
 <script src="turndown-test.browser.js"></script>
