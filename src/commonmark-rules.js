@@ -49,6 +49,12 @@ rules.list = {
 
   replacement: function (content, node) {
     var parent = node.parentNode
+    if (node.parentNode.nodeName.match(/^(UL|OL)$/i)) {
+      content = '    ' + content
+        .replace(/^\n+/, '') // remove leading newlines
+        .replace(/\n+$/, '\n') // replace trailing newlines with just a single one
+        .replace(/\n/gm, '\n    ') // indent
+    }
     if (parent.nodeName === 'LI' && parent.lastElementChild === node) {
       return '\n' + content
     } else {
@@ -65,7 +71,7 @@ rules.listItem = {
     var parent = node.parentNode
     if (parent.nodeName === 'OL') {
       var start = parent.getAttribute('start')
-      var index = Array.prototype.indexOf.call(parent.children, node)
+      var index = Array.prototype.indexOf.call(Array.prototype.filter.call(parent.children, el => el.nodeName === 'LI'), node)
       prefix = (start ? Number(start) + index : index + 1) + '.  '
     }
     var isParagraph = /\n$/.test(content)
