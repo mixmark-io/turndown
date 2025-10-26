@@ -178,3 +178,21 @@ test('remove elements are overridden by keep', function (t) {
     'Hello <del>world</del><ins>World</ins>'
   )
 })
+
+test('deep nested code in pre is converted to code block (indented)', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService()
+  t.equal(turndownService.turndown(
+    '<pre><div><code>Hi</code></div></pre>'),
+    '    Hi'
+  )
+})
+
+test('deep nested code in pre is converted to code block (fenced)', function (t) {
+  t.plan(1)
+  var turndownService = new TurndownService({ codeBlockStyle: 'fenced' })
+  t.equal(turndownService.turndown(
+    '<pre><div><code>Hi</code></div></pre>'),
+    '```\nHi\n```'
+  )
+})
