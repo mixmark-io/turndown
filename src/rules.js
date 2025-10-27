@@ -6,12 +6,14 @@ export default function Rules (options) {
   this.options = options
   this._keep = []
   this._remove = []
+  this._preserve = []
 
   this.blankRule = {
     replacement: options.blankReplacement
   }
 
   this.keepReplacement = options.keepReplacement
+  this.preserveReplacement = options.preserveReplacement
 
   this.defaultRule = {
     replacement: options.defaultReplacement
@@ -42,12 +44,20 @@ Rules.prototype = {
     })
   },
 
+  preserve: function (filter) {
+    this._preserve.unshift({
+      filter: filter,
+      replacement: this.preserveReplacement
+    })
+  },
+
   forNode: function (node) {
     if (node.isBlank) return this.blankRule
     var rule
 
     if ((rule = findRule(this.array, node, this.options))) return rule
     if ((rule = findRule(this._keep, node, this.options))) return rule
+    if ((rule = findRule(this._preserve, node, this.options))) return rule
     if ((rule = findRule(this._remove, node, this.options))) return rule
 
     return this.defaultRule
