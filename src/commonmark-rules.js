@@ -205,12 +205,26 @@ rules.referenceLink = {
   }
 }
 
+const WHITESPACE_START = /^(\\?\n| )+/
+const WHITESPACE_END = /(\\?\n| )+$/
 rules.emphasis = {
   filter: ['em', 'i'],
 
   replacement: function (content, node, options) {
     if (!content.trim()) return ''
-    return options.emDelimiter + content + options.emDelimiter
+    var startWhitespace = ''
+    var endWhitespace = ''
+    var m = WHITESPACE_START.exec(content)
+    if (m) {
+      startWhitespace = m[0]
+      content = content.slice(startWhitespace.length)
+    }
+    m = WHITESPACE_END.exec(content)
+    if (m) {
+      endWhitespace = m[0]
+      content = content.slice(0, -endWhitespace.length)
+    }
+    return startWhitespace + options.emDelimiter + content + options.emDelimiter + endWhitespace
   }
 }
 
@@ -219,7 +233,19 @@ rules.strong = {
 
   replacement: function (content, node, options) {
     if (!content.trim()) return ''
-    return options.strongDelimiter + content + options.strongDelimiter
+    var startWhitespace = ''
+    var endWhitespace = ''
+    var m = WHITESPACE_START.exec(content)
+    if (m) {
+      startWhitespace = m[0]
+      content = content.slice(startWhitespace.length)
+    }
+    m = WHITESPACE_END.exec(content)
+    if (m) {
+      endWhitespace = m[0]
+      content = content.slice(0, -endWhitespace.length)
+    }
+    return startWhitespace + options.strongDelimiter + content + options.strongDelimiter + endWhitespace
   }
 }
 
