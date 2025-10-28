@@ -150,11 +150,10 @@ rules.inlineLink = {
   },
 
   replacement: function (content, node) {
-    var href = node.getAttribute('href')
-    if (href) href = href.replace(/([()])/g, '\\$1')
-    var title = cleanAttribute(node.getAttribute('title'))
-    if (title) title = ' "' + title.replace(/"/g, '\\"') + '"'
-    return '[' + content + '](' + href + title + ')'
+    var href = escapeLinkDestination(node.getAttribute('href'))
+    var title = escapeLinkTitle(cleanAttribute(node.getAttribute('title')))
+    var titlePart = title ? ' "' + title + '"' : ''
+    return '[' + content + '](' + href + titlePart + ')'
   }
 }
 
@@ -248,16 +247,39 @@ rules.image = {
   filter: 'img',
 
   replacement: function (content, node) {
-    var alt = cleanAttribute(node.getAttribute('alt'))
-    var src = node.getAttribute('src') || ''
+    var alt = escapeMarkdown(cleanAttribute(node.getAttribute('alt')))
+    var src = escapeLinkDestination(node.getAttribute('src') || '')
     var title = cleanAttribute(node.getAttribute('title'))
-    var titlePart = title ? ' "' + title + '"' : ''
+    var titlePart = title ? ' "' + escapeLinkTitle(title) + '"' : ''
     return src ? '![' + alt + ']' + '(' + src + titlePart + ')' : ''
   }
 }
 
 function cleanAttribute (attribute) {
   return attribute ? attribute.replace(/(\n+\s*)+/g, '\n') : ''
+}
+
+var ESCAPE_PATTERNS = {
+  before: /([\\*`[\]_]|(?:^[-+>])|(?:^~~~)|(?:^#{1-6}))/g,
+  after: /((?:^\d+(?=\.)))/
+}
+var escapePattern = new RegExp(
+  '(?:' + ESCAPE_PATTERNS.before.source + '|' + ESCAPE_PATTERNS.after.source + ')',
+  'g'
+)
+
+function escapeMarkdown (content) {
+  return content.replace(escapePattern, function (match, before, after) {
+    return before ? '\\' + before : after + '\\'
+  })
+}
+
+function escapeLinkDestination (destination) {
+  return destination.replace(/([()])/g, '\\$1')
+}
+
+function escapeLinkTitle (title) {
+  return title.replace(/"/g, '\\"')
 }
 
 export default rules
