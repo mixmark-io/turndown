@@ -171,35 +171,50 @@ rules.referenceLink = {
     var href = node.getAttribute('href')
     var title = cleanAttribute(node.getAttribute('title'))
     if (title) title = ' "' + title + '"'
-    var replacement
-    var reference
+
+    var tocReference
+    var tocLink = href + title
+    var tocKey
 
     switch (options.linkReferenceStyle) {
       case 'collapsed':
-        replacement = '[' + content + '][]'
-        reference = '[' + content + ']: ' + href + title
+        tocReference = '[]'
+        tocKey = content
         break
       case 'shortcut':
-        replacement = '[' + content + ']'
-        reference = '[' + content + ']: ' + href + title
+        tocReference = ''
+        tocKey = content
         break
       default:
-        var id = this.references.length + 1
-        replacement = '[' + content + '][' + id + ']'
-        reference = '[' + id + ']: ' + href + title
+        var id = this.referenceIds[tocLink]
+        if (id === undefined) {
+          id = this.references.length + 1
+          this.referenceIds[tocLink] = id
+        }
+        tocReference = '[' + id + ']'
+        tocKey = id
     }
+    var replacement = '[' + content + ']' + tocReference
+    var reference = '[' + tocKey + ']: ' + tocLink
 
-    this.references.push(reference)
+    if (!this.knownReferences[reference]) {
+      this.references.push(reference)
+    }
+    this.knownReferences[reference] = true
     return replacement
   },
 
   references: [],
+  knownReferences: {},
+  referenceIds: {},
 
   append: function (options) {
     var references = ''
     if (this.references.length) {
       references = '\n\n' + this.references.join('\n') + '\n\n'
       this.references = [] // Reset references
+      this.referenceIds = {}
+      this.knownReferences = {}
     }
     return references
   }
