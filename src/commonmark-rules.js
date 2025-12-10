@@ -1,4 +1,4 @@
-import { repeat, trimNewlines } from './utilities'
+import { repeat, trimNewlines, findLargestSource } from './utilities'
 
 var rules = {}
 
@@ -249,7 +249,7 @@ rules.image = {
 
   replacement: function (content, node) {
     var alt = cleanAttribute(node.getAttribute('alt'))
-    var src = node.getAttribute('src') || ''
+    var src = findLargestSource(node.getAttribute('srcset')) || node.getAttribute('src') || ''
     var title = cleanAttribute(node.getAttribute('title'))
     var titlePart = title ? ' "' + title + '"' : ''
     return src ? '![' + alt + ']' + '(' + src + titlePart + ')' : ''

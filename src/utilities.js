@@ -78,3 +78,22 @@ function has (node, tagNames) {
     })
   )
 }
+
+export function findLargestSource (srcset) {
+  if (!srcset) return undefined
+  var maxURL
+  var maxResolution = 0
+  var sources = srcset.trim().split(/\s*,\s*/)
+
+  for (var i = 0; i < sources.length; i++) {
+    var parts = sources[i].split(/\s+/)
+    var descriptor = parts[1] || '1x'
+    var resolution = parseFloat(descriptor.slice(0, descriptor.length - 1))
+    if (resolution > maxResolution) {
+      maxResolution = resolution
+      maxURL = parts[0]
+    }
+  }
+
+  return maxURL
+}
