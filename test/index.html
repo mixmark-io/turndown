@@ -199,6 +199,29 @@ alt](logo.png)</pre>
 title")</pre>
 </div>
 
+<div class="case" data-name="img with srcset">
+  <div class="input"><img srcset="
+      http://example.com/logo.png,
+      http://example.com/logo-2x.png     2x,
+      http://example.com/logo-4x.png   4.0x,
+      http://example.com/logo-4.5x.png 4.5x
+    "></div>
+  <pre class="expected">![](http://example.com/logo-4.5x.png)</pre>
+</div>
+
+<div class="case" data-name="img with srcset and src">
+  <div class="input"><img src="http://example.com/logo-32x32.png" srcset="
+      http://example.com/logo-128x128.png 128w,
+      http://example.com/logo-64x64.png    64w
+    "></div>
+  <pre class="expected">![](http://example.com/logo-128x128.png)</pre>
+</div>
+
+<div class="case" data-name="img with empty srcset">
+  <div class="input"><img src="http://example.com/logo.png" srcset=""></div>
+  <pre class="expected">![](http://example.com/logo.png)</pre>
+</div>
+
 <div class="case" data-name="a">
   <div class="input"><a href="http://example.com">An anchor</a></div>
   <pre class="expected">[An anchor](http://example.com)</pre>
