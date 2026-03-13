@@ -199,6 +199,11 @@ alt](logo.png)</pre>
 title")</pre>
 </div>
 
+<div class="case" data-name="GH #513 img with markdown chars in alt">
+  <div class="input"> <img src="figure.jpg" alt="[Image]"></div>
+  <pre class="expected">![\[Image\]](figure.jpg)</pre>
+</div>
+
 <div class="case" data-name="a">
   <div class="input"><a href="http://example.com">An anchor</a></div>
   <pre class="expected">[An anchor](http://example.com)</pre>

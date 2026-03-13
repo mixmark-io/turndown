@@ -1,4 +1,4 @@
-import { repeat, trimNewlines } from './utilities'
+import { repeat, trimNewlines, escape } from './utilities'
 
 var rules = {}
 
@@ -248,7 +248,7 @@ rules.image = {
   filter: 'img',
 
   replacement: function (content, node) {
-    var alt = cleanAttribute(node.getAttribute('alt'))
+    var alt = escape(cleanAttribute(node.getAttribute('alt')))
     var src = node.getAttribute('src') || ''
     var title = cleanAttribute(node.getAttribute('title'))
     var titlePart = title ? ' "' + title + '"' : ''
