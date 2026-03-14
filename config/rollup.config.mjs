@@ -1,6 +1,7 @@
 import commonjs from '@rollup/plugin-commonjs'
 import replace from '@rollup/plugin-replace'
 import resolve from '@rollup/plugin-node-resolve'
+import babel from '@rollup/plugin-babel'
 
 export default function (config) {
   return {
@@ -10,7 +11,14 @@ export default function (config) {
     plugins: [
       commonjs(),
       replace({ 'process.browser': JSON.stringify(!!config.browser), preventAssignment: true }),
-      resolve()
+      resolve(),
+      babel({
+        babelHelpers: 'bundled',
+        plugins: [
+          '@babel/plugin-transform-block-scoping',
+          '@babel/plugin-transform-shorthand-properties'
+        ]
+      })
     ]
   }
 }
