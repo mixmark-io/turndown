@@ -31,24 +31,24 @@
  * @param {Object} options
  */
 function collapseWhitespace (options) {
-  var element = options.element
-  var isBlock = options.isBlock
-  var isVoid = options.isVoid
-  var isPre = options.isPre || function (node) {
+  const element = options.element
+  const isBlock = options.isBlock
+  const isVoid = options.isVoid
+  const isPre = options.isPre || function (node) {
     return node.nodeName === 'PRE'
   }
 
   if (!element.firstChild || isPre(element)) return
 
-  var prevText = null
-  var keepLeadingWs = false
+  let prevText = null
+  let keepLeadingWs = false
 
-  var prev = null
-  var node = next(prev, element, isPre)
+  let prev = null
+  let node = next(prev, element, isPre)
 
   while (node !== element) {
     if (node.nodeType === 3 || node.nodeType === 4) { // Node.TEXT_NODE or Node.CDATA_SECTION_NODE
-      var text = node.data.replace(/[ \r\n\t]+/g, ' ')
+      let text = node.data.replace(/[ \r\n\t]+/g, ' ')
 
       if ((!prevText || / $/.test(prevText.data)) &&
           !keepLeadingWs && text[0] === ' ') {
@@ -85,7 +85,7 @@ function collapseWhitespace (options) {
       continue
     }
 
-    var nextNode = next(prev, node, isPre)
+    const nextNode = next(prev, node, isPre)
     prev = node
     node = nextNode
   }
@@ -106,7 +106,7 @@ function collapseWhitespace (options) {
  * @return {Node} node
  */
 function remove (node) {
-  var next = node.nextSibling || node.parentNode
+  const next = node.nextSibling || node.parentNode
 
   node.parentNode.removeChild(node)
 

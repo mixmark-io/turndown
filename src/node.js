@@ -23,7 +23,7 @@ function flankingWhitespace (node, options) {
     return { leading: '', trailing: '' }
   }
 
-  var edges = edgeWhitespace(node.textContent)
+  const edges = edgeWhitespace(node.textContent)
 
   // abandon leading ASCII WS if left-flanked by ASCII WS
   if (edges.leadingAscii && isFlankedByWhitespace('left', node, options)) {
@@ -39,7 +39,7 @@ function flankingWhitespace (node, options) {
 }
 
 function edgeWhitespace (string) {
-  var m = string.match(/^(([ \t\r\n]*)(\s*))(?:(?=\S)[\s\S]*\S)?((\s*?)([ \t\r\n]*))$/)
+  const m = string.match(/^(([ \t\r\n]*)(\s*))(?:(?=\S)[\s\S]*\S)?((\s*?)([ \t\r\n]*))$/)
   return {
     leading: m[1], // whole string for whitespace-only strings
     leadingAscii: m[2],
@@ -51,9 +51,9 @@ function edgeWhitespace (string) {
 }
 
 function isFlankedByWhitespace (side, node, options) {
-  var sibling
-  var regExp
-  var isFlanked
+  let sibling
+  let regExp
+  let isFlanked
 
   if (side === 'left') {
     sibling = node.previousSibling

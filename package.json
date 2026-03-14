@@ -16,13 +16,17 @@
     "@mixmark-io/domino": "^2.2.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/plugin-transform-block-scoping": "^7.28.6",
+    "@babel/plugin-transform-shorthand-properties": "^7.27.1",
+    "@rollup/plugin-babel": "^7.0.0",
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-replace": "^6.0.3",
-    "browserify": "17.0.0",
+    "browserify": "17.0.1",
     "rewire": "^6.0.0",
-    "rollup": "^4.55.1",
-    "standard": "^10.0.3",
+    "rollup": "^4.59.0",
+    "standard": "^17.0.0",
     "turndown-attendant": "0.0.3"
   },
   "engines": {
