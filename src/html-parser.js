@@ -2,15 +2,15 @@
  * Set up window for Node.js
  */
 
-var root = (typeof window !== 'undefined' ? window : {})
+const root = (typeof window !== 'undefined' ? window : {})
 
 /*
  * Parsing HTML strings
  */
 
 function canParseHTMLNatively () {
-  var Parser = root.DOMParser
-  var canParse = false
+  const Parser = root.DOMParser
+  let canParse = false
 
   // Adapted from https://gist.github.com/1129031
   // Firefox/Opera/IE throw errors on unsupported types
@@ -25,12 +25,12 @@ function canParseHTMLNatively () {
 }
 
 function createHTMLParser () {
-  var Parser = function () {}
+  const Parser = function () {}
 
   if (process.browser) {
     if (shouldUseActiveX()) {
       Parser.prototype.parseFromString = function (string) {
-        var doc = new window.ActiveXObject('htmlfile')
+        const doc = new window.ActiveXObject('htmlfile')
         doc.designMode = 'on' // disable on-page scripts
         doc.open()
         doc.write(string)
@@ -39,7 +39,7 @@ function createHTMLParser () {
       }
     } else {
       Parser.prototype.parseFromString = function (string) {
-        var doc = document.implementation.createHTMLDocument('')
+        const doc = document.implementation.createHTMLDocument('')
         doc.open()
         doc.write(string)
         doc.close()
@@ -47,7 +47,7 @@ function createHTMLParser () {
       }
     }
   } else {
-    var domino = require('@mixmark-io/domino')
+    const domino = require('@mixmark-io/domino')
     Parser.prototype.parseFromString = function (string) {
       return domino.createDocument(string)
     }
@@ -56,7 +56,7 @@ function createHTMLParser () {
 }
 
 function shouldUseActiveX () {
-  var useActiveX = false
+  let useActiveX = false
   try {
     document.implementation.createHTMLDocument('').open()
   } catch (e) {

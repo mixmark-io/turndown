@@ -3,9 +3,9 @@ import HTMLParser from './html-parser'
 import { isBlock, isVoid } from './utilities'
 
 export default function RootNode (input, options) {
-  var root
+  let root
   if (typeof input === 'string') {
-    var doc = htmlParser().parseFromString(
+    const doc = htmlParser().parseFromString(
       // DOM parsers arrange elements in the <head> and <body>.
       // Wrapping in a custom element ensures elements are reliably arranged in
       // a single element.
@@ -19,15 +19,15 @@ export default function RootNode (input, options) {
   normalizePre(root)
   collapseWhitespace({
     element: root,
-    isBlock: isBlock,
-    isVoid: isVoid,
+    isBlock,
+    isVoid,
     isPre: options.preformattedCode ? isPreOrCode : null
   })
 
   return root
 }
 
-var _htmlParser
+let _htmlParser
 function htmlParser () {
   _htmlParser = _htmlParser || new HTMLParser()
   return _htmlParser
@@ -41,9 +41,9 @@ function normalizePre (root) {
   if (!root.getElementsByTagName) {
     return // unsupported DOM method
   }
-  var preNodes = root.getElementsByTagName('PRE')
-  for (var i = 0; i < preNodes.length; i++) {
-    var brNodes = preNodes[i].getElementsByTagName('BR')
+  const preNodes = root.getElementsByTagName('PRE')
+  for (let i = 0; i < preNodes.length; i++) {
+    const brNodes = preNodes[i].getElementsByTagName('BR')
     while (brNodes.length > 0) {
       brNodes[0].parentNode.replaceChild(
         brNodes[0].ownerDocument.createTextNode('\n'),

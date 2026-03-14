@@ -1,6 +1,6 @@
 import { escapeMarkdown, repeat, trimNewlines } from './utilities'
 
-var rules = {}
+const rules = {}
 
 rules.paragraph = {
   filter: 'p',
@@ -22,10 +22,10 @@ rules.heading = {
   filter: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
 
   replacement: function (content, node, options) {
-    var hLevel = Number(node.nodeName.charAt(1))
+    const hLevel = Number(node.nodeName.charAt(1))
 
     if (options.headingStyle === 'setext' && hLevel < 3) {
-      var underline = repeat((hLevel === 1 ? '=' : '-'), content.length)
+      const underline = repeat((hLevel === 1 ? '=' : '-'), content.length)
       return (
         '\n\n' + content + '\n' + underline + '\n\n'
       )
@@ -48,7 +48,7 @@ rules.list = {
   filter: ['ul', 'ol'],
 
   replacement: function (content, node) {
-    var parent = node.parentNode
+    const parent = node.parentNode
     if (parent.nodeName === 'LI' && parent.lastElementChild === node) {
       return '\n' + content
     } else {
@@ -61,14 +61,14 @@ rules.listItem = {
   filter: 'li',
 
   replacement: function (content, node, options) {
-    var prefix = options.bulletListMarker + '   '
-    var parent = node.parentNode
+    let prefix = options.bulletListMarker + '   '
+    const parent = node.parentNode
     if (parent.nodeName === 'OL') {
-      var start = parent.getAttribute('start')
-      var index = Array.prototype.indexOf.call(parent.children, node)
+      const start = parent.getAttribute('start')
+      const index = Array.prototype.indexOf.call(parent.children, node)
       prefix = (start ? Number(start) + index : index + 1) + '.  '
     }
-    var isParagraph = /\n$/.test(content)
+    const isParagraph = /\n$/.test(content)
     content = trimNewlines(content) + (isParagraph ? '\n' : '')
     content = content.replace(/\n/gm, '\n' + ' '.repeat(prefix.length)) // indent
     return (
@@ -107,22 +107,22 @@ rules.fencedCodeBlock = {
   },
 
   replacement: function (content, node, options) {
-    var className = node.firstChild.getAttribute('class') || ''
-    var language = (className.match(/language-(\S+)/) || [null, ''])[1]
-    var code = node.firstChild.textContent
+    const className = node.firstChild.getAttribute('class') || ''
+    const language = (className.match(/language-(\S+)/) || [null, ''])[1]
+    const code = node.firstChild.textContent
 
-    var fenceChar = options.fence.charAt(0)
-    var fenceSize = 3
-    var fenceInCodeRegex = new RegExp('^' + fenceChar + '{3,}', 'gm')
+    const fenceChar = options.fence.charAt(0)
+    let fenceSize = 3
+    const fenceInCodeRegex = new RegExp('^' + fenceChar + '{3,}', 'gm')
 
-    var match
+    let match
     while ((match = fenceInCodeRegex.exec(code))) {
       if (match[0].length >= fenceSize) {
         fenceSize = match[0].length + 1
       }
     }
 
-    var fence = repeat(fenceChar, fenceSize)
+    const fence = repeat(fenceChar, fenceSize)
 
     return (
       '\n\n' + fence + language + '\n' +
@@ -150,9 +150,9 @@ rules.inlineLink = {
   },
 
   replacement: function (content, node) {
-    var href = escapeLinkDestination(node.getAttribute('href'))
-    var title = escapeLinkTitle(cleanAttribute(node.getAttribute('title')))
-    var titlePart = title ? ' "' + title + '"' : ''
+    const href = escapeLinkDestination(node.getAttribute('href'))
+    const title = escapeLinkTitle(cleanAttribute(node.getAttribute('title')))
+    const titlePart = title ? ' "' + title + '"' : ''
     return '[' + content + '](' + href + titlePart + ')'
   }
 }
@@ -167,11 +167,11 @@ rules.referenceLink = {
   },
 
   replacement: function (content, node, options) {
-    var href = escapeLinkDestination(node.getAttribute('href'))
-    var title = cleanAttribute(node.getAttribute('title'))
+    const href = escapeLinkDestination(node.getAttribute('href'))
+    let title = cleanAttribute(node.getAttribute('title'))
     if (title) title = ' "' + escapeLinkTitle(title) + '"'
-    var replacement
-    var reference
+    let replacement
+    let reference
 
     switch (options.linkReferenceStyle) {
       case 'collapsed':
@@ -195,7 +195,7 @@ rules.referenceLink = {
   references: [],
 
   append: function (options) {
-    var references = ''
+    let references = ''
     if (this.references.length) {
       references = '\n\n' + this.references.join('\n') + '\n\n'
       this.references = [] // Reset references
@@ -224,8 +224,8 @@ rules.strong = {
 
 rules.code = {
   filter: function (node) {
-    var hasSiblings = node.previousSibling || node.nextSibling
-    var isCodeBlock = node.parentNode.nodeName === 'PRE' && !hasSiblings
+    const hasSiblings = node.previousSibling || node.nextSibling
+    const isCodeBlock = node.parentNode.nodeName === 'PRE' && !hasSiblings
 
     return node.nodeName === 'CODE' && !isCodeBlock
   },
@@ -234,9 +234,9 @@ rules.code = {
     if (!content) return ''
     content = content.replace(/\r?\n|\r/g, ' ')
 
-    var extraSpace = /^`|^ .*?[^ ].* $|`$/.test(content) ? ' ' : ''
-    var delimiter = '`'
-    var matches = content.match(/`+/gm) || []
+    const extraSpace = /^`|^ .*?[^ ].* $|`$/.test(content) ? ' ' : ''
+    let delimiter = '`'
+    const matches = content.match(/`+/gm) || []
     while (matches.indexOf(delimiter) !== -1) delimiter = delimiter + '`'
 
     return delimiter + extraSpace + content + extraSpace + delimiter
@@ -247,10 +247,10 @@ rules.image = {
   filter: 'img',
 
   replacement: function (content, node) {
-    var alt = escapeMarkdown(cleanAttribute(node.getAttribute('alt')))
-    var src = escapeLinkDestination(node.getAttribute('src') || '')
-    var title = cleanAttribute(node.getAttribute('title'))
-    var titlePart = title ? ' "' + escapeLinkTitle(title) + '"' : ''
+    const alt = escapeMarkdown(cleanAttribute(node.getAttribute('alt')))
+    const src = escapeLinkDestination(node.getAttribute('src') || '')
+    const title = cleanAttribute(node.getAttribute('title'))
+    const titlePart = title ? ' "' + escapeLinkTitle(title) + '"' : ''
     return src ? '![' + alt + ']' + '(' + src + titlePart + ')' : ''
   }
 }
@@ -260,7 +260,7 @@ function cleanAttribute (attribute) {
 }
 
 function escapeLinkDestination (destination) {
-  var escaped = destination.replace(/([<>()])/g, '\\$1')
+  const escaped = destination.replace(/([<>()])/g, '\\$1')
   return escaped.indexOf(' ') >= 0 ? '<' + escaped + '>' : escaped
 }
 
