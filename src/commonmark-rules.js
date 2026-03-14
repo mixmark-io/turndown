@@ -167,7 +167,7 @@ rules.referenceLink = {
   },
 
   replacement: function (content, node, options) {
-    var href = node.getAttribute('href')
+    var href = escapeLinkDestination(node.getAttribute('href'))
     var title = cleanAttribute(node.getAttribute('title'))
     if (title) title = ' "' + escapeLinkTitle(title) + '"'
     var replacement
@@ -260,7 +260,8 @@ function cleanAttribute (attribute) {
 }
 
 function escapeLinkDestination (destination) {
-  return destination.replace(/([()])/g, '\\$1')
+  var escaped = destination.replace(/([<>()])/g, '\\$1')
+  return escaped.indexOf(' ') >= 0 ? '<' + escaped + '>' : escaped
 }
 
 function escapeLinkTitle (title) {
