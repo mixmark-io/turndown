@@ -1,4 +1,4 @@
-import { repeat, trimNewlines } from './utilities'
+import { escapeMarkdown, repeat, trimNewlines } from './utilities'
 
 var rules = {}
 
@@ -150,11 +150,10 @@ rules.inlineLink = {
   },
 
   replacement: function (content, node) {
-    var href = node.getAttribute('href')
-    if (href) href = href.replace(/([()])/g, '\\$1')
-    var title = cleanAttribute(node.getAttribute('title'))
-    if (title) title = ' "' + title.replace(/"/g, '\\"') + '"'
-    return '[' + content + '](' + href + title + ')'
+    var href = escapeLinkDestination(node.getAttribute('href'))
+    var title = escapeLinkTitle(cleanAttribute(node.getAttribute('title')))
+    var titlePart = title ? ' "' + title + '"' : ''
+    return '[' + content + '](' + href + titlePart + ')'
   }
 }
 
@@ -170,7 +169,7 @@ rules.referenceLink = {
   replacement: function (content, node, options) {
     var href = node.getAttribute('href')
     var title = cleanAttribute(node.getAttribute('title'))
-    if (title) title = ' "' + title + '"'
+    if (title) title = ' "' + escapeLinkTitle(title) + '"'
     var replacement
     var reference
 
@@ -248,16 +247,24 @@ rules.image = {
   filter: 'img',
 
   replacement: function (content, node) {
-    var alt = cleanAttribute(node.getAttribute('alt'))
-    var src = node.getAttribute('src') || ''
+    var alt = escapeMarkdown(cleanAttribute(node.getAttribute('alt')))
+    var src = escapeLinkDestination(node.getAttribute('src') || '')
     var title = cleanAttribute(node.getAttribute('title'))
-    var titlePart = title ? ' "' + title + '"' : ''
+    var titlePart = title ? ' "' + escapeLinkTitle(title) + '"' : ''
     return src ? '![' + alt + ']' + '(' + src + titlePart + ')' : ''
   }
 }
 
 function cleanAttribute (attribute) {
   return attribute ? attribute.replace(/(\n+\s*)+/g, '\n') : ''
+}
+
+function escapeLinkDestination (destination) {
+  return destination.replace(/([()])/g, '\\$1')
+}
+
+function escapeLinkTitle (title) {
+  return title.replace(/"/g, '\\"')
 }
 
 export default rules

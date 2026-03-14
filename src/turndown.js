@@ -1,24 +1,9 @@
 import COMMONMARK_RULES from './commonmark-rules'
 import Rules from './rules'
-import { extend, trimLeadingNewlines, trimTrailingNewlines } from './utilities'
+import { escapeMarkdown, extend, trimLeadingNewlines, trimTrailingNewlines } from './utilities'
 import RootNode from './root-node'
 import Node from './node'
 var reduce = Array.prototype.reduce
-var escapes = [
-  [/\\/g, '\\\\'],
-  [/\*/g, '\\*'],
-  [/^-/g, '\\-'],
-  [/^\+ /g, '\\+ '],
-  [/^(=+)/g, '\\$1'],
-  [/^(#{1,6}) /g, '\\$1 '],
-  [/`/g, '\\`'],
-  [/^~~~/g, '\\~~~'],
-  [/\[/g, '\\['],
-  [/\]/g, '\\]'],
-  [/^>/g, '\\>'],
-  [/_/g, '\\_'],
-  [/^(\d+)\. /g, '$1\\. ']
-]
 
 export default function TurndownService (options) {
   if (!(this instanceof TurndownService)) return new TurndownService(options)
@@ -140,9 +125,7 @@ TurndownService.prototype = {
    */
 
   escape: function (string) {
-    return escapes.reduce(function (accumulator, escape) {
-      return accumulator.replace(escape[0], escape[1])
-    }, string)
+    return escapeMarkdown(string)
   }
 }
 
