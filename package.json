@@ -23,7 +23,6 @@
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-replace": "^6.0.3",
-    "browserify": "17.0.1",
     "rewire": "^6.0.0",
     "rollup": "^4.59.0",
     "standard": "^17.0.0",
@@ -53,7 +52,7 @@
     "build-es": "rollup -c config/rollup.config.es.mjs && rollup -c config/rollup.config.browser.es.mjs",
     "build-umd": "rollup -c config/rollup.config.umd.mjs && rollup -c config/rollup.config.browser.umd.mjs",
     "build-iife": "rollup -c config/rollup.config.iife.mjs",
-    "build-test": "browserify test/turndown-test.js --outfile test/turndown-test.browser.js",
+    "build-test": "rollup -c config/rollup.config.test.mjs",
     "prepare": "npm run build",
     "test": "npm run build && npm run build-test && standard ./src/**/*.js && node test/internals-test.js && node test/turndown-test.js"
   }
