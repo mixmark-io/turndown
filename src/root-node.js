@@ -16,6 +16,7 @@ export default function RootNode (input, options) {
   } else {
     root = input.cloneNode(true)
   }
+  normalizePre(root)
   collapseWhitespace({
     element: root,
     isBlock: isBlock,
@@ -34,4 +35,20 @@ function htmlParser () {
 
 function isPreOrCode (node) {
   return node.nodeName === 'PRE' || node.nodeName === 'CODE'
+}
+
+function normalizePre (root) {
+  if (!root.getElementsByTagName) {
+    return // unsupported DOM method
+  }
+  var preNodes = root.getElementsByTagName('PRE')
+  for (var i = 0; i < preNodes.length; i++) {
+    var brNodes = preNodes[i].getElementsByTagName('BR')
+    while (brNodes.length > 0) {
+      brNodes[0].parentNode.replaceChild(
+        brNodes[0].ownerDocument.createTextNode('\n'),
+        brNodes[0]
+      )
+    }
+  }
 }

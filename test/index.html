@@ -328,14 +328,14 @@ end</code></pre>
 end</code></pre></div>
 
   <pre class="expected">    def first_code_block
-      # 42 < 9001
+      # 42 &lt; 9001
       "Hello world!"
     end
 
 next:
 
     def second_code_block
-      # 42 < 9001
+      # 42 &lt; 9001
       "Hello world!"
     end</pre>
 </div>
@@ -356,6 +356,24 @@ removed</code></pre></div></div>
     
     
     removed</pre>
+</div>
+
+<div class="case" data-name="pre/code block with newline as &lt;br&gt; tag">
+  <div class="input"><div><pre><code>First line<br>Second line<br>Third line</code></pre></div></div>
+
+  <pre class="expected">    First line
+    Second line
+    Third line</pre>
+</div>
+
+<div class="case" data-name="fenced pre/code block with newline as &lt;br&gt; tag" data-options='{"codeBlockStyle": "fenced"}'>
+  <div class="input"><div><pre><code>First line<br>Second line<br>Third line</code></pre></div></div>
+
+  <pre class="expected">```
+First line
+Second line
+Third line
+```</pre>
 </div>
 
 <div class="case" data-name="fenced pre/code block" data-options='{"codeBlockStyle": "fenced"}'>
@@ -656,7 +674,7 @@ Another paragraph.
 > 
 > A code block:
 > 
->     return 1 < 2 ? shell_exec('echo $input | $markdown_script') : 0;</pre>
+>     return 1 &lt; 2 ? shell_exec('echo $input | $markdown_script') : 0;</pre>
 </div>
 
 <div class="case" data-name="multiple divs">
