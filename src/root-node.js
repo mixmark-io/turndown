@@ -16,7 +16,6 @@ export default function RootNode (input, options) {
   } else {
     root = input.cloneNode(true)
   }
-  normalizePre(root)
   collapseWhitespace({
     element: root,
     isBlock,
@@ -35,20 +34,4 @@ function htmlParser () {
 
 function isPreOrCode (node) {
   return node.nodeName === 'PRE' || node.nodeName === 'CODE'
-}
-
-function normalizePre (root) {
-  if (!root.getElementsByTagName) {
-    return // unsupported DOM method
-  }
-  const preNodes = root.getElementsByTagName('PRE')
-  for (let i = 0; i < preNodes.length; i++) {
-    const brNodes = preNodes[i].getElementsByTagName('BR')
-    while (brNodes.length > 0) {
-      brNodes[0].parentNode.replaceChild(
-        brNodes[0].ownerDocument.createTextNode('\n'),
-        brNodes[0]
-      )
-    }
-  }
 }
