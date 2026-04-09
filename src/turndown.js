@@ -10,12 +10,12 @@ export default function TurndownService (options) {
 
   const defaults = {
     rules: COMMONMARK_RULES,
-    headingStyle: 'setext',
-    hr: '* * *',
-    bulletListMarker: '*',
-    codeBlockStyle: 'indented',
+    headingStyle: 'atx',
+    hr: '---',
+    bulletListMarker: '-',
+    codeBlockStyle: 'fenced',
     fence: '```',
-    emDelimiter: '_',
+    emDelimiter: '*',
     strongDelimiter: '**',
     linkStyle: 'inlined',
     linkReferenceStyle: 'full',
