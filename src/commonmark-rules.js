@@ -209,7 +209,26 @@ rules.emphasis = {
 
   replacement: function (content, node, options) {
     if (!content.trim()) return ''
-    return options.emDelimiter + content + options.emDelimiter
+    var delimiter = options.emDelimiter
+    // A `_` delimiter cannot open or close emphasis between two word characters
+    // (CommonMark intraword rule), so `x<em>e</em>t` would emit `x_e_t`, which
+    // renders as literal text. Fall back to `*` only when the delimiter sits
+    // directly between word characters. Any whitespace on the element's edge is
+    // moved outside the delimiters, which already makes `_` safe there.
+    if (delimiter === '_') {
+      var word = /[\p{L}\p{N}]/u
+      var text = node.textContent
+      var previous = node.previousSibling
+      var next = node.nextSibling
+      var before = previous && previous.nodeType === 3 ? previous.nodeValue.slice(-1) : ''
+      var after = next && next.nodeType === 3 ? next.nodeValue.charAt(0) : ''
+      var openIntraword = !/\s/.test(text.charAt(0)) &&
+        word.test(before) && word.test(content.charAt(0))
+      var closeIntraword = !/\s/.test(text.charAt(text.length - 1)) &&
+        word.test(after) && word.test(content.charAt(content.length - 1))
+      if (openIntraword || closeIntraword) delimiter = '*'
+    }
+    return delimiter + content + delimiter
   }
 }
 
