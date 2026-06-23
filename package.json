@@ -23,7 +23,7 @@
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-replace": "^6.0.3",
-    "rewire": "^6.0.0",
+    "rewire": "^9.0.1",
     "rollup": "^4.59.0",
     "standard": "^17.0.0",
     "turndown-attendant": "0.0.3"
