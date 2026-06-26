@@ -367,6 +367,22 @@ def a_fenced_code block; end
 ```</pre>
 </div>
 
+<div class="case" data-name="fenced pre/code block with whitespace before code" data-options='{"codeBlockStyle": "fenced"}'>
+  <div class="input">
+    <pre> <code>def a_fenced_code block; end</code></pre>
+  </div>
+  <pre class="expected">```
+def a_fenced_code block; end
+```</pre>
+</div>
+
+<div class="case" data-name="indented pre/code block with whitespace before code" data-options='{"codeBlockStyle": "indented"}'>
+  <div class="input">
+    <pre> <code>def an_indented_code block; end</code></pre>
+  </div>
+  <pre class="expected">    def an_indented_code block; end</pre>
+</div>
+
 <div class="case" data-name="pre/code block fenced with ~" data-options='{"codeBlockStyle": "fenced", "fence": "~~~"}'>
   <div class="input">
     <pre><code>def a_fenced_code block; end</code></pre>
