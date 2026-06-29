@@ -92,7 +92,7 @@ const markdownEscapes = [
   [/\]/g, '\\]'],
   [/^>/g, '\\>'],
   [/_/g, '\\_'],
-  [/^(\d+)\. /g, '$1\\. ']
+  [/^(\d+)([.)]) /g, '$1\\$2 ']
 ]
 
 export function escapeMarkdown (string) {
