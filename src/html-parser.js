@@ -16,7 +16,7 @@ function canParseHTMLNatively () {
   // Firefox/Opera/IE throw errors on unsupported types
   try {
     // WebKit returns null on unsupported types
-    if (new Parser().parseFromString('', 'text/html')) {
+    if (new Parser().parseFromString(trustedTypes?.emptyHTML ?? '', 'text/html')) {
       canParse = true
     }
   } catch (e) {}
