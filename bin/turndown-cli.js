@@ -18,6 +18,13 @@ function main () {
   var inputPath = process.argv[2]
   var turndownService = new TurndownService()
 
+  try {
+    var gfm = require('turndown-plugin-gfm').gfm
+    turndownService.use(gfm)
+  } catch (err) {
+    console.warn('turndown-plugin-gfm not installed; GFM extensions (tables, etc.) are disabled')
+  }
+
   var html = inputPath
     ? fs.readFileSync(path.resolve(process.cwd(), inputPath), 'utf8')
     : readStdin()
