@@ -24,6 +24,24 @@ Browser:
 
 For usage with RequireJS, UMD versions are located in `lib/turndown.umd.js` (for Node.js) and `lib/turndown.browser.umd.js` for browser usage. These files are generated when the npm package is published. To generate them manually, clone this repo and run `npm run build`.
 
+## Docker
+
+```
+docker build -t turndown .
+```
+
+Convert HTML piped via stdin to Markdown on stdout:
+
+```
+cat foo.html | docker run --rm -i turndown > foo.md
+```
+
+Convert a file in the current directory (mounted into the container) and write `foo.md` alongside it:
+
+```
+docker run --rm -v "$(pwd):/src" turndown foo.html
+```
+
 ## Usage
 
 ```js
