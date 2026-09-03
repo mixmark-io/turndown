@@ -3,7 +3,6 @@ import Rules from './rules'
 import { escapeMarkdown, extend, trimLeadingNewlines, trimTrailingNewlines } from './utilities'
 import RootNode from './root-node'
 import Node from './node'
-const reduce = Array.prototype.reduce
 
 export default function TurndownService (options) {
   if (!(this instanceof TurndownService)) return new TurndownService(options)
@@ -139,8 +138,11 @@ TurndownService.prototype = {
 
 function process (parentNode) {
   const self = this
-  return reduce.call(parentNode.childNodes, function (output, node) {
-    node = new Node(node, self.options)
+  const children = parentNode.childNodes
+  const parts = []
+
+  for (let i = 0, len = children.length; i < len; i++) {
+    const node = new Node(children[i], self.options)
 
     let replacement = ''
     if (node.nodeType === 3) {
@@ -149,8 +151,48 @@ function process (parentNode) {
       replacement = replacementForNode.call(self, node)
     }
 
-    return join(output, replacement)
-  }, '')
+    if (parts.length === 0) {
+      // First part: same logic as join('', replacement)
+      // trimTrailingNewlines('') = '', so s1 = ''
+      // nls = max(0, leadingNls) = leadingNls
+      let replStart = 0
+      while (replStart < replacement.length && replacement[replStart] === '\n') replStart++
+      const leadingNls = replStart
+      let nls = leadingNls
+      if (nls > 2) nls = 2
+      if (nls > 0) parts.push('\n\n'.substring(0, nls))
+      const trimmed = replStart < replacement.length ? replacement.substring(replStart) : ''
+      if (trimmed) parts.push(trimmed)
+    } else {
+      const last = parts[parts.length - 1]
+
+      // Trim trailing newlines from the last part
+      let lastEnd = last.length
+      while (lastEnd > 0 && last[lastEnd - 1] === '\n') lastEnd--
+      const trailingNls = last.length - lastEnd
+
+      // Count leading newlines in the replacement
+      let replStart = 0
+      while (replStart < replacement.length && replacement[replStart] === '\n') replStart++
+      const leadingNls = replStart
+
+      // Separator: max of trailing and leading newlines, capped at 2
+      let nls = Math.max(trailingNls, leadingNls)
+      if (nls > 2) nls = 2
+
+      // Update last part (remove trailing newlines)
+      parts[parts.length - 1] = lastEnd > 0 ? last.substring(0, lastEnd) : ''
+
+      // Add separator
+      if (nls > 0) parts.push('\n\n'.substring(0, nls))
+
+      // Add trimmed replacement
+      const trimmed = replStart < replacement.length ? replacement.substring(replStart) : ''
+      if (trimmed) parts.push(trimmed)
+    }
+  }
+
+  return parts.join('')
 }
 
 /**
