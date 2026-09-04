@@ -860,6 +860,16 @@ Content in another div</pre>
   <pre class="expected">1984.George Orwell wrote 1984.</pre>
 </div>
 
+<div class="case" data-name="escaping ol markdown with ) delimiter">
+  <div class="input">1984) by George Orwell</div>
+  <pre class="expected">1984\) by George Orwell</pre>
+</div>
+
+<div class="case" data-name="not escaping ) outside of an ol">
+  <div class="input">1984)George Orwell wrote 1984)</div>
+  <pre class="expected">1984)George Orwell wrote 1984)</pre>
+</div>
+
 <div class="case" data-name="escaping ul markdown *">
   <div class="input">* An unordered list item</div>
   <pre class="expected">\* An unordered list item</pre>
