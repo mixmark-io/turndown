@@ -133,8 +133,8 @@ TurndownService.prototype = {
  * Reduces a DOM node down to its Markdown string equivalent
  * @private
  * @param {HTMLElement} parentNode The node to convert
- * @returns A Markdown representation of the node
- * @type String
+ * @returns Accumulator with Markdown representation parts of the node
+ * @type Array
  */
 
 function process (parentNode) {
@@ -149,14 +149,15 @@ function process (parentNode) {
       replacement = replacementForNode.call(self, node)
     }
 
-    return join(output, replacement)
-  }, '')
+    join(output, replacement)
+    return output
+  }, [])
 }
 
 /**
  * Appends strings as each rule requires and trims the output
  * @private
- * @param {String} output The conversion output
+ * @param {Array} output The conversion output accumulator
  * @returns A trimmed version of the ouput
  * @type String
  */
@@ -165,11 +166,11 @@ function postProcess (output) {
   const self = this
   this.rules.forEach(function (rule) {
     if (typeof rule.append === 'function') {
-      output = join(output, rule.append(self.options))
+      join(output, rule.append(self.options))
     }
   })
 
-  return output.replace(/^[\t\r\n]+/, '').replace(/[\t\r\n\s]+$/, '')
+  return output.join('').replace(/^[\t\r\n]+/, '').replace(/[\t\r\n\s]+$/, '')
 }
 
 /**
@@ -182,7 +183,7 @@ function postProcess (output) {
 
 function replacementForNode (node) {
   const rule = this.rules.forNode(node)
-  let content = process.call(this, node)
+  let content = process.call(this, node).join('')
   const whitespace = node.flankingWhitespace
   if (whitespace.leading || whitespace.trailing) content = content.trim()
   return (
@@ -193,21 +194,23 @@ function replacementForNode (node) {
 }
 
 /**
- * Joins replacement to the current output with appropriate number of new lines
+ * Joins replacement with the current output accumulator using the appropriate number of new lines
+ * (makes sure the only trailing whitespace will be in the last array element)
  * @private
- * @param {String} output The current conversion output
+ * @param {String} output The current conversion output accumulator
  * @param {String} replacement The string to append to the output
- * @returns Joined output
- * @type String
  */
 
 function join (output, replacement) {
-  const s1 = trimTrailingNewlines(output)
+  const tail = output.pop() || ''
+  const s1 = trimTrailingNewlines(tail)
   const s2 = trimLeadingNewlines(replacement)
-  const nls = Math.max(output.length - s1.length, replacement.length - s2.length)
+  const nls = Math.max(tail.length - s1.length, replacement.length - s2.length)
   const separator = '\n\n'.substring(0, nls)
 
-  return s1 + separator + s2
+  for (const it of [s1, separator, s2]) {
+    if (it) output.push(it)
+  }
 }
 
 /**
