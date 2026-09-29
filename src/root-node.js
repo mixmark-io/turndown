@@ -1,5 +1,6 @@
 import collapseWhitespace from './collapse-whitespace'
 import HTMLParser from './html-parser'
+import { unshadow } from './unshadow-node'
 import { isBlock, isVoid } from './utilities'
 
 export default function RootNode (input, options) {
@@ -12,9 +13,9 @@ export default function RootNode (input, options) {
       '<x-turndown id="turndown-root">' + input + '</x-turndown>',
       'text/html'
     )
-    root = doc.getElementById('turndown-root')
+    root = unshadow(doc.getElementById('turndown-root'))
   } else {
-    root = input.cloneNode(true)
+    root = unshadow(input).cloneNode(true)
   }
   collapseWhitespace({
     element: root,
