@@ -37,6 +37,31 @@ sit</pre>
   <pre class="expected">_i element_</pre>
 </div>
 
+<div class="case" data-name="adjacent emphasis">
+  <div class="input"><i>1</i><i>2</i><em>3</em><em>4</em></div>
+  <pre class="expected">_1234_</pre>
+</div>
+
+<div class="case" data-name="adjacent emphasis in spans">
+  <div class="input"><span><i>1</i></span><span><i>2</i></span><span><em>3</em></span><span><em>4</em></span></div>
+  <pre class="expected">_1234_</pre>
+</div>
+
+<div class="case" data-name="spaced emphasis stays separate">
+  <div class="input"><i>1</i> <i>2</i></div>
+  <pre class="expected">_1_ _2_</pre>
+</div>
+
+<div class="case" data-name="adjacent strong">
+  <div class="input"><b>1</b><strong>2</strong></div>
+  <pre class="expected">**12**</pre>
+</div>
+
+<div class="case" data-name="emphasis beside strong">
+  <div class="input"><em>1</em><strong>2</strong></div>
+  <pre class="expected">_1_**2**</pre>
+</div>
+
 <div class="case" data-name="strong">
   <div class="input"><strong>strong element</strong></div>
   <pre class="expected">**strong element**</pre>
