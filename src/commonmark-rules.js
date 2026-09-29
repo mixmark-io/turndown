@@ -204,12 +204,54 @@ rules.referenceLink = {
   }
 }
 
+function emphasisKind (nodeName) {
+  if (nodeName === 'EM' || nodeName === 'I') return 'em'
+  if (nodeName === 'STRONG' || nodeName === 'B') return 'strong'
+  return null
+}
+
+function soleElementChild (node) {
+  let child = node.firstChild
+  let found = null
+  while (child) {
+    const isEmptyText = child.nodeType === 3 && !/\S/.test(child.nodeValue)
+    if (!isEmptyText) {
+      if (found || child.nodeType !== 1) return null
+      found = child
+    }
+    child = child.nextSibling
+  }
+  return found
+}
+
+function hasAdjacentEmphasis (node, direction, kind) {
+  const sibling = direction === 'next' ? node.nextSibling : node.previousSibling
+  if (!sibling) {
+    const parent = node.parentNode
+    if (!parent || parent.nodeName !== 'SPAN' || soleElementChild(parent) !== node) return false
+    return hasAdjacentEmphasis(parent, direction, kind)
+  }
+  if (sibling.nodeType !== 1) return false
+  if (emphasisKind(sibling.nodeName) === kind && /\S/.test(sibling.textContent)) return true
+  if (sibling.nodeName !== 'SPAN') return false
+  const inner = soleElementChild(sibling)
+  return !!(inner && emphasisKind(inner.nodeName) === kind && /\S/.test(inner.textContent))
+}
+
+function emphasisReplacement (content, node, options) {
+  if (!content.trim()) return ''
+  const kind = emphasisKind(node.nodeName)
+  const delimiter = kind === 'em' ? options.emDelimiter : options.strongDelimiter
+  const open = hasAdjacentEmphasis(node, 'prev', kind) ? '' : delimiter
+  const close = hasAdjacentEmphasis(node, 'next', kind) ? '' : delimiter
+  return open + content + close
+}
+
 rules.emphasis = {
   filter: ['em', 'i'],
 
   replacement: function (content, node, options) {
-    if (!content.trim()) return ''
-    return options.emDelimiter + content + options.emDelimiter
+    return emphasisReplacement(content, node, options)
   }
 }
 
@@ -217,8 +259,7 @@ rules.strong = {
   filter: ['strong', 'b'],
 
   replacement: function (content, node, options) {
-    if (!content.trim()) return ''
-    return options.strongDelimiter + content + options.strongDelimiter
+    return emphasisReplacement(content, node, options)
   }
 }
 
