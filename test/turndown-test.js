@@ -168,6 +168,44 @@ test('remove elements are overridden by rules', function (t) {
   t.equal(turndownService.turndown('<p>Hello world</p>'), 'Hello world')
 })
 
+test('form controls do not shadow node properties', function (t) {
+  t.plan(1)
+  var domino = require('@mixmark-io/domino')
+  var document = domino.createDocument(
+    '<form><input id="parentNode"><p>Hello</p></form>'
+  )
+  var form = document.getElementsByTagName('form')[0]
+  var blocker = document.createElement('input')
+  var names = [
+    'childNodes', 'firstChild', 'lastChild', 'nextSibling', 'previousSibling',
+    'nodeName', 'textContent', 'nodeValue', 'cloneNode', 'removeChild',
+    'lastElementChild', 'getAttribute'
+  ]
+  function shadow (node) {
+    names.forEach(function (name) {
+      Object.defineProperty(node, name, {
+        configurable: true,
+        get: function () { return blocker }
+      })
+    })
+  }
+  var owner = form
+  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'cloneNode')) {
+    owner = Object.getPrototypeOf(owner)
+  }
+  var originalClone = owner.cloneNode
+  owner.cloneNode = function (deep) {
+    var copy = originalClone.call(this, deep)
+    if (copy && copy.nodeName === 'FORM') shadow(copy)
+    return copy
+  }
+  try {
+    t.equal(new TurndownService().turndown(form), 'Hello')
+  } finally {
+    owner.cloneNode = originalClone
+  }
+})
+
 test('remove elements are overridden by keep', function (t) {
   t.plan(1)
   var turndownService = new TurndownService()

@@ -3,6 +3,7 @@ import Rules from './rules'
 import { escapeMarkdown, extend, trimLeadingNewlines, trimTrailingNewlines } from './utilities'
 import RootNode from './root-node'
 import Node from './node'
+import { realNodeType } from './unshadow-node'
 const reduce = Array.prototype.reduce
 
 export default function TurndownService (options) {
@@ -219,12 +220,7 @@ function join (output, replacement) {
  */
 
 function canConvert (input) {
-  return (
-    input != null && (
-      typeof input === 'string' ||
-      (input.nodeType && (
-        input.nodeType === 1 || input.nodeType === 9 || input.nodeType === 11
-      ))
-    )
-  )
+  if (typeof input === 'string') return true
+  const nodeType = realNodeType(input)
+  return nodeType === 1 || nodeType === 9 || nodeType === 11
 }
