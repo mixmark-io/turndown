@@ -1,6 +1,6 @@
 import COMMONMARK_RULES from './commonmark-rules'
 import Rules from './rules'
-import { escapeMarkdown, extend, trimLeadingNewlines, trimTrailingNewlines } from './utilities'
+import { escapeMarkdown, extend, trimLeadingNewlines, trimTrailingNewlines, trimTrailingWhitespace } from './utilities'
 import RootNode from './root-node'
 import Node from './node'
 const reduce = Array.prototype.reduce
@@ -169,7 +169,7 @@ function postProcess (output) {
     }
   })
 
-  return output.replace(/^[\t\r\n]+/, '').replace(/[\t\r\n\s]+$/, '')
+  return trimTrailingWhitespace(output.replace(/^[\t\r\n]+/, ''))
 }
 
 /**
