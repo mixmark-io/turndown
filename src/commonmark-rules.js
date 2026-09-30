@@ -222,6 +222,18 @@ rules.strong = {
   }
 }
 
+// Same result as /^`|^ .*?[^ ].* $|`$/.test(content), whose middle branch backtracks
+// quadratically on long content that starts with a space and does not end with one.
+// `.` in that regexp does not match line terminators, so at most one may appear,
+// and only as the non-space character.
+function needsSpacePadding (content) {
+  if (content[0] === '`' || content[content.length - 1] === '`') return true
+  if (content.length < 3 || content[0] !== ' ' || content[content.length - 1] !== ' ') return false
+  const inner = content.slice(1, -1)
+  const lineTerminators = (inner.match(/[\n\r\u2028\u2029]/g) || []).length
+  return lineTerminators === 0 ? /[^ ]/.test(inner) : lineTerminators === 1
+}
+
 rules.code = {
   filter: function (node) {
     const hasSiblings = node.previousSibling || node.nextSibling
@@ -234,7 +246,7 @@ rules.code = {
     if (!content) return ''
     content = content.replace(/\r?\n|\r/g, ' ')
 
-    const extraSpace = /^`|^ .*?[^ ].* $|`$/.test(content) ? ' ' : ''
+    const extraSpace = needsSpacePadding(content) ? ' ' : ''
     let delimiter = '`'
     const matches = content.match(/`+/gm) || []
     while (matches.indexOf(delimiter) !== -1) delimiter = delimiter + '`'

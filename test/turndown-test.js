@@ -178,3 +178,21 @@ test('remove elements are overridden by keep', function (t) {
     'Hello <del>world</del><ins>World</ins>'
   )
 })
+
+test('long whitespace before the end of the output is trimmed in linear time', function (t) {
+  t.plan(2)
+  var turndownService = new TurndownService()
+  var start = Date.now()
+  var markdown = turndownService.turndown('<pre>a' + ' '.repeat(100000) + 'b</pre>')
+  t.ok(Date.now() - start < 1000, 'converts in under a second')
+  t.ok(/b$/.test(markdown), 'keeps the content after the whitespace')
+})
+
+test('code span padding is checked in linear time', function (t) {
+  t.plan(2)
+  var turndownService = new TurndownService()
+  var start = Date.now()
+  var markdown = turndownService.turndown('<p>x<code><br>' + 'a'.repeat(100000) + '</code></p>')
+  t.ok(Date.now() - start < 1000, 'converts in under a second')
+  t.ok(/^x` +a+`$/.test(markdown), 'renders the code span unchanged')
+})

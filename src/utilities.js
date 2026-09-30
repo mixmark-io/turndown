@@ -23,6 +23,13 @@ export function trimTrailingNewlines (string) {
   return string.substring(0, indexEnd)
 }
 
+export function trimTrailingWhitespace (string) {
+  // avoid match-at-end regexp bottleneck, see #370
+  let indexEnd = string.length
+  while (indexEnd > 0 && /\s/.test(string[indexEnd - 1])) indexEnd--
+  return string.substring(0, indexEnd)
+}
+
 export function trimNewlines (string) {
   return trimTrailingNewlines(trimLeadingNewlines(string))
 }
