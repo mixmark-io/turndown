@@ -430,6 +430,83 @@ def a_fenced_code block; end
 44.  Ordered list item 44</pre>
 </div>
 
+<div class="case" data-name="ol with single digit start">
+  <div class="input">
+    <ol start="5">
+      <li>Ordered list item 5</li>
+      <li>Ordered list item 6</li>
+    </ol>
+  </div>
+  <pre class="expected">5.  Ordered list item 5
+6.  Ordered list item 6</pre>
+</div>
+
+<div class="case" data-name="ol with zero start">
+  <div class="input">
+    <ol start="0">
+      <li>Ordered list item 0</li>
+      <li>Ordered list item 1</li>
+    </ol>
+  </div>
+  <pre class="expected">0.  Ordered list item 0
+1.  Ordered list item 1</pre>
+</div>
+
+<div class="case" data-name="ol with empty start">
+  <div class="input">
+    <ol start="">
+      <li>Ordered list item 1</li>
+      <li>Ordered list item 2</li>
+    </ol>
+  </div>
+  <pre class="expected">1.  Ordered list item 1
+2.  Ordered list item 2</pre>
+</div>
+
+<div class="case" data-name="ol with non-numeric start">
+  <div class="input">
+    <ol start="abc">
+      <li>Ordered list item 1</li>
+      <li>Ordered list item 2</li>
+    </ol>
+  </div>
+  <pre class="expected">1.  Ordered list item 1
+2.  Ordered list item 2</pre>
+</div>
+
+<div class="case" data-name="ol with start followed by non-numeric characters">
+  <div class="input">
+    <ol start="3abc">
+      <li>Ordered list item 3</li>
+      <li>Ordered list item 4</li>
+    </ol>
+  </div>
+  <pre class="expected">3.  Ordered list item 3
+4.  Ordered list item 4</pre>
+</div>
+
+<div class="case" data-name="ol with decimal start">
+  <div class="input">
+    <ol start="2.5">
+      <li>Ordered list item 2</li>
+      <li>Ordered list item 3</li>
+    </ol>
+  </div>
+  <pre class="expected">2.  Ordered list item 2
+3.  Ordered list item 3</pre>
+</div>
+
+<div class="case" data-name="ol with whitespace around start">
+  <div class="input">
+    <ol start=" 7 ">
+      <li>Ordered list item 7</li>
+      <li>Ordered list item 8</li>
+    </ol>
+  </div>
+  <pre class="expected">7.  Ordered list item 7
+8.  Ordered list item 8</pre>
+</div>
+
 <div class="case" data-name="ol with content">
   <div class="input">
     <ol start="42">
