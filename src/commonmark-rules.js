@@ -260,12 +260,12 @@ function cleanAttribute (attribute) {
 }
 
 function escapeLinkDestination (destination) {
-  const escaped = destination.replace(/([<>()])/g, '\\$1')
+  const escaped = destination.replace(/([\\<>()])/g, '\\$1')
   return escaped.indexOf(' ') >= 0 ? '<' + escaped + '>' : escaped
 }
 
 function escapeLinkTitle (title) {
-  return title.replace(/"/g, '\\"')
+  return title.replace(/(["\\])/g, '\\$1')
 }
 
 export default rules
