@@ -64,9 +64,10 @@ rules.listItem = {
     let prefix = options.bulletListMarker + '   '
     const parent = node.parentNode
     if (parent.nodeName === 'OL') {
-      const start = parent.getAttribute('start')
+      // An invalid `start` is ignored (numbering begins at 1), as in HTML
+      const start = parseInt(parent.getAttribute('start'), 10)
       const index = Array.prototype.indexOf.call(parent.children, node)
-      prefix = (start ? Number(start) + index : index + 1) + '.  '
+      prefix = (Number.isNaN(start) ? index + 1 : start + index) + '.  '
     }
     const isParagraph = /\n$/.test(content)
     content = trimNewlines(content) + (isParagraph ? '\n' : '')
