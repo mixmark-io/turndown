@@ -184,7 +184,19 @@ function replacementForNode (node) {
   const rule = this.rules.forNode(node)
   let content = process.call(this, node)
   const whitespace = node.flankingWhitespace
-  if (whitespace.leading || whitespace.trailing) content = content.trim()
+  if (whitespace.leading || whitespace.trailing) {
+    // Newlines can come from child <br> elements, not flanking text whitespace.
+    const trimmed = content.trim()
+    const start = trimmed ? content.indexOf(trimmed) : content.length
+    const leading = content.slice(0, start)
+    const trailing = content.slice(start + trimmed.length)
+    const preserveLeading = leading.indexOf('\n') !== -1
+    const preserveTrailing = trailing.indexOf('\n') !== -1
+    if (preserveLeading) whitespace.leading = ''
+    if (preserveTrailing) whitespace.trailing = ''
+    content = (preserveLeading ? leading : '') + trimmed +
+      (preserveTrailing ? trailing : '')
+  }
   return (
     whitespace.leading +
     rule.replacement(content, node, this.options) +

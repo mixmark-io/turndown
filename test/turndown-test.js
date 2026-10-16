@@ -9,6 +9,32 @@ var test = attendant.test
 
 attendant.run()
 
+test('inline whitespace preserves child line breaks', function (t) {
+  const cases = [
+    ['<span>abc</span><span> def<br></span><span>ghi</span>', 'abc def  \nghi'],
+    ['<span>abc</span><span><br>def </span><span>ghi</span>', 'abc  \ndef ghi'],
+    ['abc<span> def<br><br></span>ghi', 'abc def  \n  \nghi'],
+    ['abc<span> <span>def<br></span></span>ghi', 'abc def  \nghi'],
+    ['abc<span> def<br></span>ghi', 'abc def\\\nghi', { br: '\\' }],
+    ['abc<span> def </span>ghi', 'abc def ghi'],
+    ['abc<span>&nbsp;def<br></span>ghi', 'abc\u00a0def  \nghi'],
+    ['abc<span><br>&nbsp;def</span>ghi', 'abc  \n\u00a0defghi'],
+    ['abc<span>def&nbsp;<br></span>ghi', 'abcdef\u00a0  \nghi'],
+    ['abc<span> <code>def</code><br></span>ghi', 'abc `def`  \nghi']
+  ]
+  t.plan(cases.length * 3)
+  cases.forEach(function (item) {
+    const document = require('@mixmark-io/domino').createDocument(item[0])
+    const fragment = document.createDocumentFragment()
+    const body = document.body.cloneNode(true)
+    while (body.firstChild) fragment.appendChild(body.firstChild)
+    const inputs = [item[0], document.body, fragment]
+    inputs.forEach(function (input, index) {
+      t.equal(new TurndownService(item[2]).turndown(input), item[1], item[0] + ' input ' + index)
+    })
+  })
+})
+
 test('malformed documents', function (t) {
   t.plan(0)
   var turndownService = new TurndownService()
