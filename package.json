@@ -26,7 +26,8 @@
     "rewire": "^9.0.1",
     "rollup": "^4.59.0",
     "standard": "^17.0.0",
-    "turndown-attendant": "0.0.3"
+    "turndown-attendant": "0.0.3",
+    "turndown-baseline": "npm:turndown@7.2.4"
   },
   "engines": {
     "node": ">=18",
@@ -54,6 +55,7 @@
     "build-iife": "rollup -c config/rollup.config.iife.mjs",
     "build-test": "rollup -c config/rollup.config.test.mjs",
     "prepare": "npm run build",
-    "test": "npm run build && npm run build-test && standard ./src/**/*.js && node test/internals-test.js && node test/turndown-test.js"
+    "test": "npm run build && npm run build-test && standard ./src/**/*.js && node test/internals-test.js && node test/turndown-test.js",
+    "bench": "npm run build-cjs && node bench/index.js"
   }
 }
