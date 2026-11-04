@@ -208,9 +208,9 @@ function join (output, replacement) {
   const nls = Math.max(tail.length - s1.length, replacement.length - s2.length)
   const separator = '\n\n'.substring(0, nls)
 
-  for (const it of [s1, separator, s2]) {
-    if (it) output.push(it)
-  }
+  if (s1) output.push(s1)
+  if (separator) output.push(separator)
+  if (s2) output.push(s2)
 }
 
 /**
