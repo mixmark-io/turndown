@@ -82,15 +82,15 @@ rules.indentedCodeBlock = {
     return (
       options.codeBlockStyle === 'indented' &&
       node.nodeName === 'PRE' &&
-      node.firstChild &&
-      node.firstChild.nodeName === 'CODE'
+      node.firstElementChild &&
+      node.firstElementChild.nodeName === 'CODE'
     )
   },
 
   replacement: function (content, node, options) {
     return (
       '\n\n    ' +
-      node.firstChild.textContent.replace(/\n/g, '\n    ') +
+      node.firstElementChild.textContent.replace(/\n/g, '\n    ') +
       '\n\n'
     )
   }
@@ -101,15 +101,15 @@ rules.fencedCodeBlock = {
     return (
       options.codeBlockStyle === 'fenced' &&
       node.nodeName === 'PRE' &&
-      node.firstChild &&
-      node.firstChild.nodeName === 'CODE'
+      node.firstElementChild &&
+      node.firstElementChild.nodeName === 'CODE'
     )
   },
 
   replacement: function (content, node, options) {
-    const className = node.firstChild.getAttribute('class') || ''
+    const className = node.firstElementChild.getAttribute('class') || ''
     const language = (className.match(/language-(\S+)/) || [null, ''])[1]
-    const code = node.firstChild.textContent
+    const code = node.firstElementChild.textContent
 
     const fenceChar = options.fence.charAt(0)
     let fenceSize = 3
