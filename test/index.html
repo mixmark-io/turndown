@@ -591,6 +591,22 @@ Another paragraph.
 *   This is a third item at root level</pre>
 </div>
 
+<div class="case" data-name="text after a nested list">
+  <div class="input">
+    <ul>
+      <li>Fruits<ul><li>Apple</li><li>Pear</li></ul>are healthy.</li>
+      <li>Next</li>
+    </ul>
+  </div>
+  <pre class="expected">*   Fruits
+    
+    *   Apple
+    *   Pear
+    
+    are healthy.
+*   Next</pre>
+</div>
+
 <div class="case" data-name="ul with blockquote">
   <div class="input">
     <ul>
