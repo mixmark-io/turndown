@@ -30,6 +30,12 @@ rules.heading = {
         '\n\n' + content + '\n' + underline + '\n\n'
       )
     } else {
+      // An ATX heading is one line, so a <br> becomes a space
+      const br = options.br
+      content = content.split('\n').map(function (line) {
+        if (br && line.slice(-br.length) === br) line = line.slice(0, -br.length)
+        return line.trim()
+      }).join(' ')
       return '\n\n' + repeat('#', hLevel) + ' ' + content + '\n\n'
     }
   }

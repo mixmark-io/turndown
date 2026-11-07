@@ -129,6 +129,16 @@ sit</pre>
   <pre class="expected">Level Seven Heading?</pre>
 </div>
 
+<div class="case" data-name="h3 with line break">
+  <div class="input"><h3>Chapter 1<br>The Beginning</h3></div>
+  <pre class="expected">### Chapter 1 The Beginning</pre>
+</div>
+
+<div class="case" data-name="h1 as atx with line break" data-options='{"headingStyle":"atx"}'>
+  <div class="input"><h1>Chapter 1<br>The Beginning</h1></div>
+  <pre class="expected"># Chapter 1 The Beginning</pre>
+</div>
+
 <div class="case" data-name="hr">
   <div class="input"><hr></div>
   <pre class="expected">* * *</pre>
