@@ -49,12 +49,19 @@ rules.list = {
 
   replacement: function (content, node) {
     const parent = node.parentNode
-    if (parent.nodeName === 'LI' && parent.lastElementChild === node) {
+    if (parent.nodeName === 'LI' && !hasContentAfter(node)) {
       return '\n' + content
     } else {
       return '\n\n' + content + '\n\n'
     }
   }
+}
+
+function hasContentAfter (node) {
+  for (let sibling = node.nextSibling; sibling; sibling = sibling.nextSibling) {
+    if (sibling.nodeType === 1 || (sibling.nodeType === 3 && /\S/.test(sibling.nodeValue))) return true
+  }
+  return false
 }
 
 rules.listItem = {
