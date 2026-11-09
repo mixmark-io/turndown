@@ -42,7 +42,7 @@ export function isBlock (node) {
 
 export var voidElements = [
   'AREA', 'BASE', 'BR', 'COL', 'COMMAND', 'EMBED', 'HR', 'IMG', 'INPUT',
-  'KEYGEN', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'
+  'KEYGEN', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR', 'TEXTAREA'
 ]
 
 export function isVoid (node) {
