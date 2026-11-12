@@ -32,6 +32,16 @@ sit</pre>
   <pre class="expected">_em element_</pre>
 </div>
 
+<div class="case" data-name="intraword em uses asterisks">
+  <div class="input">x<em>e</em>t</div>
+  <pre class="expected">x*e*t</pre>
+</div>
+
+<div class="case" data-name="em adjacent to whitespace keeps underscores">
+  <div class="input">said <em>hi</em> now</div>
+  <pre class="expected">said _hi_ now</pre>
+</div>
+
 <div class="case" data-name="i">
   <div class="input"><i>i element</i></div>
   <pre class="expected">_i element_</pre>
