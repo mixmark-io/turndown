@@ -13,6 +13,11 @@ export default function RootNode (input, options) {
       'text/html'
     )
     root = doc.getElementById('turndown-root')
+    // A page's default Trusted Types policy can strip unknown custom
+    // elements from parsed HTML, leaving the input in <body> instead (#551).
+    if (!root) {
+      root = doc.body
+    }
   } else {
     root = input.cloneNode(true)
   }
