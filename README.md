@@ -34,11 +34,21 @@ var turndownService = new TurndownService()
 var markdown = turndownService.turndown('<h1>Hello world!</h1>')
 ```
 
+
+
 Turndown also accepts DOM nodes as input (either element nodes, document nodes,  or document fragment nodes):
 
 ```js
 var markdown = turndownService.turndown(document.getElementById('content'))
 ```
+
+If using Vue, you may see an error: `TypeError: TurndownService is not a constructor` when trying to import Turndown. To fix this, add `.default` to the import. In other words:
+```js
+// example.vue
+const TurndownService = require('turndown').default
+```
+
+
 
 ## Options
 
