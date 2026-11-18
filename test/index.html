@@ -1029,6 +1029,34 @@ Code
 ````</pre>
 </div>
 
+<div class="case" data-name="indented triple ticks inside code" data-options='{"codeBlockStyle": "fenced", "fence": "```"}'>
+  <div class="input">
+<pre><code>a
+  ```
+b
+</code></pre>
+  </div>
+  <pre class="expected">````
+a
+  ```
+b
+````</pre>
+</div>
+
+<div class="case" data-name="indented triple tildes inside code" data-options='{"codeBlockStyle": "fenced", "fence": "~~~"}'>
+  <div class="input">
+<pre><code>a
+   ~~~
+b
+</code></pre>
+  </div>
+  <pre class="expected">~~~~
+a
+   ~~~
+b
+~~~~</pre>
+</div>
+
 <div class="case" data-name="four ticks inside code" data-options='{"codeBlockStyle": "fenced", "fence": "```"}'>
   <div class="input">
 <pre><code>````
