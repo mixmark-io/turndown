@@ -149,9 +149,25 @@ function process (parentNode) {
       replacement = replacementForNode.call(self, node)
     }
 
+    if (replacement.charAt(0) === '[' && !node.isCode) escapeTrailingBang(output)
     join(output, replacement)
     return output
   }, [])
+}
+
+/**
+ * Escapes a `!` at the end of the output, so that it does not turn a following link into an image
+ * @private
+ * @param {Array} output The conversion output accumulator
+ */
+
+function escapeTrailingBang (output) {
+  const tail = output[output.length - 1]
+  if (!tail || tail.charAt(tail.length - 1) !== '!') return
+
+  let backslashes = 0
+  while (tail.charAt(tail.length - 2 - backslashes) === '\\') backslashes++
+  if (backslashes % 2 === 0) output[output.length - 1] = tail.slice(0, -1) + '\\!'
 }
 
 /**

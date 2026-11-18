@@ -229,6 +229,8 @@ If you are confident in doing so, you may want to customise the escaping behavio
 
 Note: text in code elements is never passed to`escape`.
 
+A `!` that ends up right before a link is escaped by Turndown itself, even when `escape` is overridden, because the `!` and the link come from different nodes and `escape` only sees one text node at a time. Without it, the link would turn into an image.
+
 ## License
 
 turndown is copyright © 2017+ Dom Christie and released under the MIT license.
