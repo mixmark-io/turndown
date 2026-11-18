@@ -113,12 +113,12 @@ rules.fencedCodeBlock = {
 
     const fenceChar = options.fence.charAt(0)
     let fenceSize = 3
-    const fenceInCodeRegex = new RegExp('^' + fenceChar + '{3,}', 'gm')
+    const fenceInCodeRegex = new RegExp('^ {0,3}(' + fenceChar + '{3,})', 'gm')
 
     let match
     while ((match = fenceInCodeRegex.exec(code))) {
-      if (match[0].length >= fenceSize) {
-        fenceSize = match[0].length + 1
+      if (match[1].length >= fenceSize) {
+        fenceSize = match[1].length + 1
       }
     }
 
