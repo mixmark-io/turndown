@@ -114,6 +114,36 @@ sit</pre>
   <pre class="expected">## Level Two Heading with ATX</pre>
 </div>
 
+<div class="case" data-name="setext h1 with a trailing line break">
+  <div class="input"><h1>Title 1<br></h1></div>
+  <pre class="expected">Title 1
+=======</pre>
+</div>
+
+<div class="case" data-name="setext h2 with a trailing line break">
+  <div class="input"><h2><span>Title 2</span><br></h2></div>
+  <pre class="expected">Title 2
+-------</pre>
+</div>
+
+<div class="case" data-name="setext heading with repeated edge line breaks">
+  <div class="input"><h2><br><br>Title 2<br><br></h2></div>
+  <pre class="expected">Title 2
+-------</pre>
+</div>
+
+<div class="case" data-name="setext heading preserves internal line breaks">
+  <div class="input"><h2>First<br>Second<br></h2></div>
+  <pre class="expected">First&#32;&#32;
+Second
+--------------</pre>
+</div>
+
+<div class="case" data-name="setext heading containing only line breaks">
+  <div class="input"><h2><br><br></h2></div>
+  <pre class="expected"></pre>
+</div>
+
 <div class="case" data-name="h3">
   <div class="input"><h3>Level Three Heading</h3></div>
   <pre class="expected">### Level Three Heading</pre>
