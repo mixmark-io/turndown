@@ -25,6 +25,7 @@ rules.heading = {
     const hLevel = Number(node.nodeName.charAt(1))
 
     if (options.headingStyle === 'setext' && hLevel < 3) {
+      content = content.trim()
       const underline = repeat((hLevel === 1 ? '=' : '-'), content.length)
       return (
         '\n\n' + content + '\n' + underline + '\n\n'
