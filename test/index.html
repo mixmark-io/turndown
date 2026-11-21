@@ -124,6 +124,26 @@ sit</pre>
   <pre class="expected">#### Level Four Heading with `child`</pre>
 </div>
 
+<div class="case" data-name="atx heading ending with #" data-options='{"headingStyle":"atx"}'>
+  <div class="input"><h2>Title #</h2></div>
+  <pre class="expected">## Title \#</pre>
+</div>
+
+<div class="case" data-name="h3 ending with ##">
+  <div class="input"><h3>Issue ##</h3></div>
+  <pre class="expected">### Issue \##</pre>
+</div>
+
+<div class="case" data-name="heading that is only #">
+  <div class="input"><h3>#</h3></div>
+  <pre class="expected">### \#</pre>
+</div>
+
+<div class="case" data-name="heading ending with # inside a word">
+  <div class="input"><h3>Learn C#</h3></div>
+  <pre class="expected">### Learn C#</pre>
+</div>
+
 <div class="case" data-name="invalid heading">
   <div class="input"><h7>Level Seven Heading?</h7></div>
   <pre class="expected">Level Seven Heading?</pre>
