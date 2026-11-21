@@ -267,6 +267,47 @@ link")</pre>
   <pre class="expected">[Some \[text\]](http://example.com/code)</pre>
 </div>
 
+<div class="case" data-name="a with surrounding href whitespace">
+  <div class="input"><a href="  http://example.com/path  ">An anchor</a></div>
+  <pre class="expected">[An anchor](http://example.com/path)</pre>
+</div>
+
+<div class="case" data-name="a with tabs and newlines around href">
+  <div class="input"><a href="&#9;&#10;http://example.com/path&#13;&#9;">An anchor</a></div>
+  <pre class="expected">[An anchor](http://example.com/path)</pre>
+</div>
+
+<div class="case" data-name="a with surrounding and internal href whitespace">
+  <div class="input"><a href=" http://example.com/foo bar ">An anchor</a></div>
+  <pre class="expected">[An anchor](&lt;http://example.com/foo bar&gt;)</pre>
+</div>
+
+<div class="case" data-name="a with whitespace-only href">
+  <div class="input"><a href=" &#9;&#10; ">An anchor</a></div>
+  <pre class="expected">[An anchor]()</pre>
+</div>
+
+<div class="case" data-name="a reference with surrounding href whitespace" data-options='{"linkStyle": "referenced"}'>
+  <div class="input"><a href=" http://example.com/path ">Reference link</a></div>
+  <pre class="expected">[Reference link][1]
+
+[1]: http://example.com/path</pre>
+</div>
+
+<div class="case" data-name="a collapsed reference with surrounding href whitespace" data-options='{"linkStyle": "referenced", "linkReferenceStyle": "collapsed"}'>
+  <div class="input"><a href=" http://example.com/path ">Reference link</a></div>
+  <pre class="expected">[Reference link][]
+
+[Reference link]: http://example.com/path</pre>
+</div>
+
+<div class="case" data-name="a shortcut reference with surrounding href whitespace" data-options='{"linkStyle": "referenced", "linkReferenceStyle": "shortcut"}'>
+  <div class="input"><a href=" http://example.com/path ">Reference link</a></div>
+  <pre class="expected">[Reference link]
+
+[Reference link]: http://example.com/path</pre>
+</div>
+
 <div class="case" data-name="a reference" data-options='{"linkStyle": "referenced"}'>
   <div class="input"><a href="http://example.com">Reference link</a></div>
   <pre class="expected">[Reference link][1]
