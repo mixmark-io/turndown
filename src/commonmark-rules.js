@@ -150,7 +150,7 @@ rules.inlineLink = {
   },
 
   replacement: function (content, node) {
-    const href = escapeLinkDestination(node.getAttribute('href'))
+    const href = escapeLinkDestination(node.getAttribute('href').trim())
     const title = escapeLinkTitle(cleanAttribute(node.getAttribute('title')))
     const titlePart = title ? ' "' + title + '"' : ''
     return '[' + content + '](' + href + titlePart + ')'
@@ -167,7 +167,7 @@ rules.referenceLink = {
   },
 
   replacement: function (content, node, options) {
-    const href = escapeLinkDestination(node.getAttribute('href'))
+    const href = escapeLinkDestination(node.getAttribute('href').trim())
     let title = cleanAttribute(node.getAttribute('title'))
     if (title) title = ' "' + escapeLinkTitle(title) + '"'
     let replacement
