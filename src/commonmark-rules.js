@@ -30,6 +30,9 @@ rules.heading = {
         '\n\n' + content + '\n' + underline + '\n\n'
       )
     } else {
+      // A trailing run of # would be read as the optional closing sequence
+      // and dropped, so escape its first #
+      content = content.replace(/(^|[ \t])(#+[ \t]*)$/, '$1\\$2')
       return '\n\n' + repeat('#', hLevel) + ' ' + content + '\n\n'
     }
   }
